@@ -9,6 +9,10 @@ namespace BoletoNet
         /// <summary>
         /// Formata o código de barras
         /// </summary>
+        void InstanciaBanco(int codigoBanco);
+        /// <summary>
+        /// Formata o código de barras
+        /// </summary>
         void FormataCodigoBarra(Boleto boleto);
         /// <summary>
         /// Formata a linha digital

@@ -63,6 +63,14 @@ namespace BoletoNet
         #endregion Propriedades
 
         # region Métodos
+        /// <summary>
+        /// Instancia um banco específico:
+        /// </summary>
+        /// <returns></returns>
+        public virtual void InstanciaBanco(int codigoBanco)
+        {
+            throw new NotImplementedException("Função não implementada");
+        }
 
         /// <summary>
         /// Retorna o campo que compos o código de barras que para todos os bancos são iguais foramado por:

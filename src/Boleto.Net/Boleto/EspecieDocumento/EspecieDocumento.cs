@@ -16,7 +16,7 @@ namespace BoletoNet
 
         #region Construtores
 
-        internal EspecieDocumento()
+        public EspecieDocumento()
         {
         }
 
@@ -83,9 +83,9 @@ namespace BoletoNet
 
         #endregion
 
-        # region Métodos Privados
+        # region Métodos
 
-        private void InstanciaEspecieDocumento(int codigoBanco, string codigoEspecie)
+        public void InstanciaEspecieDocumento(int codigoBanco, string codigoEspecie)
         {
             try
             {
@@ -205,8 +205,6 @@ namespace BoletoNet
             }
         }
 
-        # endregion
-
         public static string ValidaSigla(IEspecieDocumento especie)
         {
             try
@@ -243,6 +241,8 @@ namespace BoletoNet
 
             return especiesDocumentosBancos[banco.Codigo].DuplicataMercantil();
         }
+
+        # endregion
 
         private static Dictionary<int, AbstractEspecieDocumento> especiesDocumentosBancos = new Dictionary<int, AbstractEspecieDocumento>() {
                 { 341, new EspecieDocumento_Itau       ()  },

@@ -199,6 +199,7 @@
     <Compile Include="EDI\EDIFile.cs" />
     <Compile Include="Enums\CategoriaLancamento.cs" />
     <Compile Include="Enums\Extensions.cs" />
+    <Compile Include="Enums\GetDllTypes.cs" />
     <Compile Include="Enums\IsencaoCpmf.cs" />
     <Compile Include="Enums\TipoComplementoLancamento.cs" />
     <Compile Include="Enums\TipoLancamento.cs" />

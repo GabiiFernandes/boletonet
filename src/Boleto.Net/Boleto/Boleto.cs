@@ -624,5 +624,19 @@ namespace BoletoNet
 				throw new Exception("Erro durante a formatação dos campos.", ex);
 			}
 		}
-	}
+
+        #region Genexus
+
+        public void setBancoGx(Banco banco)
+        {
+            this.Banco = banco;
+        }
+
+        public void setEspecieDocumentoGx(EspecieDocumento especieDocumento)
+        {
+            this.EspecieDocumento = especieDocumento;
+        }
+
+        #endregion
+    }
 }

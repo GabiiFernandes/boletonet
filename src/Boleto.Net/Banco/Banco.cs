@@ -10,11 +10,11 @@ namespace BoletoNet
 
 		private IBanco _IBanco;
 
-		#endregion Variaveis
+        #endregion Variaveis
 
-		#region Construtores
+        #region Construtores
 
-		internal Banco()
+        public Banco()
 		{
 		}
 
@@ -50,11 +50,11 @@ namespace BoletoNet
 			get { return _IBanco.Nome; }
 		}
 
-		#endregion
+        #endregion
 
-		#region Métodos Privados
+        #region Métodos de Interface
 
-		private void InstanciaBanco(int codigoBanco)
+        public override void InstanciaBanco(int codigoBanco)
 		{
 			try
 			{
@@ -156,10 +156,6 @@ namespace BoletoNet
 				throw new Exception("Erro durante a execução da transação.", ex);
 			}
 		}
-
-		#endregion
-
-		#region Métodos de Interface
 
 		public override void FormataCodigoBarra(Boleto boleto)
 		{
