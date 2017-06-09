@@ -26,5 +26,22 @@ namespace BoletoNet
         }
         #endregion
 
+        #region Instrução
+
+        public Instrucao newInstrucao(int codigoBanco)
+        {
+            return new Instrucao(codigoBanco);
+        }
+
+        #endregion
+
+        #region Banco
+
+        public Banco newBanco(int codigoBanco)
+        {
+            return new Banco(codigoBanco);
+        }
+
+        #endregion
     }
 }

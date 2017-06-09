@@ -637,6 +637,10 @@ namespace BoletoNet
             this.EspecieDocumento = especieDocumento;
         }
 
+        public void addInstrucaoGx(Instrucao instrucao)
+        {
+            this.Instrucoes.Add(instrucao);
+        }
         #endregion
     }
 }

@@ -61,6 +61,10 @@ namespace BoletoNet
             throw new NotImplementedException("Função não implementada");
         }
 
+        public virtual void InstanciaInstrucao(int codigoBanco)
+        {
+            throw new NotImplementedException("Função não implementada");
+        }
         #endregion
     }
 }

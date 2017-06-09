@@ -11,6 +11,8 @@ namespace BoletoNet
         /// </summary>
         void Valida();
 
+        void InstanciaInstrucao(int codigoBanco);
+
         IBanco Banco { get; set; }
         int Codigo { get; set; }
         string Descricao { get; set; }

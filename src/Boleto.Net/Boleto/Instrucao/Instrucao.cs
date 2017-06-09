@@ -15,7 +15,7 @@ namespace BoletoNet
 
         #region Construtores
 
-        internal Instrucao()
+        public Instrucao()
         {
         }
 
@@ -35,7 +35,7 @@ namespace BoletoNet
 
         # region Métodos Privados
 
-        private void InstanciaInstrucao(int codigoBanco)
+        public override void InstanciaInstrucao(int codigoBanco)
         {
             try
             {
