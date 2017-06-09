@@ -1,4 +1,5 @@
 using BoletoNet.Excecoes;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -161,6 +162,12 @@ namespace BoletoNet
             }
         }
 
+        public String CarregarTodasJson(int codigoBanco)
+        {
+            EspeciesDocumento especiesDocumento = CarregaTodas(codigoBanco);
+            return JsonConvert.SerializeObject(especiesDocumento);
+        }
+
         public static EspeciesDocumento CarregaTodas(int codigoBanco)
         {
             try
@@ -243,6 +250,8 @@ namespace BoletoNet
         }
 
         # endregion
+
+
 
         private static Dictionary<int, AbstractEspecieDocumento> especiesDocumentosBancos = new Dictionary<int, AbstractEspecieDocumento>() {
                 { 341, new EspecieDocumento_Itau       ()  },

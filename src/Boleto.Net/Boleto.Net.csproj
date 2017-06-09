@@ -50,6 +50,10 @@
     <AssemblyOriginatorKeyFile>Boleto.Net.snk</AssemblyOriginatorKeyFile>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Newtonsoft.Json, Version=10.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.10.0.2\lib\net40\Newtonsoft.Json.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="NReco.PdfGenerator, Version=1.1.12.0, Culture=neutral, PublicKeyToken=231663d50a41b451, processorArchitecture=MSIL">
       <HintPath>..\packages\NReco.PdfGenerator.1.1.12.0\lib\net20\NReco.PdfGenerator.dll</HintPath>
       <Private>True</Private>
@@ -199,7 +203,7 @@
     <Compile Include="EDI\EDIFile.cs" />
     <Compile Include="Enums\CategoriaLancamento.cs" />
     <Compile Include="Enums\Extensions.cs" />
-    <Compile Include="Enums\GetDllTypes.cs" />
+    <Compile Include="Util\GetDllTypes.cs" />
     <Compile Include="Enums\IsencaoCpmf.cs" />
     <Compile Include="Enums\TipoComplementoLancamento.cs" />
     <Compile Include="Enums\TipoLancamento.cs" />
@@ -328,7 +332,10 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Boleto.Net.snk" />
-    <None Include="packages.config" />
+    <None Include="ClassDiagram1.cd" />
+    <None Include="packages.config">
+      <SubType>Designer</SubType>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Imagens\085.jpg" />

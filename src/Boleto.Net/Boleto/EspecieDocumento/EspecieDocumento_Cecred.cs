@@ -16,8 +16,7 @@ namespace BoletoNet {
         }
         #endregion
 
-        public EspecieDocumento_Cecred()
-        {
+        public EspecieDocumento_Cecred() {
         }
 
         public EspecieDocumento_Cecred(string codigo) {
@@ -30,25 +29,27 @@ namespace BoletoNet {
         }
 
         public static string getCodigoEspecieByEnum(EnumEspecieDocumento_Cecred especie) {
-            return ((int)especie).ToString().PadLeft(2, '0');
+            return ((int)especie).ToString();
         }
 
         public static EnumEspecieDocumento_Cecred getEnumEspecieByCodigo(string codigo) {
             switch (codigo) {
-                case "DM": return EnumEspecieDocumento_Cecred.DuplicataMercantil;
-                case "NF": return EnumEspecieDocumento_Cecred.NotaFiscal;
-                case "RC": return EnumEspecieDocumento_Cecred.Recibo;
-                case "DS": return EnumEspecieDocumento_Cecred.DuplicataServico;
+                case "1": return EnumEspecieDocumento_Cecred.DuplicataMercantil;
+                case "2": return EnumEspecieDocumento_Cecred.NotaFiscal;
+                case "5": return EnumEspecieDocumento_Cecred.Recibo;
+                case "10": return EnumEspecieDocumento_Cecred.Cheque;
+                case "12": return EnumEspecieDocumento_Cecred.DuplicataServico;
                 default: return EnumEspecieDocumento_Cecred.DuplicataMercantil;
             }
         }
 
         private void carregar(string idCodigo) {
             try {
-                this.Banco = new Banco_Sicredi();
+                this.Banco = new Banco_Cecred();
 
-                switch (getEnumEspecieByCodigo(idCodigo)) {
-                    case EnumEspecieDocumento_Cecred.DuplicataMercantil:
+                switch (getEnumEspecieByCodigo(idCodigo))
+                {
+                    case EnumEspecieDocumento_Cecred.DuplicataMercantil: default:
                         this.Codigo = getCodigoEspecieByEnum(EnumEspecieDocumento_Cecred.DuplicataMercantil);
                         this.Especie = "Duplicata Mercantil";
                         this.Sigla = "DM";
@@ -57,6 +58,11 @@ namespace BoletoNet {
                         this.Codigo = getCodigoEspecieByEnum(EnumEspecieDocumento_Cecred.Recibo);
                         this.Especie = "Recibo";
                         this.Sigla = "RC";
+                        break;
+                    case EnumEspecieDocumento_Cecred.Cheque:
+                        this.Codigo = getCodigoEspecieByEnum(EnumEspecieDocumento_Cecred.Cheque);
+                        this.Especie = "Cheque";
+                        this.Sigla = "C";
                         break;
                     case EnumEspecieDocumento_Cecred.DuplicataServico:
                         this.Codigo = getCodigoEspecieByEnum(EnumEspecieDocumento_Cecred.DuplicataServico);
@@ -68,10 +74,6 @@ namespace BoletoNet {
                         this.Especie = "Nota Fiscal";
                         this.Sigla = "NF";
                         break;
-                    default:
-                        this.Codigo = "0";
-                        this.Especie = "( Selecione )";
-                        break;
                 }
             } catch (Exception ex) {
                 throw new Exception("Erro ao carregar objeto", ex);
@@ -82,13 +84,12 @@ namespace BoletoNet {
             EspeciesDocumento especiesDocumento = new EspeciesDocumento();
 
             foreach (EnumEspecieDocumento_Cecred item in Enum.GetValues(typeof(EnumEspecieDocumento_Cecred)))
-                especiesDocumento.Add(new EspecieDocumento_Sicredi(getCodigoEspecieByEnum(item)));
+                especiesDocumento.Add(new EspecieDocumento_Cecred(getCodigoEspecieByEnum(item)));
 
             return especiesDocumento;
         }
 
-        public override IEspecieDocumento DuplicataMercantil()
-        {
+        public override IEspecieDocumento DuplicataMercantil() {
             return new EspecieDocumento_Cecred(getCodigoEspecieByEnum(EnumEspecieDocumento_Cecred.DuplicataMercantil));
         }
     }
