@@ -31,7 +31,6 @@ namespace BoletoNet {
         LiquidacaoDeTituloNaoRegristroOuPagamentoEmDuplicidade = 17,
         ConcederDesconto = 31,
         NaoConcederDesconto = 32
-
     }
 
     public class Instrucao_Cecred : AbstractInstrucao, IInstrucao {
