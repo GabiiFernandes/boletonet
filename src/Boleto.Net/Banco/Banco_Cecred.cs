@@ -532,40 +532,50 @@ namespace BoletoNet {
                 reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediDataDDMMAAAA_________, 0110, 008, 0, boleto.DataDocumento, '0'));                          // posição 110-117 (008) - Data da Emissão do Título
 
                 #region Código de juros
-                string CodJurosMora;
-                if (boleto.JurosMora == 0 && boleto.PercJurosMora == 0)
-                    CodJurosMora = "3"; //  Isento
-                else
-                    CodJurosMora = "1"; // Valor por Dia
+
+                string CodJurosMora = "3"; //Isento de Juros
+                decimal jurosMora = 0;
+                if (boleto.JurosMora > 0)
+                {
+                    jurosMora = boleto.JurosMora;
+                    CodJurosMora = "1"; //  Valor por Dia
+                }
+                else if (boleto.PercJurosMora > 0)
+                {
+                    jurosMora = boleto.PercJurosMora;
+                    CodJurosMora = "2"; // Percentual por Mês
+                }
+
                 #endregion
 
                 reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediNumericoSemSeparador_, 0118, 001, 0, CodJurosMora, '0'));                                  // posição 118-118 (001) - Código do Juros de Mora
                 reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediDataDDMMAAAA_________, 0119, 008, 0, boleto.DataJurosMora, '0'));                          // posição 119-126 (008) - Data do Juros de Mora
-                reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediNumericoSemSeparador_, 0127, 015, 2, boleto.JurosMora, '0'));                              // posição 127-141 (015)- Juros de Mora por Dia/Taxa
-                reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediNumericoSemSeparador_, 0142, 001, 0, "0", '0'));                                           // posição 142-142 (001) -  Código do Desconto 1 - "0" = Sem desconto. "1"= Valor Fixo-a data informada "2" = Percentual-a data informada
+                reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediNumericoSemSeparador_, 0127, 015, 3, jurosMora, '0'));                                     // posição 127-141 (015) - Juros de Mora por Dia/Taxa
+                reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediNumericoSemSeparador_, 0142, 001, 0, (boleto.ValorDesconto > 0 ? "1" : "0"), '0'));        // posição 142-142 (001) - Código do Desconto 1 - "0" = Sem desconto. "1"= Valor Fixo-a data informada "2" = Percentual-a data informada
                 reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediDataDDMMAAAA_________, 0143, 008, 0, boleto.DataDesconto, '0'));                           // posição 143-150 (008) - Data do Desconto
-                reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediNumericoSemSeparador_, 0151, 015, 2, boleto.ValorDesconto, '0'));                          // posição 151-165 (015)- Valor/Percentual a ser Concedido
-                reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediNumericoSemSeparador_, 0166, 015, 2, boleto.IOF, '0'));                                    // posição 166-180 (015)- Valor do IOF a ser concedido
-                reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediNumericoSemSeparador_, 0181, 015, 2, boleto.Abatimento, '0'));                             // posição 181-195 (015)- Valor do Abatimento
-                reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediAlphaAliEsquerda_____, 0196, 025, 0, boleto.NumeroDocumento, ' '));                        // posição 196-220 (025)- Identificação do Título na Empresa. Informar o Número do Documento - Seu Número (mesmo das posições 63-73 do Segmento P)                
+                reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediNumericoSemSeparador_, 0151, 015, 2, boleto.ValorDesconto, '0'));                          // posição 151-165 (015) - Valor/Percentual a ser Concedido
+                reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediNumericoSemSeparador_, 0166, 015, 2, boleto.IOF, '0'));                                    // posição 166-180 (015) - Valor do IOF a ser concedido
+                reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediNumericoSemSeparador_, 0181, 015, 2, boleto.Abatimento, '0'));                             // posição 181-195 (015) - Valor do Abatimento
+                reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediAlphaAliEsquerda_____, 0196, 025, 0, boleto.NumeroDocumento, ' '));                        // posição 196-220 (025) - Identificação do Título na Empresa. Informar o Número do Documento - Seu Número (mesmo das posições 63-73 do Segmento P)                
 
                 #region CodProtesto codBaixaDevolucao
                     String codProtesto = "3";
                     String diasProtesto = "";
-                    String codBaixaDevolucao = "3";
+                    String codBaixaDevolucao = "2";
                     String diasBaixaDevolucao = "";
                     foreach (IInstrucao instrucao in boleto.Instrucoes)
                     {
-                        if (instrucao.Codigo.Equals(9))
+                        switch ((EnumInstrucoes_Cecred)instrucao.Codigo)
                         {
-                            codProtesto = "1";
-                            diasProtesto = instrucao.QuantidadeDias.ToString();
-                        }
-                        else if (instrucao.Codigo.Equals(2))
-                        //else if (instrucao.Codigo.Equals(EnumInstrucoes_Cecred.PedidoBaixa))
-                        {
-                            codBaixaDevolucao = "1";
-                            diasBaixaDevolucao = instrucao.QuantidadeDias > 0 ? instrucao.QuantidadeDias.ToString() : "";
+                            case EnumInstrucoes_Cecred.PedidoProtesto:
+                                codProtesto = "1";
+                                diasProtesto = instrucao.QuantidadeDias.ToString();
+                                break;
+
+                            case EnumInstrucoes_Cecred.PedidoBaixa:
+                                codProtesto = "1";
+                                diasProtesto = instrucao.QuantidadeDias.ToString();
+                                break;
                         }
                     }
                 #endregion
