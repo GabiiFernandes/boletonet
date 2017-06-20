@@ -22,6 +22,8 @@ namespace BoletoNet {
             this.Nome = "CECRED";
         }
 
+        #region Boleto
+
         /// <summary>
         /// 
         ///    01 a 03 -  3 - 033 fixo - Código do banco
@@ -36,7 +38,8 @@ namespace BoletoNet {
         ///    
         /// </summary>
         /// <param name="boleto"></param>
-        void IBanco.FormataCodigoBarra(Boleto boleto) {
+        void IBanco.FormataCodigoBarra(Boleto boleto)
+        {
 
             string codigoBanco = Utils.FormatCode(this.Codigo.ToString(), 3);
             string codigoMoeda = "9";
@@ -57,7 +60,8 @@ namespace BoletoNet {
 
         }
 
-        void IBanco.FormataLinhaDigitavel(Boleto boleto) {
+        void IBanco.FormataLinhaDigitavel(Boleto boleto)
+        {
 
             string codigoBanco = Utils.FormatCode(this.Codigo.ToString(), 3);
             string codigoMoeda = "9";
@@ -94,15 +98,18 @@ namespace BoletoNet {
 
         }
 
-        void IBanco.FormataNossoNumero(Boleto boleto) {
+        void IBanco.FormataNossoNumero(Boleto boleto)
+        {
             boleto.NossoNumero = GetFormatedNossoNumero(boleto);
         }
 
-        void IBanco.FormataNumeroDocumento(Boleto boleto) {
+        void IBanco.FormataNumeroDocumento(Boleto boleto)
+        {
             throw new NotImplementedException("Função não implementada.");
         }
 
-        void IBanco.ValidaBoleto(Boleto boleto) {
+        void IBanco.ValidaBoleto(Boleto boleto)
+        {
             //throw new NotImplementedException("Função não implementada.");
             if ((boleto.Carteira != "01"))
                 throw new NotImplementedException("Carteira não implementada.");
@@ -118,6 +125,7 @@ namespace BoletoNet {
             boleto.FormataCampos();
         }
 
+        #endregion
 
         #region Métodos internos
         int Calcula11(string parte1) {
@@ -192,8 +200,7 @@ namespace BoletoNet {
             return _nossoNumero;
         }
         #endregion
-
-
+        
         #region Métodos de geração do arquivo remessa - Genéricos
         /// <summary>
         /// HEADER DE LOTE do arquivo CNAB
@@ -344,8 +351,7 @@ namespace BoletoNet {
             throw new NotImplementedException("Função não implementada.");
         }
         #endregion
-
-
+        
         #region Arquivo Remessa 240
         public bool ValidarRemessaCNAB240(string numeroConvenio, IBanco banco, Cedente cedente, Boletos boletos, int numeroArquivoRemessa, out string mensagem) {
             string vMsg = string.Empty;
@@ -533,24 +539,24 @@ namespace BoletoNet {
 
                 #region Código de juros
 
-                string CodJurosMora = "3"; //Isento de Juros
+                string codJurosMora = "3"; //Isento de Juros
                 decimal jurosMora = 0;
                 if (boleto.JurosMora > 0)
                 {
                     jurosMora = boleto.JurosMora;
-                    CodJurosMora = "1"; //  Valor por Dia
+                    codJurosMora = "1"; //  Valor por Dia
                 }
                 else if (boleto.PercJurosMora > 0)
                 {
                     jurosMora = boleto.PercJurosMora;
-                    CodJurosMora = "2"; // Percentual por Mês
+                    codJurosMora = "2"; // Percentual por Mês
                 }
 
                 #endregion
 
-                reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediNumericoSemSeparador_, 0118, 001, 0, CodJurosMora, '0'));                                  // posição 118-118 (001) - Código do Juros de Mora
+                reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediNumericoSemSeparador_, 0118, 001, 0, codJurosMora, '0'));                                  // posição 118-118 (001) - Código do Juros de Mora
                 reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediDataDDMMAAAA_________, 0119, 008, 0, boleto.DataJurosMora, '0'));                          // posição 119-126 (008) - Data do Juros de Mora
-                reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediNumericoSemSeparador_, 0127, 015, 3, jurosMora, '0'));                                     // posição 127-141 (015) - Juros de Mora por Dia/Taxa
+                reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediNumericoSemSeparador_, 0127, 015, 2, jurosMora, '0'));                                     // posição 127-141 (015) - Juros de Mora por Dia/Taxa
                 reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediNumericoSemSeparador_, 0142, 001, 0, (boleto.ValorDesconto > 0 ? "1" : "0"), '0'));        // posição 142-142 (001) - Código do Desconto 1 - "0" = Sem desconto. "1"= Valor Fixo-a data informada "2" = Percentual-a data informada
                 reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediDataDDMMAAAA_________, 0143, 008, 0, boleto.DataDesconto, '0'));                           // posição 143-150 (008) - Data do Desconto
                 reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediNumericoSemSeparador_, 0151, 015, 2, boleto.ValorDesconto, '0'));                          // posição 151-165 (015) - Valor/Percentual a ser Concedido
@@ -614,11 +620,19 @@ namespace BoletoNet {
                 reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediAlphaAliEsquerda_____, 0014, 001, 0, "Q", '0'));                                           // posição 014-014 (001) - Cód. Segmento do Registro Detalhe
                 reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediAlphaAliEsquerda_____, 0015, 001, 0, string.Empty, ' '));                                  // posição 015-015 (001) - Uso Exclusivo FEBRABAN/CNAB
                 reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediNumericoSemSeparador_, 0016, 002, 0, "01", '0'));                                          // posição 016-017 (002) - Código de Movimento Remessa
+                
                 #region Regra Tipo de Inscrição Cedente
                 string vCpfCnpjEmi = "0";//não informado
-                if (boleto.Sacado.CPFCNPJ.Length.Equals(11)) vCpfCnpjEmi = "1"; //Cpf
-                else if (boleto.Sacado.CPFCNPJ.Length.Equals(14)) vCpfCnpjEmi = "2"; //Cnpj
+                if (boleto.Sacado.CPFCNPJ.Length.Equals(11))
+                {
+                    vCpfCnpjEmi = "1"; //Cpf
+                }
+                else if (boleto.Sacado.CPFCNPJ.Length.Equals(14))
+                {
+                    vCpfCnpjEmi = "2"; //Cnpj
+                }
                 #endregion
+
                 reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediNumericoSemSeparador_, 0018, 001, 0, vCpfCnpjEmi, '0'));                                   // posição 018-018 (001) - Tipo de Inscrição 
                 reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediNumericoSemSeparador_, 0019, 015, 0, boleto.Sacado.CPFCNPJ, '0'));                         // posição 019-033 (015) - Número de Inscrição da empresa
                 reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediAlphaAliEsquerda_____, 0034, 040, 0, boleto.Sacado.Nome.ToUpper(), ' '));                  // posição 034-073 (040) - Nome
@@ -771,7 +785,6 @@ namespace BoletoNet {
 
         }
         #endregion
-
 
         #region Arquivo Remessa 400      
         public string GerarHeaderRemessaCNAB400(Cedente cedente, int numeroArquivoRemessa) {
@@ -986,8 +999,6 @@ namespace BoletoNet {
             }
         }
         #endregion
-
-
 
         #region Arquivo Retorno 240
         /// <summary>
@@ -1335,6 +1346,5 @@ namespace BoletoNet {
             }
         }
         #endregion
-
     }
 }
