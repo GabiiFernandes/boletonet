@@ -481,9 +481,11 @@ namespace BoletoNet
                 //Nº Inscrição da Empresa ==> 004 a 017
                 detalhe.NumeroInscricao = registro.Substring(3, 14);
 
-                //Identificação da Empresa Cedente no Banco ==> 021 a 037
-                detalhe.Agencia = Utils.ToInt32(registro.Substring(24, 6));
-                detalhe.Conta = Utils.ToInt32(registro.Substring(30, 7));
+                //Identificação da Empresa Cedente no Banco ==> 021 a 037 = 17 (Igual remessa)
+                // 0 + Carteira 3 + Agência 5 + Conta 7 + Digito 1 = 17
+                // ex: 00090750315206870
+                detalhe.Agencia = Utils.ToInt32(registro.Substring(24, 5));
+                detalhe.Conta = Utils.ToInt32(registro.Substring(29, 7));
                 detalhe.DACConta = Utils.ToInt32(registro.Substring(36, 1));
 
                 //Nº Controle do Participante ==> 038 a 062
@@ -917,7 +919,7 @@ namespace BoletoNet
                 _detalhe += Utils.FitStringLength(boleto.Cedente.ContaBancaria.Conta, 7, 7, '0', 0, true, true, true); //Conta Corrente(7)
                 _detalhe += Utils.FitStringLength(boleto.Cedente.ContaBancaria.DigitoConta, 1, 1, '0', 0, true, true, true);//D da conta(1)
                 //Nº de Controle do Participante - uso livre da empresa (25, A)  //  brancos
-                _detalhe += Utils.FitStringLength(boleto.NumeroControle, 25, 25, ' ', 0, true, true, false);
+                _detalhe += Utils.FitStringLength(boleto.NumeroControle ?? boleto.NumeroDocumento, 25, 25, ' ', 0, true, true, false);
 
                 //Código do Banco, só deve ser preenchido quando cliente cedente optar por "Débito Automático".
                 _detalhe += "000";
@@ -1101,7 +1103,7 @@ namespace BoletoNet
                 _detalhe += Utils.FitStringLength(boleto.Sacado.Nome.TrimStart(' '), 40, 40, ' ', 0, true, true, false).ToUpper();
 
                 //Endereço Completo (40, A)
-                _detalhe += Utils.FitStringLength(boleto.Sacado.Endereco.End.TrimStart(' '), 40, 40, ' ', 0, true, true, false).ToUpper();
+                _detalhe += Utils.FitStringLength(boleto.Sacado.Endereco.EndComNumero.TrimStart(' '), 40, 40, ' ', 0, true, true, false).ToUpper();
 
                 //1ª Mensagem (12, A)
                 /*Campo livre para uso da Empresa. A mensagem enviada nesse campo será impressa

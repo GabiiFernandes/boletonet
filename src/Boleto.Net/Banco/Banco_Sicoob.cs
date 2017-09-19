@@ -439,7 +439,7 @@ namespace BoletoNet
                 _header.Append(Utils.FitStringLength(cedente.Nome, 30, 30, ' ', 0, true, true, false)); //Posição 047 a 076
                 _header.Append(Utils.FitStringLength("756BANCOOBCED", 18, 18, ' ', 0, true, true, false)); //Posição 077 a 094
                 _header.Append(DateTime.Now.ToString("ddMMyy")); //Posição 095 a 100
-                _header.Append(Utils.FitStringLength(Convert.ToString(cedente.NumeroSequencial), 7, 7, '0', 0, true, true, true)); //Posição 101 a 107
+                _header.Append(Utils.FitStringLength(Convert.ToString(numeroArquivoRemessa), 7, 7, '0', 0, true, true, true)); //Posição 101 a 107
                 _header.Append(new string(' ', 287)); //Posição 108 a 394
                 _header.Append("000001"); //Posição 395 a 400
 
@@ -553,7 +553,15 @@ namespace BoletoNet
                 _detalhe.Append("00000"); //Posição 090 a 094
                 _detalhe.Append("0"); //Posição 095
                 _detalhe.Append(Utils.FitStringLength(boleto.Cedente.NumeroBordero.ToString(), 6, 6, '0', 0, true, true, true)); //Posição 096 a 101
-                _detalhe.Append(new string(' ', 5)); //Posição 102 a 106
+                _detalhe.Append(new string(' ', 4)); //Posição 102 a 105
+
+                // Tipo de emissão"Tipo de Emissão: 1 - Cooperativa 2 - Cliente"
+                var tipoDeEmissao = "1";
+                if (boleto.ApenasRegistrar)
+                    tipoDeEmissao = "2";
+
+                _detalhe.Append(Utils.FitStringLength(tipoDeEmissao, 1, 1, '0', 0, true, true, true)); // Posição 106 a 106
+
                 _detalhe.Append(Utils.FitStringLength(boleto.TipoModalidade, 2, 2, '0', 0, true, true, true));  //Posição 107 a 108
                 _detalhe.Append(Utils.FitStringLength(boleto.Remessa.CodigoOcorrencia, 2, 2, '0', 0, true, true, true)); //Posição 109 a 110 - (1)REGISTRO DE TITULOS (2)Solicitação de Baixa
                 _detalhe.Append(Utils.FitStringLength(boleto.NumeroDocumento, 10, 10, '0', 0, true, true, true)); //Posição 111 a 120
@@ -601,7 +609,24 @@ namespace BoletoNet
         {
             throw new NotImplementedException("Função não implementada.");
         }
+		
+		/// <summary>
+        /// Função que gera nosso numero a ser colocado na remessa sicoob CNAB240, segundo layout para troca de informações
+        /// </summary>
+        /// <param name="boleto"></param>
+        /// <returns></returns>
+        private string NossoNumeroFormatado( Boleto boleto )
+        {
+            FormataNossoNumero(boleto);
 
+            string retorno = Utils.FormatCode(boleto.NossoNumero.Replace("-",""), "0", 10, true); // nosso numero+dg - 10 posicoes
+            retorno = retorno + Utils.FormatCode(boleto.NumeroParcela.ToString(), "0", 2, true); // numero parcela - 2 posicoes
+            retorno = retorno + Utils.FormatCode(boleto.ModalidadeCobranca.ToString(), "0", 2, true); // modalidade - 2 posicoes
+            retorno = retorno + "4"; // tipo formulario (A4 sem envelopamento) - 1 posicoes;
+            retorno = retorno + Utils.FormatCode("", " ", 5); // brancos - 5 posicoes ;
+            return retorno;
+        }
+		
         public override string GerarDetalheSegmentoPRemessa(Boleto boleto, int numeroRegistro, string numeroConvenio)
         {
             try
@@ -618,7 +643,7 @@ namespace BoletoNet
                 detalhe += Utils.FormatCode(boleto.Cedente.ContaBancaria.Conta, 12); //Posição 024 a 035 Conta Corrente: vide planilha "Capa" deste arquivo
                 detalhe += Utils.FormatCode(boleto.Cedente.ContaBancaria.DigitoConta, 1);  //Posição 036  Dígito Verificador da Conta: vide planilha "Capa" deste arquivo
                 detalhe += " ";  //Posição 037 Dígito Verificador da Ag/Conta: Brancos
-                detalhe += Utils.FormatCode(boleto.NossoNumero, 20);  //Posição 038 a 057 Nosso Número
+                detalhe += Utils.FormatCode(NossoNumeroFormatado(boleto), 20);  //Posição 038 a 057 Nosso Número
                 detalhe += (Convert.ToInt16(boleto.Carteira) == 1 ? "1" : "2");  //Posição 058 Código da Carteira: vide planilha "Capa" deste arquivo
                 detalhe += "0";  //Posição 059 Forma de Cadastr. do Título no Banco: "0"
                 detalhe += " ";  //Posição 060 Tipo de Documento: Brancos

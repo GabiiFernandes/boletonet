@@ -49,8 +49,19 @@ namespace BoletoNet
 		{
 			get { return _IBanco.Nome; }
 		}
+        
+		public override Cedente Cedente
+		{
+			get { return _IBanco.Cedente; }
+		}
 
-        #endregion
+		public string ChaveASBACE
+		{
+			get { return _IBanco.ChaveASBACE; }
+			set { _IBanco.ChaveASBACE = value; }
+		}
+
+		#endregion
 
         #region Métodos de Interface
 
@@ -141,7 +152,11 @@ namespace BoletoNet
 					case 85:
 						_IBanco = new Banco_Cecred();
 						break;
-					case 707:
+                    //655 - Votorantim
+                    case 655:
+                        _IBanco = new Banco_Votorantim();
+                        break;
+                    case 707:
 						_IBanco = new Banco_Daycoval();
 						break;
 					case 637:
@@ -156,6 +171,10 @@ namespace BoletoNet
 				throw new Exception("Erro durante a execução da transação.", ex);
 			}
 		}
+        
+		#endregion
+
+		#region Métodos de Interface
 
 		public override void FormataCodigoBarra(Boleto boleto)
 		{
@@ -391,6 +410,18 @@ namespace BoletoNet
 			}
 		}
 
+		public override string GerarDetalheSegmentoPRemessa(Boleto boleto, int numeroRegistro, string numeroConvenio, Cedente cedente, Boleto boletos)
+		{
+			try
+			{
+				return _IBanco.GerarDetalheSegmentoPRemessa(boleto, numeroRegistro, numeroConvenio, cedente, boletos);
+			}
+			catch (Exception ex)
+			{
+				throw new Exception("Erro durante a geração dos registros de DETALHE do arquivo de REMESSA.", ex);
+			}
+		}
+
 		public override string GerarDetalheSegmentoQRemessa(Boleto boleto, int numeroRegistro, TipoArquivo tipoArquivo)
 		{
 			try
@@ -451,7 +482,7 @@ namespace BoletoNet
 			}
 		}
 
-		public override string GerarTrailerArquivoRemessa(int numeroRegistro, Boleto boletos)
+		public string GerarTrailerArquivoRemessa(int numeroRegistro, Boleto boletos)
 		{
 			try
 			{
@@ -463,7 +494,7 @@ namespace BoletoNet
 			}
 		}
 
-		public override string GerarTrailerLoteRemessa(int numeroRegistro)
+		public string GerarTrailerLoteRemessa(int numeroRegistro)
 		{
 			try
 			{
@@ -475,7 +506,7 @@ namespace BoletoNet
 			}
 		}
 
-		public override string GerarTrailerLoteRemessa(int numeroRegistro, Boleto boletos)
+		public string GerarTrailerLoteRemessa(int numeroRegistro, Boleto boletos)
 		{
 			try
 			{
@@ -487,7 +518,7 @@ namespace BoletoNet
 			}
 		}
 
-		public override string GerarMensagemVariavelRemessa(Boleto boleto, ref int numeroRegistro, TipoArquivo tipoArquivo)
+		public string GerarMensagemVariavelRemessa(Boleto boleto, ref int numeroRegistro, TipoArquivo tipoArquivo)
 		{
 			try
 			{
@@ -503,32 +534,37 @@ namespace BoletoNet
 
 		#region Métodos de Leitura do arquivo de Retorno
 
-		public override DetalheSegmentoTRetornoCNAB240 LerDetalheSegmentoTRetornoCNAB240(string registro)
+		public DetalheSegmentoTRetornoCNAB240 LerDetalheSegmentoTRetornoCNAB240(string registro)
 		{
 			return _IBanco.LerDetalheSegmentoTRetornoCNAB240(registro);
 		}
 
-		public override DetalheSegmentoURetornoCNAB240 LerDetalheSegmentoURetornoCNAB240(string registro)
+		public DetalheSegmentoURetornoCNAB240 LerDetalheSegmentoURetornoCNAB240(string registro)
 		{
 			return _IBanco.LerDetalheSegmentoURetornoCNAB240(registro);
 		}
 
-		public override DetalheSegmentoWRetornoCNAB240 LerDetalheSegmentoWRetornoCNAB240(string registro)
+		public DetalheSegmentoYRetornoCNAB240 LerDetalheSegmentoYRetornoCNAB240(string registro)
+		{
+			return _IBanco.LerDetalheSegmentoYRetornoCNAB240(registro);
+		}
+
+		public DetalheSegmentoWRetornoCNAB240 LerDetalheSegmentoWRetornoCNAB240(string registro)
 		{
 			return _IBanco.LerDetalheSegmentoWRetornoCNAB240(registro);
 		}
 
-		public override DetalheRetorno LerDetalheRetornoCNAB400(string registro)
+		public DetalheRetorno LerDetalheRetornoCNAB400(string registro)
 		{
 			return _IBanco.LerDetalheRetornoCNAB400(registro);
 		}
 
-        public override HeaderRetorno LerHeaderRetornoCNAB400(string registro)
+        public HeaderRetorno LerHeaderRetornoCNAB400(string registro)
         {
             return _IBanco.LerHeaderRetornoCNAB400(registro);
         }
 
-        public override long ObterNossoNumeroSemConvenioOuDigitoVerificador(long convenio, string nossoNumero)
+        public long ObterNossoNumeroSemConvenioOuDigitoVerificador(long convenio, string nossoNumero)
         {
             return _IBanco.ObterNossoNumeroSemConvenioOuDigitoVerificador(convenio, nossoNumero);
         }

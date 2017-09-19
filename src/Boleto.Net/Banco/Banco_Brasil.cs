@@ -1540,7 +1540,13 @@ namespace BoletoNet
                 if (boleto.ValorDesconto > 0)
                 {
                     _segmentoP += "1";
-                    _segmentoP += Utils.FitStringLength(boleto.DataVencimento.ToString("ddMMyyyy"), 8, 8, '0', 0, true, true, false);
+                    //Alterado por Suélton - 14/07/2017 
+                    //Implementação da data limite para o desconto por antecipação
+                    _segmentoP +=
+                        Utils.FitStringLength(
+                            boleto.DataDesconto == DateTime.MinValue
+                                ? boleto.DataVencimento.ToString("ddMMyyyy")
+                                : boleto.DataDesconto.ToString("ddMMyyyy"), 8, 8, '0', 0, true, true, false);
                     _segmentoP += Utils.FitStringLength(boleto.ValorDesconto.ApenasNumeros(), 15, 15, '0', 0, true, true, true);
                 }
                 else
@@ -1748,14 +1754,7 @@ namespace BoletoNet
                 trailer += Utils.FitStringLength("1", 4, 4, '0', 0, true, true, true);
                 trailer += "5";
                 trailer += Utils.FormatCode("", " ", 9);
-
-                #region Pega o Numero de Registros + 1(HeaderLote) + 1(TrailerLote)
-                int vQtdeRegLote = numeroRegistro; // (numeroRegistro + 2);
-                trailer += Utils.FitStringLength(vQtdeRegLote.ToString(), 6, 6, '0', 0, true, true, true);  //posição 18 até 23   (6) - Quantidade de Registros no Lote
-                //deve considerar 1 registro a mais - Header
-                #endregion
-
-
+                trailer += Utils.FitStringLength(numeroRegistro.ToString(), 6, 6, '0', 0, true, true, true);  //posição 18 até 23   (6) - Quantidade de Registros no Lote
                 trailer += Utils.FormatCode("", "0", 92, true);
                 trailer += Utils.FormatCode("", " ", 125);
                 trailer = Utils.SubstituiCaracteresEspeciais(trailer);
@@ -1776,7 +1775,7 @@ namespace BoletoNet
                 string _trailerArquivo;
 
                 _trailerArquivo = "00199999         000001";
-                _trailerArquivo += Utils.FitStringLength((numeroRegistro + 1).ToString(), 6, 6, '0', 0, true, true, true); //deve considerar 1 registro a mais - Header
+                _trailerArquivo += Utils.FitStringLength((numeroRegistro).ToString(), 6, 6, '0', 0, true, true, true);
                 _trailerArquivo += "000000";
                 _trailerArquivo += _brancos205;
 
@@ -1881,8 +1880,13 @@ namespace BoletoNet
                 _header += Utils.FitStringLength(cedente.CPFCNPJ, 14, 14, '0', 0, true, true, true);
                 _header += Utils.FitStringLength(cedente.Convenio.ToString(), 9, 9, '0', 0, true, true, true);
                 _header += "0014";
-                _header += Utils.FitStringLength(cedente.Carteira, 2, 2, '0', 0, true, true, true);
-                _header += "019";
+                // adicionado por Heric Souza em 02/06/2017
+                if (cedente.Carteira.Length == 2)
+                    _header += cedente.Carteira.ToString() + "019";
+                else
+                    _header += Utils.FitStringLength(cedente.Carteira.Replace("-", ""), 5, 5, ' ', 0, true, true, false);
+                //_header += Utils.FitStringLength(cedente.Carteira, 2, 2, '0', 0, true, true, true);
+                //_header += "019";
                 _header += "  ";
                 _header += Utils.FitStringLength(cedente.ContaBancaria.Agencia, 5, 5, '0', 0, true, true, true);
                 _header += Utils.FitStringLength(cedente.ContaBancaria.DigitoAgencia, 1, 1, ' ', 0, true, true, false);
@@ -2229,7 +2233,8 @@ namespace BoletoNet
                 reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediAlphaAliEsquerda_____, 0102, 005, 0, string.Empty, ' '));                              //102-106
                 reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediNumericoSemSeparador_, 0107, 002, 0, boleto.Cedente.Carteira, '0'));                   //107-108
                 reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediAlphaAliEsquerda_____, 0109, 002, 0, ObterCodigoDaOcorrencia(boleto), ' '));           //109-110
-                reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediAlphaAliEsquerda_____, 0111, 010, 0, boleto.NumeroDocumento, '0'));                    //111-120
+                var numeroControle = boleto.NumeroControle ?? boleto.NumeroDocumento;
+                reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediAlphaAliEsquerda_____, 0111, 010, 0, numeroControle, '0'));                            //111-120
                 reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediDataDDMMAA___________, 0121, 006, 0, boleto.DataVencimento, ' '));                     //121-126
                 reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediNumericoSemSeparador_, 0127, 013, 2, boleto.ValorBoleto, '0'));                        //127-139
                 reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediAlphaAliEsquerda_____, 0140, 003, 0, "001", '0'));                                     //140-142   
@@ -2248,22 +2253,26 @@ namespace BoletoNet
                 #region Instruções
                 string vInstrucao1 = "0";
                 string vInstrucao2 = "0";
+                string diasProtesto = String.Empty;
                 //string vInstrucao3 = "0";
                 switch (boleto.Instrucoes.Count)
                 {
                     case 1:
                         vInstrucao1 = boleto.Instrucoes[0].Codigo.ToString();
                         vInstrucao2 = "0";
+                        diasProtesto = boleto.Instrucoes[0].QuantidadeDias.ToString().PadLeft(2, '0') ?? String.Empty;
                         //vInstrucao3 = "0";
                         break;
                     case 2:
                         vInstrucao1 = boleto.Instrucoes[0].Codigo.ToString();
                         vInstrucao2 = boleto.Instrucoes[1].Codigo.ToString();
+                        diasProtesto = boleto.Instrucoes[0].QuantidadeDias.ToString().PadLeft(2, '0') ?? String.Empty;
                         //vInstrucao3 = "0";
                         break;
                     case 3:
                         vInstrucao1 = boleto.Instrucoes[0].Codigo.ToString();
                         vInstrucao2 = boleto.Instrucoes[1].Codigo.ToString();
+                        diasProtesto = boleto.Instrucoes[0].QuantidadeDias.ToString().PadLeft(2, '0') ?? String.Empty;
                         //vInstrucao3 = boleto.Instrucoes[2].Codigo.ToString();
                         break;
                 }
@@ -2338,7 +2347,7 @@ namespace BoletoNet
                 reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediAlphaAliEsquerda_____, 0335, 015, 0, boleto.Sacado.Endereco.Cidade.ToUpper(), ' '));   //335-349
                 reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediAlphaAliEsquerda_____, 0350, 002, 0, boleto.Sacado.Endereco.UF.ToUpper(), ' '));       //350-351
                 reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediAlphaAliEsquerda_____, 0352, 040, 0, string.Empty, ' '));                              //352-391
-                reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediAlphaAliEsquerda_____, 0392, 002, 0, string.Empty, ' '));                              //392-393
+                reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediAlphaAliEsquerda_____, 0392, 002, 0, diasProtesto, ' '));                              //392-393
                 reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediAlphaAliEsquerda_____, 0394, 001, 0, string.Empty, ' '));                              //394-394                
                 reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediNumericoSemSeparador_, 0395, 006, 0, numeroRegistro, '0'));                            //395-400
                 //

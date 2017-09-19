@@ -350,8 +350,7 @@
 						&lt;td class="pL6  w409"&gt;Sacador / Avalista: @AVALISTA&lt;/td&gt;
 						&lt;td class="w250 Ar"&gt;Autenticação mecânica - &lt;b class="cpN"&gt;Ficha de Compensação&lt;/b&gt;&lt;/td&gt;
 				&lt;/tr&gt;
-				&lt;tr class="h13"&gt;&lt;td colspan="3" /&gt;&lt;/tr&gt;
-		&lt;/table&gt;</value>
+				&lt;/table&gt;</value>
   </data>
   <data name="ReciboCedenteParte11" xml:space="preserve">
     <value>&lt;table class="w666"&gt;
@@ -362,17 +361,8 @@
   </data>
   <data name="ReciboCedenteParte12" xml:space="preserve">
     <value>&lt;table class="ctN w666"&gt;
-				&lt;tr class="h13"&gt;&lt;td /&gt;&lt;/tr&gt;
 				&lt;tr&gt;&lt;td class="Ar"&gt;Corte na linha pontilhada&lt;/td&gt;&lt;/tr&gt;
 				&lt;tr&gt;&lt;td class="cut" /&gt;&lt;/tr&gt;
-		&lt;/table&gt;
-		&lt;table class="ctN w666"&gt;
-				&lt;tr class="h13"&gt;&lt;td /&gt;&lt;/tr&gt;
-				&lt;tr class="h13"&gt;&lt;td /&gt;&lt;/tr&gt;
-				&lt;tr class="h13"&gt;&lt;td /&gt;&lt;/tr&gt;
-				&lt;tr class="h13"&gt;&lt;td /&gt;&lt;/tr&gt;
-				&lt;tr class="h13"&gt;&lt;td /&gt;&lt;/tr&gt;
-				&lt;tr class="h13"&gt;&lt;td /&gt;&lt;/tr&gt;
 		&lt;/table&gt;</value>
   </data>
   <data name="ReciboCedenteParte2" xml:space="preserve">
@@ -625,10 +615,10 @@
     <value>&lt;table cellpadding="0" cellspacing="0"&gt;
 						&lt;tr&gt;
 								&lt;td valign="top"&gt;
-										&lt;table class="w150 mt23"&gt;
-												&lt;tr class="ct cpN BHead"&gt;
-														&lt;td class="ld"&gt;
-																Recibo do Pagador
+										&lt;table class="150"&gt;
+												&lt;tr class="BHead"&gt;
+														&lt;td class="imgLogo Al"&gt;
+															&lt;img src="@URLIMAGEMLOGO" /&gt;
 														&lt;/td&gt;
 												&lt;/tr&gt;
 										&lt;/table&gt;
@@ -643,26 +633,20 @@
 																@CEDENTE
 														&lt;/td&gt;
 												&lt;/tr&gt;
-										&lt;/table&gt;
-										&lt;table class="w150"&gt;
-												&lt;tr class="ct h13 At"&gt;
-														&lt;td class="w298"&gt;
-																Telefone
-														&lt;/td&gt;
-												&lt;/tr&gt;
-												&lt;tr class="cp h12 At rBb"&gt;
-														&lt;td&gt;
-																@TELEFONE
-														&lt;/td&gt;
-												&lt;/tr&gt;
-										&lt;/table&gt;
+										&lt;/table&gt;										
 										&lt;table class="w150"&gt;
 												&lt;tr class="ct h13"&gt;
+														&lt;td class="w192"&gt;
+																Parcela/Total
+														&lt;/td&gt;
 														&lt;td class="w192"&gt;
 																Vencimento
 														&lt;/td&gt;
 												&lt;/tr&gt;
 												&lt;tr class="cp h12 rBb"&gt;
+														&lt;td&gt;
+																@PARCELATOTAL
+														&lt;/td&gt;
 														&lt;td&gt;
 																@DATAVENCIMENTO
 														&lt;/td&gt;
@@ -682,18 +666,6 @@
 										&lt;/table&gt;
 										&lt;table class="w150"&gt;
 												&lt;tr class="ct h13"&gt;
-														&lt;td class="w192"&gt;
-																Número do documento
-														&lt;/td&gt;
-												&lt;/tr&gt;
-												&lt;tr class="cp h12 rBb"&gt;
-														&lt;td&gt;
-																@NUMERODOCUMENTO
-														&lt;/td&gt;
-												&lt;/tr&gt;
-										&lt;/table&gt;
-										&lt;table class="w150"&gt;
-												&lt;tr class="ct h13"&gt;
 														&lt;td class="w113"&gt;
 																(=) Valor do Documento
 														&lt;/td&gt;
@@ -701,6 +673,54 @@
 												&lt;tr class="cp h12 rBb Ab"&gt;
 														&lt;td&gt;
 																@=VALORDOCUMENTO
+														&lt;/td&gt;
+												&lt;/tr&gt;
+										&lt;/table&gt;
+										&lt;table class="w150"&gt;
+												&lt;tr class="ct h13"&gt;
+														&lt;td class="w113"&gt;
+																(-) Desconto / Abatimentos
+														&lt;/td&gt;
+												&lt;/tr&gt;
+												&lt;tr class="cp h12 rBb Ab"&gt;
+														&lt;td&gt;
+																@DESCONTOS
+														&lt;/td&gt;
+												&lt;/tr&gt;
+										&lt;/table&gt;
+										&lt;table class="w150"&gt;
+												&lt;tr class="ct h13"&gt;
+														&lt;td class="w113"&gt;
+																(-) Outras deduções
+														&lt;/td&gt;
+												&lt;/tr&gt;
+												&lt;tr class="cp h12 rBb Ab"&gt;
+														&lt;td&gt;
+																@OUTRASDEDUCOES
+														&lt;/td&gt;
+												&lt;/tr&gt;
+										&lt;/table&gt;
+										&lt;table class="w150"&gt;
+												&lt;tr class="ct h13"&gt;
+														&lt;td class="w113"&gt;
+																(+) Mora / Multa
+														&lt;/td&gt;
+												&lt;/tr&gt;
+												&lt;tr class="cp h12 rBb Ab"&gt;
+														&lt;td&gt;
+																@MORAMULTA
+														&lt;/td&gt;
+												&lt;/tr&gt;
+										&lt;/table&gt;
+										&lt;table class="w150"&gt;
+												&lt;tr class="ct h13"&gt;
+														&lt;td class="w113"&gt;
+																(+) Outros acréscimos
+														&lt;/td&gt;
+												&lt;/tr&gt;
+												&lt;tr class="cp h12 rBb Ab"&gt;
+														&lt;td&gt;
+																@OUTROSACRESCIMOS
 														&lt;/td&gt;
 												&lt;/tr&gt;
 										&lt;/table&gt;
@@ -716,6 +736,30 @@
 														&lt;/td&gt;
 												&lt;/tr&gt;
 										&lt;/table&gt;
+										&lt;table class="w150"&gt;
+												&lt;tr class="ct h13 At"&gt;
+														&lt;td class="w298"&gt;
+																Nosso Número
+														&lt;/td&gt;
+												&lt;/tr&gt;
+												&lt;tr class="cp h12 At rBb"&gt;
+														&lt;td&gt;
+																@NOSSONUMERO
+														&lt;/td&gt;
+												&lt;/tr&gt;
+										&lt;/table&gt;
+										&lt;table class="w150"&gt;
+												&lt;tr class="ct h13"&gt;
+														&lt;td class="w192"&gt;
+																Número do documento
+														&lt;/td&gt;
+												&lt;/tr&gt;
+												&lt;tr class="cp h12 rBb"&gt;
+														&lt;td&gt;
+																@NUMERODOCUMENTO
+														&lt;/td&gt;
+												&lt;/tr&gt;
+										&lt;/table&gt;										
 										&lt;table class="w150"&gt;
 												&lt;tr class="ct h13"&gt;
 														&lt;td class="w113"&gt;
