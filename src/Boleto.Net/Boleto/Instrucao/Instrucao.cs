@@ -4,7 +4,7 @@ using System.Text;
 
 namespace BoletoNet
 {
-    public class Instrucao : IInstrucao
+    public class Instrucao : AbstractInstrucao, IInstrucao
     {
 
         #region Variaveis
@@ -108,7 +108,7 @@ namespace BoletoNet
                         break;
                     //655 - Votorantim
                     case 655:
-                        _IInstrucao = new Instrucao_Votorantim();
+                        //_IInstrucao = new Instrucao_Votorantim();
                         break;
                     default:
                         throw new Exception("Código do banco não implementando: " + codigoBanco);
@@ -124,25 +124,25 @@ namespace BoletoNet
 
         #region Propriedades da interface
 
-        public IBanco Banco
+        public override IBanco Banco
         {
             get { return _IInstrucao.Banco; }
             set { _IInstrucao.Banco = value; }
         }
 
-        public int Codigo
+        public override int Codigo
         {
             get { return _IInstrucao.Codigo; }
             set { _IInstrucao.Codigo = value; }
         }
 
-        public string Descricao
+        public override string Descricao
         {
             get { return _IInstrucao.Descricao; }
             set { _IInstrucao.Descricao = value; }
         }
 
-        public int QuantidadeDias
+        public override int QuantidadeDias
         {
             get { return _IInstrucao.QuantidadeDias; }
             set { _IInstrucao.QuantidadeDias = value; }
@@ -152,7 +152,7 @@ namespace BoletoNet
 
         #region Métodos de interface
 
-        public void Valida()
+        public override void Valida()
         {
             try
             {

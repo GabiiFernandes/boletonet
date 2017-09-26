@@ -55,7 +55,7 @@ namespace BoletoNet
 			get { return _IBanco.Cedente; }
 		}
 
-		public string ChaveASBACE
+		public new string ChaveASBACE
 		{
 			get { return _IBanco.ChaveASBACE; }
 			set { _IBanco.ChaveASBACE = value; }
@@ -154,7 +154,7 @@ namespace BoletoNet
 						break;
                     //655 - Votorantim
                     case 655:
-                        _IBanco = new Banco_Votorantim();
+                       // _IBanco = new Banco_Votorantim();
                         break;
                     case 707:
 						_IBanco = new Banco_Daycoval();
@@ -482,7 +482,7 @@ namespace BoletoNet
 			}
 		}
 
-		public string GerarTrailerArquivoRemessa(int numeroRegistro, Boleto boletos)
+		public override string GerarTrailerArquivoRemessa(int numeroRegistro, Boleto boletos)
 		{
 			try
 			{
@@ -494,7 +494,7 @@ namespace BoletoNet
 			}
 		}
 
-		public string GerarTrailerLoteRemessa(int numeroRegistro)
+		public override string GerarTrailerLoteRemessa(int numeroRegistro)
 		{
 			try
 			{
@@ -506,7 +506,7 @@ namespace BoletoNet
 			}
 		}
 
-		public string GerarTrailerLoteRemessa(int numeroRegistro, Boleto boletos)
+		public override string GerarTrailerLoteRemessa(int numeroRegistro, Boleto boletos)
 		{
 			try
 			{
@@ -518,7 +518,7 @@ namespace BoletoNet
 			}
 		}
 
-		public string GerarMensagemVariavelRemessa(Boleto boleto, ref int numeroRegistro, TipoArquivo tipoArquivo)
+		public override string GerarMensagemVariavelRemessa(Boleto boleto, ref int numeroRegistro, TipoArquivo tipoArquivo)
 		{
 			try
 			{
@@ -534,37 +534,37 @@ namespace BoletoNet
 
 		#region Métodos de Leitura do arquivo de Retorno
 
-		public DetalheSegmentoTRetornoCNAB240 LerDetalheSegmentoTRetornoCNAB240(string registro)
+		public override DetalheSegmentoTRetornoCNAB240 LerDetalheSegmentoTRetornoCNAB240(string registro)
 		{
 			return _IBanco.LerDetalheSegmentoTRetornoCNAB240(registro);
 		}
 
-		public DetalheSegmentoURetornoCNAB240 LerDetalheSegmentoURetornoCNAB240(string registro)
+		public override DetalheSegmentoURetornoCNAB240 LerDetalheSegmentoURetornoCNAB240(string registro)
 		{
 			return _IBanco.LerDetalheSegmentoURetornoCNAB240(registro);
 		}
 
-		public DetalheSegmentoYRetornoCNAB240 LerDetalheSegmentoYRetornoCNAB240(string registro)
+		public override DetalheSegmentoYRetornoCNAB240 LerDetalheSegmentoYRetornoCNAB240(string registro)
 		{
 			return _IBanco.LerDetalheSegmentoYRetornoCNAB240(registro);
 		}
 
-		public DetalheSegmentoWRetornoCNAB240 LerDetalheSegmentoWRetornoCNAB240(string registro)
+		public override DetalheSegmentoWRetornoCNAB240 LerDetalheSegmentoWRetornoCNAB240(string registro)
 		{
 			return _IBanco.LerDetalheSegmentoWRetornoCNAB240(registro);
 		}
 
-		public DetalheRetorno LerDetalheRetornoCNAB400(string registro)
+		public override DetalheRetorno LerDetalheRetornoCNAB400(string registro)
 		{
 			return _IBanco.LerDetalheRetornoCNAB400(registro);
 		}
 
-        public HeaderRetorno LerHeaderRetornoCNAB400(string registro)
+        public override HeaderRetorno LerHeaderRetornoCNAB400(string registro)
         {
             return _IBanco.LerHeaderRetornoCNAB400(registro);
         }
 
-        public long ObterNossoNumeroSemConvenioOuDigitoVerificador(long convenio, string nossoNumero)
+        public override long ObterNossoNumeroSemConvenioOuDigitoVerificador(long convenio, string nossoNumero)
         {
             return _IBanco.ObterNossoNumeroSemConvenioOuDigitoVerificador(convenio, nossoNumero);
         }
