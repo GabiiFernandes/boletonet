@@ -269,9 +269,10 @@ namespace BoletoNet
                 detalhe += Utils.FormatCode(boleto.NumeroDocumento, 15);
                 detalhe += boleto.DataVencimento.ToString("ddMMyyyy");
                 string valorBoleto = boleto.ValorBoleto.ToString("f").Replace(",", "").Replace(".", "");
-                valorBoleto = Utils.FormatCode(valorBoleto, 13);
+                valorBoleto = Utils.FormatCode(valorBoleto, 15);
                 detalhe += valorBoleto;
-                detalhe += "00000 99A";
+                detalhe += "00000 99";
+                detalhe += (string.IsNullOrEmpty(boleto.Aceite) ? 'N' : boleto.Aceite[0]);
                 detalhe += boleto.DataDocumento.ToString("ddMMyyyy");
                 detalhe += "200000000";
                 valorBoleto = boleto.JurosMora.ToString("f").Replace(",", "").Replace(".", "");
