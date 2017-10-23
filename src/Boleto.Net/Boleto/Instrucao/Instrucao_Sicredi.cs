@@ -122,28 +122,29 @@ namespace BoletoNet
             {
                 this.Banco = new Banco_Sicredi();
                 this.Valida();
+                EnumTipoValor tipoValor = EnumTipoValor.Percentual;
 
                 switch ((EnumInstrucoes_Sicredi)idInstrucao)
                 {
                     case EnumInstrucoes_Sicredi.CadastroDeTitulo:
                         this.Codigo = (int)EnumInstrucoes_Sicredi.CadastroDeTitulo;
-                        this.Descricao = "";
+                        this.Descricao = "Cadastro De Titulo";
                         break;
                     case EnumInstrucoes_Sicredi.PedidoBaixa:
                         this.Codigo = (int)EnumInstrucoes_Sicredi.PedidoBaixa;
-                        this.Descricao = "";
+                        this.Descricao = "Pedido Baixa";
                         break;   
                     case EnumInstrucoes_Sicredi.ConcessaoAbatimento:
                         this.Codigo = (int)EnumInstrucoes_Sicredi.ConcessaoAbatimento;
-                        this.Descricao = "";
+                        this.Descricao = "Concessão de Abatimento";
                         break;
                     case EnumInstrucoes_Sicredi.CancelamentoAbatimentoConcedido:
                         this.Codigo = (int)EnumInstrucoes_Sicredi.CancelamentoAbatimentoConcedido;
-                        this.Descricao = "";
+                        this.Descricao = "Cancelamento Abatimento Concedido";
                         break;
                     case EnumInstrucoes_Sicredi.AlteracaoVencimento:
                         this.Codigo = (int)EnumInstrucoes_Sicredi.AlteracaoVencimento;
-                        this.Descricao = "";
+                        this.Descricao = "Alteração Vencimento";
                         break;
                     case EnumInstrucoes_Sicredi.PedidoProtesto:
                         this.Codigo = (int)EnumInstrucoes_Sicredi.PedidoProtesto;
@@ -151,15 +152,39 @@ namespace BoletoNet
                         break;
                     case EnumInstrucoes_Sicredi.SustarProtestoBaixarTitulo:
                         this.Codigo = (int)EnumInstrucoes_Sicredi.SustarProtestoBaixarTitulo;
-                        this.Descricao = "";
+                        this.Descricao = "Sustar Protesto / Baixar Título";
                         break;
                     case EnumInstrucoes_Sicredi.SustarProtestoManterCarteira:
                         this.Codigo = (int)EnumInstrucoes_Sicredi.SustarProtestoManterCarteira;
-                        this.Descricao = "";
+                        this.Descricao = "Sustar Protesto / Manter Carteira";
                         break;
                     case EnumInstrucoes_Sicredi.AlteracaoOutrosDados:
                         this.Codigo = (int)EnumInstrucoes_Sicredi.AlteracaoOutrosDados;
-                        this.Descricao = "";
+                        this.Descricao = "Alteração outros dados";
+                        break;
+                    case EnumInstrucoes_Sicredi.OutrasInstrucoes_ExibeMensagem_MoraDiaria:
+                        this.Codigo = (int)EnumInstrucoes_Sicredi.AlteracaoOutrosDados;
+                        this.Descricao = String.Format("  - APÓS VENCIMENTO COBRAR JUROS DE {0} {1} POR DIA DE ATRASO",
+                            (tipoValor.Equals(EnumTipoValor.Reais) ? "R$ " : nrDias.ToString("F2")),
+                            (tipoValor.Equals(EnumTipoValor.Percentual) ? "%" : nrDias.ToString("F2")));
+                        break;
+                    case EnumInstrucoes_Sicredi.OutrasInstrucoes_ExibeMensagem_MultaVencimento:
+                        this.Codigo = (int)EnumInstrucoes_Sicredi.AlteracaoOutrosDados;
+                        this.Descricao = String.Format("  - APÓS VENCIMENTO COBRAR MULTA DE {0} {1}",
+                            (tipoValor.Equals(EnumTipoValor.Reais) ? "R$ " : nrDias.ToString("F2")),
+                            (tipoValor.Equals(EnumTipoValor.Percentual) ? "%" : nrDias.ToString("F2")));
+                        break;
+                    case EnumInstrucoes_Sicredi.AlteracaoOutrosDados_Desconto:
+                        this.Codigo = (int)EnumInstrucoes_Sicredi.AlteracaoOutrosDados;
+                        this.Descricao = "  - CONCEDER DESCONTO DE R$ " + nrDias;
+                        break;
+                    case EnumInstrucoes_Sicredi.AlteracaoOutrosDados_DescontoAntecipacao:
+                        this.Codigo = (int)EnumInstrucoes_Sicredi.AlteracaoOutrosDados;
+                        this.Descricao = "  - CONCEDER DESCONTO DE R$ " + nrDias + "POR DIA DE ANTECIPAÇÃO";
+                        break;
+                    case EnumInstrucoes_Sicredi.AlteracaoOutrosDados_JuroDia:
+                        this.Codigo = (int)EnumInstrucoes_Sicredi.AlteracaoOutrosDados;
+                        this.Descricao = "  - APÓS VENCIMENTO COBRAR JURO DE " + nrDias + "% POR DIA DE ATRASO";
                         break;
                     default:
                         this.Codigo = 0;

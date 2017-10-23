@@ -1729,7 +1729,7 @@ namespace BoletoNet
                 switch (tipoArquivo)
                 {
                     case TipoArquivo.CNAB240:
-                        _trailer = GerarTrailerRemessa240();
+                        _trailer = GerarTrailerArquivoRemessa(numeroRegistro);
                         break;
                     case TipoArquivo.CNAB400:
                         _trailer = GerarTrailerRemessa400(numeroRegistro, 0);
