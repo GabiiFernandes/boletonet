@@ -317,6 +317,10 @@ Posição|Tamanho|Picture|Conteúdo
             throw new NotImplementedException();
         }
 
+        public void MontaNossoNumero(Boleto boleto)
+        {
+            throw new NotImplementedException();
+        }
     }
 }
 #endregion

@@ -297,6 +297,13 @@ namespace BoletoNet
             throw new NotImplementedException("Função não implementada na classe filha. Implemente na classe que está sendo criada.");
         }
         /// <summary>
+        /// Monta nosso número
+        /// </summary>
+        public virtual void MontaNossoNumero(Boleto boleto)
+        {
+            throw new NotImplementedException("Função não implementada na classe filha. Implemente na classe que está sendo criada.");
+        }
+        /// <summary>
         /// Formata número do documento
         /// </summary>
         public virtual void FormataNumeroDocumento(Boleto boleto)

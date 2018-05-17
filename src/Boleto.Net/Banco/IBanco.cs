@@ -23,6 +23,10 @@ namespace BoletoNet
         /// </summary>
         void FormataNossoNumero(Boleto boleto);
         /// <summary>
+        /// Monta o nosso número
+        /// </summary>
+        void MontaNossoNumero(Boleto boleto);
+        /// <summary>
         /// Formata o número do documento, alguns bancos exige uma formatação. Tipo: 123-4
         /// </summary>
         void FormataNumeroDocumento(Boleto boleto);        

@@ -199,7 +199,12 @@ namespace BoletoNet
 			return detalheRetorno;
 		}
 
-		public override void ValidaBoleto(Boleto boleto)
+        public void MontaNossoNumero(Boleto boleto)
+        {
+            throw new NotImplementedException();
+        }
+
+        public override void ValidaBoleto(Boleto boleto)
 		{
 			if (this._banco == null && this.Codigo != boleto.Banco.Codigo)
 			{

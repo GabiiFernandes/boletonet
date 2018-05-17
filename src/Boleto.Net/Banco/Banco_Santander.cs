@@ -798,7 +798,7 @@ namespace BoletoNet
                 if (boleto.JurosMora > 0)
                 {
                     //Código do juros de mora ==> 118 - 118
-                    if (!String.IsNullOrWhiteSpace(boleto.CodJurosMora)) //Possibilita passar o código 2 para JurosMora ao Mes, senão for setado, assume o valor padrão 1 para JurosMora ao Dia
+                    if (!string.IsNullOrEmpty(boleto.CodJurosMora)) //Possibilita passar o código 2 para JurosMora ao Mes, senão for setado, assume o valor padrão 1 para JurosMora ao Dia
                         _segmentoP += Utils.FitStringLength(boleto.CodJurosMora.ToString(), 1, 1, '0', 0, true, true, true); 
                     else
                         _segmentoP += "1";

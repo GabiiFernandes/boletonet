@@ -295,5 +295,9 @@ namespace BoletoNet
             return vRetorno;
         }
 
+        public void MontaNossoNumero(Boleto boleto)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

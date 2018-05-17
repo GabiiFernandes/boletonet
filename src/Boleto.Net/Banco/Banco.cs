@@ -200,7 +200,19 @@ namespace BoletoNet
 			}
 		}
 
-		public override void FormataNossoNumero(Boleto boleto)
+        public override void MontaNossoNumero(Boleto boleto)
+        {
+            try
+            {
+                _IBanco.MontaNossoNumero(boleto);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Erro durante a formatação do nosso número.", ex);
+            }
+        }
+
+        public override void FormataNossoNumero(Boleto boleto)
 		{
 			try
 			{

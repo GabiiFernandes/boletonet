@@ -1,12 +1,9 @@
-using System;
-using System.Web.UI;
-using BoletoNet.Util;
-using System.Text;
 using BoletoNet.EDI.Banco;
 using BoletoNet.Excecoes;
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using BoletoNet.Enums;
+using System.Web.UI;
 
 [assembly: WebResource("BoletoNet.Imagens.748.jpg", "image/jpg")]
 namespace BoletoNet
@@ -32,7 +29,7 @@ namespace BoletoNet
             this.Digito = "X";
             this.Nome = "Banco Sicredi";
         }
-        
+
         public override void ValidaBoleto(Boleto boleto)
         {
             //Formata o tamanho do número da agência
@@ -48,29 +45,12 @@ namespace BoletoNet
                 boleto.LocalPagamento += Nome;
             else boleto.LocalPagamento = "PAGÁVEL PREFERENCIALMENTE NAS COOPERATIVAS DE CRÉDITO DO SICREDI";
 
-            //Verifica se o nosso número é válido
-            if (Utils.ToInt64(boleto.NossoNumero) == 0 || boleto.NossoNumero.Length > 8)
-                throw new NotImplementedException("Nosso número inválido");
-            else if (boleto.NossoNumero.Length == 6)
-            {
-                boleto.NossoNumero = DateTime.Now.ToString("yy") + boleto.NossoNumero;
-                boleto.DigitoNossoNumero = DigNossoNumeroSicredi(boleto);
-                boleto.NossoNumero += boleto.DigitoNossoNumero;
-            }
-            else if (boleto.NossoNumero.Length == 8)
-            {
-                boleto.DigitoNossoNumero = DigNossoNumeroSicredi(boleto);
-                boleto.NossoNumero += boleto.DigitoNossoNumero;
-                //boleto.DigitoNossoNumero += DigNossoNumeroSicredi(boleto);
-            }
-
-
             //Verifica se data do processamento é valida
-			if (boleto.DataProcessamento == DateTime.MinValue) // diegomodolo (diego.ribeiro@nectarnet.com.br)
+            if (boleto.DataProcessamento == DateTime.MinValue) // diegomodolo (diego.ribeiro@nectarnet.com.br)
                 boleto.DataProcessamento = DateTime.Now;
 
             //Verifica se data do documento é valida
-			if (boleto.DataDocumento == DateTime.MinValue) // diegomodolo (diego.ribeiro@nectarnet.com.br)
+            if (boleto.DataDocumento == DateTime.MinValue) // diegomodolo (diego.ribeiro@nectarnet.com.br)
                 boleto.DataDocumento = DateTime.Now;
 
             string infoFormatoCodigoCedente = "formato AAAAPPCCCCC, onde: AAAA = Número da agência, PP = Posto do beneficiário, CCCCC = Código do beneficiário";
@@ -79,15 +59,21 @@ namespace BoletoNet
 
             if (string.IsNullOrEmpty(codigoCedente))
                 throw new BoletoNetException("Código do cedente deve ser informado, " + infoFormatoCodigoCedente);
-            else if (boleto.Cedente.ContaBancaria != null && 
+
+            var conta = boleto.Cedente.ContaBancaria.Conta;
+            if (boleto.Cedente.ContaBancaria != null &&
                 (!codigoCedente.StartsWith(boleto.Cedente.ContaBancaria.Agencia) ||
-                (!codigoCedente.EndsWith(boleto.Cedente.ContaBancaria.Conta))))
-                throw new BoletoNetException("Código do cedente deve estar no " + infoFormatoCodigoCedente);
+                 !(codigoCedente.EndsWith(conta) || codigoCedente.EndsWith(conta.Substring(0, conta.Length - 1)))))
+                //throw new BoletoNetException("Código do cedente deve estar no " + infoFormatoCodigoCedente);
+                boleto.Cedente.Codigo = string.Format("{0}{1}{2}", boleto.Cedente.ContaBancaria.Agencia, boleto.Cedente.ContaBancaria.OperacaConta, boleto.Cedente.Codigo);
 
             if (string.IsNullOrEmpty(boleto.Carteira))
                 throw new BoletoNetException("Tipo de carteira é obrigatório. " + ObterInformacoesCarteirasDisponiveis());
-            else if (!CarteiraValida(boleto.Carteira))
+
+            if (!CarteiraValida(boleto.Carteira))
                 throw new BoletoNetException("Carteira informada é inválida. Informe " + ObterInformacoesCarteirasDisponiveis());
+
+            MontaNossoNumero(boleto);
 
             FormataCodigoBarra(boleto);
             if (boleto.CodigoBarra.Codigo.Length != 44)
@@ -99,7 +85,7 @@ namespace BoletoNet
 
         private string ObterInformacoesCarteirasDisponiveis()
         {
-            return string.Join(", ", carteirasDisponiveis.Select(o => string.Format("“{0}” – {1}", o.Key, o.Value)));
+            return "";// string.Join(", ", carteirasDisponiveis.Select(o => string.Format("“{0}” – {1}", o.Key, o.Value)));
         }
 
         private bool CarteiraValida(string carteira)
@@ -116,14 +102,44 @@ namespace BoletoNet
         {
             string nossoNumero = boleto.NossoNumero;
 
-            if (nossoNumero == null || nossoNumero.Length != 9) {
-                throw new Exception("Erro ao tentar formatar nosso número, verifique o tamanho do campo");
+            if (nossoNumero == null || nossoNumero.Length != 9)
+            {
+                MontaNossoNumero(boleto);
             }
 
-            try {
+            try
+            {
                 boleto.NossoNumero = string.Format("{0}/{1}-{2}", nossoNumero.Substring(0, 2), nossoNumero.Substring(2, 6), nossoNumero.Substring(8));
-            } catch (Exception ex) {
+            }
+            catch (Exception ex)
+            {
                 throw new Exception("Erro ao formatar nosso número", ex);
+            }
+        }
+
+        public override void MontaNossoNumero(Boleto boleto)
+        {
+
+            //Verifica se o nosso número é válido
+            var Length_NN = boleto.NossoNumero.Length;
+            switch (Length_NN)
+            {
+                case 9: //Completo, recalcula o dv
+                    boleto.NossoNumero = boleto.NossoNumero.Substring(0, Length_NN - 1);
+                    boleto.DigitoNossoNumero = DigNossoNumeroSicredi(boleto);
+                    boleto.NossoNumero += boleto.DigitoNossoNumero;
+                    break;
+                case 8: //Ano Sequencial
+                    boleto.DigitoNossoNumero = DigNossoNumeroSicredi(boleto);
+                    boleto.NossoNumero += boleto.DigitoNossoNumero;
+                    break;
+                case 6: //Sequencial
+                    boleto.NossoNumero = DateTime.Now.ToString("yy") + boleto.NossoNumero;
+                    boleto.DigitoNossoNumero = DigNossoNumeroSicredi(boleto);
+                    boleto.NossoNumero += boleto.DigitoNossoNumero;
+                    break;
+                default:
+                    throw new NotImplementedException("Nosso número inválido! Deve possuir 6 posições");
             }
         }
 
@@ -135,17 +151,17 @@ namespace BoletoNet
         {
             //041M2.1AAAd1  CCCCC.CCNNNd2  NNNNN.041XXd3  V FFFF9999999999
 
-            string campo1 = "7489" + boleto.CodigoBarra.Codigo.Substring(19,5);
+            string campo1 = "7489" + boleto.CodigoBarra.Codigo.Substring(19, 5);
             int d1 = Mod10Sicredi(campo1);
-            campo1 = FormataCampoLD(campo1)+d1.ToString();
+            campo1 = FormataCampoLD(campo1) + d1.ToString();
 
             string campo2 = boleto.CodigoBarra.Codigo.Substring(24, 10);
             int d2 = Mod10Sicredi(campo2);
-            campo2 = FormataCampoLD(campo2)+d2.ToString();
+            campo2 = FormataCampoLD(campo2) + d2.ToString();
 
             string campo3 = boleto.CodigoBarra.Codigo.Substring(34, 10);
             int d3 = Mod10Sicredi(campo3);
-            campo3 = FormataCampoLD(campo3)+d3.ToString();
+            campo3 = FormataCampoLD(campo3) + d3.ToString();
 
             string campo4 = boleto.CodigoBarra.Codigo.Substring(4, 1);
 
@@ -155,7 +171,7 @@ namespace BoletoNet
         }
         private string FormataCampoLD(string campo)
         {
-            return string.Format("{0}.{1}",campo.Substring(0, 5), campo.Substring(5));
+            return string.Format("{0}.{1}", campo.Substring(0, 5), campo.Substring(5));
         }
 
         public override void FormataCodigoBarra(Boleto boleto)
@@ -180,7 +196,7 @@ namespace BoletoNet
             boleto.CodigoBarra.ValorDocumento = valorBoleto;
 
             int _dacBoleto = digSicredi(codigoTemp);
-            
+
             if (_dacBoleto == 0 || _dacBoleto > 9)
                 _dacBoleto = 1;
 
@@ -262,17 +278,16 @@ namespace BoletoNet
                 detalhe += Utils.FormatCode(boleto.Cedente.ContaBancaria.Conta, 12);
                 detalhe += boleto.Cedente.ContaBancaria.DigitoConta;
                 detalhe += " ";
-                detalhe += Utils.FormatCode(boleto.NossoNumero.Replace("/", "").Replace("-", ""),20);
+                detalhe += Utils.FormatCode(boleto.NossoNumero.Replace("/", "").Replace("-", ""), 20);
                 detalhe += "1";
                 detalhe += (Convert.ToInt16(boleto.Carteira) == 1 ? "1" : "2");
                 detalhe += "122";
                 detalhe += Utils.FormatCode(boleto.NumeroDocumento, 15);
                 detalhe += boleto.DataVencimento.ToString("ddMMyyyy");
                 string valorBoleto = boleto.ValorBoleto.ToString("f").Replace(",", "").Replace(".", "");
-                valorBoleto = Utils.FormatCode(valorBoleto, 15);
+                valorBoleto = Utils.FormatCode(valorBoleto, 13);
                 detalhe += valorBoleto;
-                detalhe += "00000 99";
-                detalhe += (string.IsNullOrEmpty(boleto.Aceite) ? 'N' : boleto.Aceite[0]);
+                detalhe += "00000 99A";
                 detalhe += boleto.DataDocumento.ToString("ddMMyyyy");
                 detalhe += "200000000";
                 valorBoleto = boleto.JurosMora.ToString("f").Replace(",", "").Replace(".", "");
@@ -440,7 +455,7 @@ namespace BoletoNet
             {
                 string complemento = new string(' ', 205);
                 string _trailer;
-                
+
                 _trailer = "74899999";
                 _trailer += Utils.FormatCode("", " ", 9);
                 _trailer += Utils.FormatCode("", 6);
@@ -542,7 +557,7 @@ namespace BoletoNet
             {
 
                 r = (Convert.ToInt32(seq.Substring(i, 1)) * p);
-                if(r > 9)
+                if (r > 9)
                     r = SomaDezena(r);
                 s = s + r;
                 if (p < b)
@@ -830,7 +845,7 @@ namespace BoletoNet
                 string vAuxNossoNumeroComDV = NossoNumero;
                 if (string.IsNullOrEmpty(boleto.DigitoNossoNumero) || NossoNumero.Length < 9)
                 {
-                    boleto.DigitoNossoNumero = DigNossoNumeroSicredi(boleto); 
+                    boleto.DigitoNossoNumero = DigNossoNumeroSicredi(boleto);
                     vAuxNossoNumeroComDV = NossoNumero + boleto.DigitoNossoNumero;
                 }
                 reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediNumericoSemSeparador_, 0048, 009, 0, vAuxNossoNumeroComDV, '0'));                      //048-056
@@ -906,7 +921,7 @@ namespace BoletoNet
                 reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediAlphaAliEsquerda_____, 0220, 001, 0, "0", '0'));                                       //220-220
                 reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediNumericoSemSeparador_, 0221, 014, 0, boleto.Sacado.CPFCNPJ, '0'));                     //221-234
                 reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediAlphaAliEsquerda_____, 0235, 040, 0, boleto.Sacado.Nome.ToUpper(), ' '));              //235-274
-                reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediAlphaAliEsquerda_____, 0275, 040, 0, boleto.Sacado.Endereco.End.ToUpper(), ' '));      //275-314
+                reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediAlphaAliEsquerda_____, 0275, 040, 0, boleto.Sacado.Endereco.EndComNumero.ToUpper(), ' '));      //275-314
                 reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediNumericoSemSeparador_, 0315, 005, 0, 0, '0'));                                         //315-319
                 reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediNumericoSemSeparador_, 0320, 006, 0, 0, '0'));                                         //320-325
                 reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediNumericoSemSeparador_, 0326, 001, 0, string.Empty, ' '));                              //326-326
@@ -928,7 +943,7 @@ namespace BoletoNet
             }
         }
 
-        public string GerarTrailerRemessa400(int numeroRegistro,  Cedente cedente)
+        public string GerarTrailerRemessa400(int numeroRegistro, Cedente cedente)
         {
             try
             {
@@ -1149,7 +1164,7 @@ namespace BoletoNet
                 detalhe.DACNossoNumero = reg.NossoNumeroSicredi.Substring(reg.NossoNumeroSicredi.Length - 1); //DV do Nosso Numero
                 #endregion
                 //Filler3
-                detalhe.CodigoOcorrencia = Utils.ToInt32(reg.Ocorrencia);                
+                detalhe.CodigoOcorrencia = Utils.ToInt32(reg.Ocorrencia);
                 int dataOcorrencia = Utils.ToInt32(reg.DataOcorrencia);
                 detalhe.DataOcorrencia = Utils.ToDateTime(dataOcorrencia.ToString("##-##-##"));
 
@@ -1190,7 +1205,7 @@ namespace BoletoNet
                 detalhe.ValorPago = valorPago / 100;
                 //Juros Mora
                 decimal jurosMora = Convert.ToUInt64(reg.JurosMora);
-                detalhe.JurosMora = jurosMora / 100;                
+                detalhe.JurosMora = jurosMora / 100;
                 //Filler7
                 //SomenteOcorrencia19
                 //Filler8

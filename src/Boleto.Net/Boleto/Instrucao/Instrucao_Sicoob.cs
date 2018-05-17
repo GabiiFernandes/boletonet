@@ -75,7 +75,7 @@ namespace BoletoNet
             try
             {
                 this.Banco = new Banco_Banrisul();
-                this.Valida();
+                //this.Valida();
 
                 switch ((EnumInstrucoes_Sicoob)idInstrucao)
                 {

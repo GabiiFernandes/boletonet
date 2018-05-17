@@ -72,7 +72,7 @@ namespace BoletoNet
         private string _tipoImpressao = "A";
 		private Remessa _remessa;
 
-		private ObservableCollection<GrupoDemonstrativo> _demonstrativos;
+		//private ObservableCollection<GrupoDemonstrativo> _demonstrativos;
 
 		#endregion
 
@@ -141,13 +141,13 @@ namespace BoletoNet
 
 		#region Properties
 
-		public ObservableCollection<GrupoDemonstrativo> Demonstrativos
+		/*public ObservableCollection<GrupoDemonstrativo> Demonstrativos
 		{
 			get
 			{
-				return this._demonstrativos ?? (this._demonstrativos = new ObservableCollection<GrupoDemonstrativo>());
+                return null;// this._demonstrativos ?? (this._demonstrativos = new ObservableCollection<GrupoDemonstrativo>());
 			}
-		}
+		}*/
 
 		/// <summary> 
 		/// Retorna a Categoria do boleto

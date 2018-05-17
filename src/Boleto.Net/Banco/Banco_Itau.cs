@@ -1628,7 +1628,7 @@ namespace BoletoNet
                 // 354 - 23 brancos
                 detalhe.Erros = registro.Substring(377, 8);
 
-                if (!string.IsNullOrWhiteSpace(detalhe.Erros))
+                if (!string.IsNullOrEmpty(detalhe.Erros))
                 {
                     string detalheErro = detalhe.Erros;
 
@@ -1636,13 +1636,13 @@ namespace BoletoNet
                     var motivo2 = MotivoRejeicao(detalhe.Erros.Substring(2, 2));
                     var motivo3 = MotivoRejeicao(detalhe.Erros.Substring(4, 2));
 
-                    if (!string.IsNullOrWhiteSpace(motivo1))
+                    if (!string.IsNullOrEmpty(motivo1))
                         detalheErro += " - " + motivo1;
 
-                    if (!string.IsNullOrWhiteSpace(motivo2))
+                    if (!string.IsNullOrEmpty(motivo2))
                         detalheErro += " / " + motivo2;
 
-                    if (!string.IsNullOrWhiteSpace(motivo3))
+                    if (!string.IsNullOrEmpty(motivo3))
                         detalheErro += " / " + motivo3;
 
                     detalhe.Erros = detalheErro;

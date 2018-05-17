@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.ComponentModel;
 using Newtonsoft.Json;
+using System.IO;
 
 namespace BoletoNet
 {
@@ -488,6 +489,20 @@ namespace BoletoNet
         public String getComandosRetornoJson(int codigoBanco)
         {
             return JsonConvert.SerializeObject(getComandosRetorno(codigoBanco));
+        }
+
+        #endregion
+
+        #region Retorno
+
+        public IBanco getBancoInterface(Banco banco)
+        {
+            return banco;
+        }
+
+        public Stream getStreamReader(string caminhoArquivo)
+        {
+            return new StreamReader(caminhoArquivo).BaseStream;
         }
 
         #endregion

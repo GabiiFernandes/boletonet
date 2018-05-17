@@ -8,7 +8,7 @@
 	{
 		#region Fields
 
-		private ObservableCollection<ItemDemonstrativo> _itens;
+		/*private ObservableCollection<ItemDemonstrativo> _itens;*/
 
 		#endregion
 
@@ -16,13 +16,13 @@
 
 		public string Descricao { get; set; }
 
-		public ObservableCollection<ItemDemonstrativo> Itens
+		/*public ObservableCollection<ItemDemonstrativo> Itens
 		{
 			get
 			{
-				return this._itens ?? (this._itens = new ObservableCollection<ItemDemonstrativo>());
+                return null; //this._itens;// ?? (this._itens = new ObservableCollection<ItemDemonstrativo>());
 			}
-		}
+		}*/
 
 		#endregion
 	}

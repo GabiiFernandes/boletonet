@@ -479,7 +479,7 @@ namespace BoletoNet
             //Oculta o cabeçalho das instruções do boleto
             if (!OcultarInstrucoes)
                 html.Append(GeraHtmlInstrucoes());
-
+            /*
             if (this.ExibirDemonstrativo && this.Boleto.Demonstrativos.Any())
             {
                 html.Append(Html.ReciboCedenteRelatorioValores);
@@ -521,7 +521,7 @@ namespace BoletoNet
 
                 html = html.Replace("@ITENSDEMONSTRATIVO", grupoDemonstrativo.ToString());
             }
-
+            */
             if (!FormatoCarne)
             {
                 //Mostra o comprovante de entrega
@@ -1252,7 +1252,7 @@ namespace BoletoNet
         {
             var converter = new NReco.PdfGenerator.HtmlToPdfConverter();
 
-            if (!string.IsNullOrWhiteSpace(TempFilesPath))
+            if (!string.IsNullOrEmpty(TempFilesPath))
             {
                 converter.TempFilesPath = this.TempFilesPath;
             }
