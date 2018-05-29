@@ -73,463 +73,7 @@ namespace BoletoNet
             if (Utils.ToString(boleto.NossoNumero) == string.Empty)
                 throw new NotImplementedException("Nosso número inválido");
 
-
-            #region Carteira 11
-            //Carteira 18 com nosso número de 11 posições
-            if (boleto.Carteira.Equals("11"))
-            {
-                if (!boleto.TipoModalidade.Equals("21"))
-                {
-                    if (boleto.NossoNumero.Length > 11)
-                        throw new NotImplementedException(string.Format("Para a carteira {0}, a quantidade máxima são de 11 de posições para o nosso número", boleto.Carteira));
-
-                    if (boleto.Cedente.Convenio.ToString().Length == 6)
-                        boleto.NossoNumero = string.Format("{0}{1}", boleto.Cedente.Convenio, Utils.FormatCode(boleto.NossoNumero, 11));
-                    else
-                        boleto.NossoNumero = Utils.FormatCode(boleto.NossoNumero, 11);
-                }
-                else
-                {
-                    if (boleto.Cedente.Convenio.ToString().Length != 6)
-                        throw new NotImplementedException(string.Format("Para a carteira {0} e o tipo da modalidade 21, o número do convênio são de 6 posições", boleto.Carteira));
-
-                    boleto.NossoNumero = Utils.FormatCode(boleto.NossoNumero, 17);
-                }
-            }
-            #endregion Carteira 11
-
-            #region Carteira 16
-            //Carteira 18 com nosso número de 11 posições
-            if (boleto.Carteira.Equals("16"))
-            {
-                if (!boleto.TipoModalidade.Equals("21"))
-                {
-                    if (boleto.NossoNumero.Length > 11)
-                        throw new NotImplementedException(string.Format("Para a carteira {0}, a quantidade máxima são de 11 de posições para o nosso número", boleto.Carteira));
-
-                    if (boleto.Cedente.Convenio.ToString().Length == 6)
-                        boleto.NossoNumero = string.Format("{0}{1}", boleto.Cedente.Convenio, Utils.FormatCode(boleto.NossoNumero, 11));
-                    else
-                        boleto.NossoNumero = Utils.FormatCode(boleto.NossoNumero, 11);
-                }
-                else
-                {
-                    if (boleto.Cedente.Convenio.ToString().Length != 6)
-                        throw new NotImplementedException(string.Format("Para a carteira {0} e o tipo da modalidade 21, o número do convênio são de 6 posições", boleto.Carteira));
-
-                    boleto.NossoNumero = Utils.FormatCode(boleto.NossoNumero, 17);
-                }
-            }
-            #endregion Carteira 16
-
-            #region Carteira 17
-            //Carteira 17
-            if (boleto.Carteira.Equals("17"))
-            {
-                switch (boleto.Cedente.Convenio.ToString().Length)
-                {
-                    //O BB manda como padrão 7 posições, mas é possível solicitar um convênio com 6 posições na carteira 17
-                    case 6:
-                        if (boleto.NossoNumero.Length > 12)
-                            throw new NotImplementedException(string.Format("Para a carteira {0}, a quantidade máxima são de 12 de posições para o nosso número", boleto.Carteira));
-                        boleto.NossoNumero = Utils.FormatCode(boleto.NossoNumero, 12);
-                        break;
-                    case 7:
-                        if (boleto.NossoNumero.Length > 17)
-                            throw new NotImplementedException(string.Format("Para a carteira {0}, a quantidade máxima são de 10 de posições para o nosso número", boleto.Carteira));
-                        boleto.NossoNumero = string.Format("{0}{1}", boleto.Cedente.Convenio, Utils.FormatCode(boleto.NossoNumero, 10));
-                        break;
-                    default:
-                        throw new NotImplementedException(string.Format("Para a carteira {0}, o número do convênio deve ter 6 ou 7 posições", boleto.Carteira));
-                }
-            }
-            #endregion Carteira 17
-
-            #region Carteira 17-019, 17-067 e 17-167
-            //Carteira 17, com variação 019
-            if (boleto.Carteira.Equals("17-019") || boleto.Carteira.Equals("17-067") || boleto.Carteira.Equals("17-167"))
-            {
-                /*
-                 * Convênio de 7 posições
-                 * Nosso Número com 17 posições
-                 */
-                if (boleto.Cedente.Convenio.ToString().Length == 7)
-                {
-                    if (boleto.NossoNumero.Length > 10 && (boleto.NossoNumero.Substring(0, 7) == boleto.Cedente.Convenio.ToString()))
-                    {
-                        boleto.NossoNumero = boleto.NossoNumero.Substring(7);
-                    }
-                    else if (boleto.NossoNumero.Length > 10)
-                        throw new NotImplementedException(string.Format("Para a carteira {0}, a quantidade máxima são de 10 de posições para o nosso número", boleto.Carteira));
-
-                    boleto.NossoNumero = string.Format("{0}{1}", boleto.Cedente.Convenio, Utils.FormatCode(boleto.NossoNumero, 10));
-                }
-                /*
-                 * Convênio de 6 posições
-                 * Nosso Número com 11 posições
-                 */
-                else if (boleto.Cedente.Convenio.ToString().Length == 6)
-                {
-                    //Nosso Número com 17 posições
-                    if ((boleto.Cedente.Codigo.ToString().Length + boleto.NossoNumero.Length) > 11)
-                        throw new NotImplementedException(string.Format("Para a carteira {0}, a quantidade máxima são de 11 de posições para o nosso número. Onde o nosso número é formado por CCCCCCNNNNN-X: C -> número do convênio fornecido pelo Banco, N -> seqüencial atribuído pelo cliente e X -> dígito verificador do “Nosso-Número”.", boleto.Carteira));
-
-                    boleto.NossoNumero = string.Format("{0}{1}", boleto.Cedente.Convenio, Utils.FormatCode(boleto.NossoNumero, 5));
-                }
-                /*
-                  * Convênio de 4 posições
-                  * Nosso Número com 11 posições
-                  */
-                else if (boleto.Cedente.Convenio.ToString().Length == 4)
-                {
-                    if (boleto.NossoNumero.Length > 7)
-                        throw new NotImplementedException(string.Format("Para a carteira {0}, a quantidade máxima são de 7 de posições para o nosso número [{1}]", boleto.Carteira, boleto.NossoNumero));
-
-                    boleto.NossoNumero = string.Format("{0}{1}", boleto.Cedente.Convenio, Utils.FormatCode(boleto.NossoNumero, 7));
-                }
-                else
-                    boleto.NossoNumero = Utils.FormatCode(boleto.NossoNumero, 11);
-            }
-            #endregion Carteira 17-019, 17-067 e 17-167
-
-            #region Carteira 17-027, 17-051
-            //Carteira 17, com variação 027, 129 e 140
-            if (boleto.Carteira.Equals("17-027") || boleto.Carteira.Equals("17-051") || boleto.Carteira.Equals("17-159") || boleto.Carteira.Equals("17-140"))
-            {
-                /*
-                 * Convênio de 7 posições
-                 * Nosso Número com 17 posições
-                 */
-                if (boleto.Cedente.Convenio.ToString().Length == 7)
-                {
-                    if (boleto.NossoNumero.Length > 10)
-                        throw new NotImplementedException(string.Format("Para a carteira {0}, a quantidade máxima são de 10 de posições para o nosso número", boleto.Carteira));
-
-                    boleto.NossoNumero = string.Format("{0}{1}", boleto.Cedente.Convenio, Utils.FormatCode(boleto.NossoNumero, 10));
-                }
-                /*
-                 * Convênio de 6 posições
-                 * Nosso Número com 11 posições
-                 */
-                else if (boleto.Cedente.Convenio.ToString().Length == 6)
-                {
-                    //Nosso Número com 17 posições
-                    if ((boleto.Cedente.Codigo.ToString().Length + boleto.NossoNumero.Length) > 11)
-                        throw new NotImplementedException(string.Format("Para a carteira {0}, a quantidade máxima são de 11 de posições para o nosso número. Onde o nosso número é formado por CCCCCCNNNNN-X: C -> número do convênio fornecido pelo Banco, N -> seqüencial atribuído pelo cliente e X -> dígito verificador do “Nosso-Número”.", boleto.Carteira));
-
-                    boleto.NossoNumero = string.Format("{0}{1}", boleto.Cedente.Convenio, Utils.FormatCode(boleto.NossoNumero, 5));
-                }
-                /*
-                  * Convênio de 4 posições
-                  * Nosso Número com 11 posições
-                  */
-                else if (boleto.Cedente.Convenio.ToString().Length == 4)
-                {
-                    if (boleto.NossoNumero.Length > 7)
-                        throw new NotImplementedException(string.Format("Para a carteira {0}, a quantidade máxima são de 7 de posições para o nosso número [{1}]", boleto.Carteira, boleto.NossoNumero));
-
-                    boleto.NossoNumero = string.Format("{0}{1}", boleto.Cedente.Convenio, Utils.FormatCode(boleto.NossoNumero, 7));
-                }
-                else
-                    boleto.NossoNumero = Utils.FormatCode(boleto.NossoNumero, 11);
-            }
-            #endregion Carteira 17-027, 17-051
-
-            #region Carteira 17-035
-            //Carteira 17, com variação 035
-            if (boleto.Carteira.Equals("17-035"))
-            {
-                /*
-                 * Convênio de 7 posições
-                 * Nosso Número com 17 posições
-                 */
-                if (boleto.Cedente.Convenio.ToString().Length == 7)
-                {
-                    if (boleto.NossoNumero.Length > 10)
-                        throw new NotImplementedException(string.Format("Para a carteira {0}, a quantidade máxima são de 10 de posições para o nosso número", boleto.Carteira));
-
-                    boleto.NossoNumero = string.Format("{0}{1}", boleto.Cedente.Convenio, Utils.FormatCode(boleto.NossoNumero, 10));
-                }
-                /*
-                 * Convênio de 6 posições
-                 * Nosso Número com 11 posições
-                 */
-                else if (boleto.Cedente.Convenio.ToString().Length == 6)
-                {
-                    if ((boleto.Cedente.Codigo.ToString().Length + boleto.NossoNumero.Length) > 11)
-                        throw new NotImplementedException(string.Format("Para a carteira {0}, a quantidade máxima são de 11 de posições para o nosso número. Onde o nosso número é formado por CCCCCCNNNNN-X: C -> número do convênio fornecido pelo Banco, N -> seqüencial atribuído pelo cliente e X -> dígito verificador do “Nosso-Número”.", boleto.Carteira));
-
-                    boleto.NossoNumero = string.Format("{0}{1}", boleto.Cedente.Convenio, Utils.FormatCode(boleto.NossoNumero, 5));
-                }
-                /*
-                  * Convênio de 4 posições
-                  * Nosso Número com 11 posições
-                  */
-                else if (boleto.Cedente.Convenio.ToString().Length == 4)
-                {
-                    if (boleto.NossoNumero.Length > 7)
-                        throw new NotImplementedException(string.Format("Para a carteira {0}, a quantidade máxima são de 7 de posições para o nosso número [{1}]", boleto.Carteira, boleto.NossoNumero));
-
-                    boleto.NossoNumero = string.Format("{0}{1}", boleto.Cedente.Convenio, Utils.FormatCode(boleto.NossoNumero, 7));
-                }
-                else
-                    boleto.NossoNumero = Utils.FormatCode(boleto.NossoNumero, 11);
-            }
-            #endregion Carteira 17-035
-            #region Carteira 18
-            //Carteira 18 com nosso número de 11 posições
-            if (boleto.Carteira.Equals("18"))
-            {
-                boleto.BancoCarteira.ValidaBoleto(boleto);
-                boleto.BancoCarteira.FormataNossoNumero(boleto);
-            }
-            #endregion Carteira 18
-
-            #region Carteira 18-019
-            //Carteira 18, com variação 019
-            if (boleto.Carteira.Equals("18-019"))
-            {
-                /*
-                 * Convênio de 7 posições
-                 * Nosso Número com 17 posições
-                 */
-                if (boleto.Cedente.Convenio.ToString().Length == 7)
-                {
-                    if (boleto.NossoNumero.Length > 10)
-                        throw new NotImplementedException(string.Format("Para a carteira {0}, a quantidade máxima são de 10 de posições para o nosso número", boleto.Carteira));
-
-                    boleto.NossoNumero = string.Format("{0}{1}", boleto.Cedente.Convenio, Utils.FormatCode(boleto.NossoNumero, 10));
-                }
-                /*
-                 * Convênio de 6 posições
-                 * Nosso Número com 11 posições
-                 */
-                else if (boleto.Cedente.Convenio.ToString().Length == 6)
-                {
-                    //Modalidades de Cobrança Sem Registro – Carteira 16 e 18
-                    //Nosso Número com 17 posições
-                    if (!boleto.TipoModalidade.Equals("21"))
-                    {
-                        if ((boleto.Cedente.Codigo.ToString().Length + boleto.NossoNumero.Length) > 11)
-                            throw new NotImplementedException(string.Format("Para a carteira {0}, a quantidade máxima são de 11 de posições para o nosso número. Onde o nosso número é formado por CCCCCCNNNNN-X: C -> número do convênio fornecido pelo Banco, N -> seqüencial atribuído pelo cliente e X -> dígito verificador do “Nosso-Número”.", boleto.Carteira));
-
-                        boleto.NossoNumero = string.Format("{0}{1}", boleto.Cedente.Convenio, Utils.FormatCode(boleto.NossoNumero, 5));
-                    }
-                    else
-                    {
-                        if (boleto.Cedente.Convenio.ToString().Length != 6)
-                            throw new NotImplementedException(string.Format("Para a carteira {0} e o tipo da modalidade 21, o número do convênio são de 6 posições", boleto.Carteira));
-
-                        boleto.NossoNumero = Utils.FormatCode(boleto.NossoNumero, 17);
-                    }
-                }
-                /*
-                  * Convênio de 4 posições
-                  * Nosso Número com 11 posições
-                  */
-                else if (boleto.Cedente.Convenio.ToString().Length == 4)
-                {
-                    if (boleto.NossoNumero.Length > 7)
-                        throw new NotImplementedException(string.Format("Para a carteira {0}, a quantidade máxima são de 7 de posições para o nosso número [{1}]", boleto.Carteira, boleto.NossoNumero));
-
-                    boleto.NossoNumero = string.Format("{0}{1}", boleto.Cedente.Convenio, Utils.FormatCode(boleto.NossoNumero, 7));
-                }
-                else
-                    boleto.NossoNumero = Utils.FormatCode(boleto.NossoNumero, 11);
-            }
-            #endregion Carteira 18-019
-
-
-            //Para atender o cliente Fiemg foi adaptado no código na variação 18-027 as variações 18-035 e 18-140
-            #region Carteira 18-027
-            //Carteira 18, com variação 019
-            if (boleto.Carteira.Equals("18-027"))
-            {
-                /*
-                 * Convênio de 7 posições
-                 * Nosso Número com 17 posições
-                 */
-                if (boleto.Cedente.Convenio.ToString().Length == 7)
-                {
-                    if (boleto.NossoNumero.Length > 10)
-                        throw new NotImplementedException(string.Format("Para a carteira {0}, a quantidade máxima são de 10 de posições para o nosso número", boleto.Carteira));
-
-                    boleto.NossoNumero = string.Format("{0}{1}", boleto.Cedente.Convenio, Utils.FormatCode(boleto.NossoNumero, 10));
-                }
-                /*
-                 * Convênio de 6 posições
-                 * Nosso Número com 11 posições
-                 */
-                else if (boleto.Cedente.Convenio.ToString().Length == 6)
-                {
-                    //Modalidades de Cobrança Sem Registro – Carteira 16 e 18
-                    //Nosso Número com 17 posições
-                    if (!boleto.TipoModalidade.Equals("21"))
-                    {
-                        if ((boleto.Cedente.Codigo.ToString().Length + boleto.NossoNumero.Length) > 11)
-                            throw new NotImplementedException(string.Format("Para a carteira {0}, a quantidade máxima são de 11 de posições para o nosso número. Onde o nosso número é formado por CCCCCCNNNNN-X: C -> número do convênio fornecido pelo Banco, N -> seqüencial atribuído pelo cliente e X -> dígito verificador do “Nosso-Número”.", boleto.Carteira));
-
-                        boleto.NossoNumero = string.Format("{0}{1}", boleto.Cedente.Convenio, Utils.FormatCode(boleto.NossoNumero, 5));
-                    }
-                    else
-                    {
-                        if (boleto.Cedente.Convenio.ToString().Length != 6)
-                            throw new NotImplementedException(string.Format("Para a carteira {0} e o tipo da modalidade 21, o número do convênio são de 6 posições", boleto.Carteira));
-
-                        boleto.NossoNumero = Utils.FormatCode(boleto.NossoNumero, 17);
-                    }
-                }
-                /*
-                  * Convênio de 4 posições
-                  * Nosso Número com 11 posições
-                  */
-                else if (boleto.Cedente.Convenio.ToString().Length == 4)
-                {
-                    if (boleto.NossoNumero.Length > 7)
-                        throw new NotImplementedException(string.Format("Para a carteira {0}, a quantidade máxima são de 7 de posições para o nosso número [{1}]", boleto.Carteira, boleto.NossoNumero));
-
-                    boleto.NossoNumero = string.Format("{0}{1}", boleto.Cedente.Convenio, Utils.FormatCode(boleto.NossoNumero, 7));
-                }
-                else
-                    boleto.NossoNumero = Utils.FormatCode(boleto.NossoNumero, 11);
-            }
-            #endregion Carteira 18-027
-
-            #region Carteira 18-035
-            //Carteira 18, com variação 019
-            if (boleto.Carteira.Equals("18-035"))
-            {
-                /*
-                 * Convênio de 7 posições
-                 * Nosso Número com 17 posições
-                 */
-                if (boleto.Cedente.Convenio.ToString().Length == 7)
-                {
-                    if (boleto.NossoNumero.Length > 10)
-                        throw new NotImplementedException(string.Format("Para a carteira {0}, a quantidade máxima são de 10 de posições para o nosso número", boleto.Carteira));
-
-                    boleto.NossoNumero = string.Format("{0}{1}", boleto.Cedente.Convenio, Utils.FormatCode(boleto.NossoNumero, 10));
-                }
-                /*
-                 * Convênio de 6 posições
-                 * Nosso Número com 11 posições
-                 */
-                else if (boleto.Cedente.Convenio.ToString().Length == 6)
-                {
-                    //Modalidades de Cobrança Sem Registro – Carteira 16 e 18
-                    //Nosso Número com 17 posições
-                    if (!boleto.TipoModalidade.Equals("21"))
-                    {
-                        if ((boleto.Cedente.Codigo.ToString().Length + boleto.NossoNumero.Length) > 11)
-                            throw new NotImplementedException(string.Format("Para a carteira {0}, a quantidade máxima são de 11 de posições para o nosso número. Onde o nosso número é formado por CCCCCCNNNNN-X: C -> número do convênio fornecido pelo Banco, N -> seqüencial atribuído pelo cliente e X -> dígito verificador do “Nosso-Número”.", boleto.Carteira));
-
-                        boleto.NossoNumero = string.Format("{0}{1}", boleto.Cedente.Convenio, Utils.FormatCode(boleto.NossoNumero, 5));
-                    }
-                    else
-                    {
-                        if (boleto.Cedente.Convenio.ToString().Length != 6)
-                            throw new NotImplementedException(string.Format("Para a carteira {0} e o tipo da modalidade 21, o número do convênio são de 6 posições", boleto.Carteira));
-
-                        boleto.NossoNumero = Utils.FormatCode(boleto.NossoNumero, 17);
-                    }
-                }
-                /*
-                  * Convênio de 4 posições
-                  * Nosso Número com 11 posições
-                  */
-                else if (boleto.Cedente.Convenio.ToString().Length == 4)
-                {
-                    if (boleto.NossoNumero.Length > 7)
-                        throw new NotImplementedException(string.Format("Para a carteira {0}, a quantidade máxima são de 7 de posições para o nosso número [{1}]", boleto.Carteira, boleto.NossoNumero));
-
-                    boleto.NossoNumero = string.Format("{0}{1}", boleto.Cedente.Convenio, Utils.FormatCode(boleto.NossoNumero, 7));
-                }
-                else
-                    boleto.NossoNumero = Utils.FormatCode(boleto.NossoNumero, 11);
-            }
-            #endregion Carteira 18-035
-
-            #region Carteira 18-140
-            //Carteira 18, com variação 019
-            if (boleto.Carteira.Equals("18-140"))
-            {
-                /*
-                 * Convênio de 7 posições
-                 * Nosso Número com 17 posições
-                 */
-                if (boleto.Cedente.Convenio.ToString().Length == 7)
-                {
-                    if (boleto.NossoNumero.Length > 10)
-                        throw new NotImplementedException(string.Format("Para a carteira {0}, a quantidade máxima são de 10 de posições para o nosso número", boleto.Carteira));
-
-                    boleto.NossoNumero = string.Format("{0}{1}", boleto.Cedente.Convenio, Utils.FormatCode(boleto.NossoNumero, 10));
-                }
-                /*
-                 * Convênio de 6 posições
-                 * Nosso Número com 11 posições
-                 */
-                else if (boleto.Cedente.Convenio.ToString().Length == 6)
-                {
-                    //Modalidades de Cobrança Sem Registro – Carteira 16 e 18
-                    //Nosso Número com 17 posições
-                    if (!boleto.TipoModalidade.Equals("21"))
-                    {
-                        if ((boleto.Cedente.Codigo.ToString().Length + boleto.NossoNumero.Length) > 11)
-                            throw new NotImplementedException(string.Format("Para a carteira {0}, a quantidade máxima são de 11 de posições para o nosso número. Onde o nosso número é formado por CCCCCCNNNNN-X: C -> número do convênio fornecido pelo Banco, N -> seqüencial atribuído pelo cliente e X -> dígito verificador do “Nosso-Número”.", boleto.Carteira));
-
-                        boleto.NossoNumero = string.Format("{0}{1}", boleto.Cedente.Convenio, Utils.FormatCode(boleto.NossoNumero, 5));
-                    }
-                    else
-                    {
-                        if (boleto.Cedente.Convenio.ToString().Length != 6)
-                            throw new NotImplementedException(string.Format("Para a carteira {0} e o tipo da modalidade 21, o número do convênio são de 6 posições", boleto.Carteira));
-
-                        boleto.NossoNumero = Utils.FormatCode(boleto.NossoNumero, 17);
-                    }
-                }
-                /*
-                  * Convênio de 4 posições
-                  * Nosso Número com 11 posições
-                  */
-                else if (boleto.Cedente.Convenio.ToString().Length == 4)
-                {
-                    if (boleto.NossoNumero.Length > 7)
-                        throw new NotImplementedException(string.Format("Para a carteira {0}, a quantidade máxima são de 7 de posições para o nosso número [{1}]", boleto.Carteira, boleto.NossoNumero));
-
-                    boleto.NossoNumero = string.Format("{0}{1}", boleto.Cedente.Convenio, Utils.FormatCode(boleto.NossoNumero, 7));
-                }
-                else
-                    boleto.NossoNumero = Utils.FormatCode(boleto.NossoNumero, 11);
-            }
-            #endregion Carteira 18-140
-
-            #region Carteira 31
-            //Carteira 31
-            if (boleto.Carteira.Equals("31"))
-            {
-                switch (boleto.Cedente.Convenio.ToString().Length)
-                {
-                    //O BB manda como padrão 7 posições, mas é possível solicitar um convênio com 6 posições na carteira 31
-                    case 5:
-                        if (boleto.NossoNumero.Length > 12)
-                            throw new NotImplementedException(string.Format("Para a carteira {0}, a quantidade máxima são de 12 de posições para o nosso número", boleto.Carteira));
-                        boleto.NossoNumero = Utils.FormatCode(boleto.NossoNumero, 12);
-                        break;
-                    case 6:
-                        if (boleto.NossoNumero.Length > 12)
-                            throw new NotImplementedException(string.Format("Para a carteira {0}, a quantidade máxima são de 12 de posições para o nosso número", boleto.Carteira));
-                        boleto.NossoNumero = Utils.FormatCode(boleto.NossoNumero, 12);
-                        break;
-                    case 7:
-                        if (boleto.NossoNumero.Length > 17)
-                            throw new NotImplementedException(string.Format("Para a carteira {0}, a quantidade máxima são de 10 de posições para o nosso número", boleto.Carteira));
-                        boleto.NossoNumero = string.Format("{0}{1}", boleto.Cedente.Convenio, Utils.FormatCode(boleto.NossoNumero, 10));
-                        break;
-                    default:
-                        throw new NotImplementedException(string.Format("Para a carteira {0}, o número do convênio deve ter 6 ou 7 posições", boleto.Carteira));
-                }
-            }
-            #endregion Carteira 31
+            //Valida Nosso Número
 
 
             #region Agência e Conta Corrente
@@ -563,9 +107,9 @@ namespace BoletoNet
 
             boleto.QuantidadeMoeda = 0;
 
+            FormataNossoNumero(boleto);
             FormataCodigoBarra(boleto);
             FormataLinhaDigitavel(boleto);
-            FormataNossoNumero(boleto);
         }
 
         # endregion
@@ -1256,6 +800,477 @@ namespace BoletoNet
         /// <param name="boleto"></param>
         public override void FormataNossoNumero(Boleto boleto)
         {
+
+
+
+
+
+
+
+
+
+            #region ValidaBoleto
+
+                #region Carteira 11
+                //Carteira 18 com nosso número de 11 posições
+                if (boleto.Carteira.Equals("11"))
+                {
+                    if (!boleto.TipoModalidade.Equals("21"))
+                    {
+                        if (boleto.NossoNumero.Length > 11)
+                            throw new NotImplementedException(string.Format("Para a carteira {0}, a quantidade máxima são de 11 de posições para o nosso número", boleto.Carteira));
+
+                        if (boleto.Cedente.Convenio.ToString().Length == 6)
+                            boleto.NossoNumero = string.Format("{0}{1}", boleto.Cedente.Convenio, Utils.FormatCode(boleto.NossoNumero, 11));
+                        else
+                            boleto.NossoNumero = Utils.FormatCode(boleto.NossoNumero, 11);
+                    }
+                    else
+                    {
+                        if (boleto.Cedente.Convenio.ToString().Length != 6)
+                            throw new NotImplementedException(string.Format("Para a carteira {0} e o tipo da modalidade 21, o número do convênio são de 6 posições", boleto.Carteira));
+
+                        boleto.NossoNumero = Utils.FormatCode(boleto.NossoNumero, 17);
+                    }
+                }
+                #endregion Carteira 11
+
+                #region Carteira 16
+                //Carteira 18 com nosso número de 11 posições
+                if (boleto.Carteira.Equals("16"))
+                {
+                    if (!boleto.TipoModalidade.Equals("21"))
+                    {
+                        if (boleto.NossoNumero.Length > 11)
+                            throw new NotImplementedException(string.Format("Para a carteira {0}, a quantidade máxima são de 11 de posições para o nosso número", boleto.Carteira));
+
+                        if (boleto.Cedente.Convenio.ToString().Length == 6)
+                            boleto.NossoNumero = string.Format("{0}{1}", boleto.Cedente.Convenio, Utils.FormatCode(boleto.NossoNumero, 11));
+                        else
+                            boleto.NossoNumero = Utils.FormatCode(boleto.NossoNumero, 11);
+                    }
+                    else
+                    {
+                        if (boleto.Cedente.Convenio.ToString().Length != 6)
+                            throw new NotImplementedException(string.Format("Para a carteira {0} e o tipo da modalidade 21, o número do convênio são de 6 posições", boleto.Carteira));
+
+                        boleto.NossoNumero = Utils.FormatCode(boleto.NossoNumero, 17);
+                    }
+                }
+                #endregion Carteira 16
+
+                #region Carteira 17
+                //Carteira 17
+                if (boleto.Carteira.Equals("17"))
+                {
+                    switch (boleto.Cedente.Convenio.ToString().Length)
+                    {
+                        //O BB manda como padrão 7 posições, mas é possível solicitar um convênio com 6 posições na carteira 17
+                        case 6:
+                            if (boleto.NossoNumero.Length > 12)
+                                throw new NotImplementedException(string.Format("Para a carteira {0}, a quantidade máxima são de 12 de posições para o nosso número", boleto.Carteira));
+                            boleto.NossoNumero = Utils.FormatCode(boleto.NossoNumero, 12);
+                            break;
+                        case 7:
+                            if (boleto.NossoNumero.Length > 17)
+                                throw new NotImplementedException(string.Format("Para a carteira {0}, a quantidade máxima são de 10 de posições para o nosso número", boleto.Carteira));
+
+                            boleto.NossoNumero = string.Format("{0}{1}", boleto.Cedente.Convenio, Utils.FormatCode(boleto.NossoNumero, 10));
+
+                            break;
+                        default:
+                            throw new NotImplementedException(string.Format("Para a carteira {0}, o número do convênio deve ter 6 ou 7 posições", boleto.Carteira));
+                    }
+                }
+                #endregion Carteira 17
+
+                #region Carteira 17-019, 17-067 e 17-167
+                //Carteira 17, com variação 019
+                if (boleto.Carteira.Equals("17-019") || boleto.Carteira.Equals("17-067") || boleto.Carteira.Equals("17-167"))
+                {
+                    /*
+                     * Convênio de 7 posições
+                     * Nosso Número com 17 posições
+                     */
+                    if (boleto.Cedente.Convenio.ToString().Length == 7)
+                    {
+                        if (boleto.NossoNumero.Length > 10 && (boleto.NossoNumero.Substring(0, 7) == boleto.Cedente.Convenio.ToString()))
+                        {
+                            boleto.NossoNumero = boleto.NossoNumero.Substring(7);
+                        }
+                        else if (boleto.NossoNumero.Length > 10)
+                            throw new NotImplementedException(string.Format("Para a carteira {0}, a quantidade máxima são de 10 de posições para o nosso número", boleto.Carteira));
+
+                        boleto.NossoNumero = string.Format("{0}{1}", boleto.Cedente.Convenio, Utils.FormatCode(boleto.NossoNumero, 10));
+                    }
+                    /*
+                     * Convênio de 6 posições
+                     * Nosso Número com 11 posições
+                     */
+                    else if (boleto.Cedente.Convenio.ToString().Length == 6)
+                    {
+                        //Nosso Número com 17 posições
+                        if ((boleto.Cedente.Codigo.ToString().Length + boleto.NossoNumero.Length) > 11)
+                            throw new NotImplementedException(string.Format("Para a carteira {0}, a quantidade máxima são de 11 de posições para o nosso número. Onde o nosso número é formado por CCCCCCNNNNN-X: C -> número do convênio fornecido pelo Banco, N -> seqüencial atribuído pelo cliente e X -> dígito verificador do “Nosso-Número”.", boleto.Carteira));
+
+                        boleto.NossoNumero = string.Format("{0}{1}", boleto.Cedente.Convenio, Utils.FormatCode(boleto.NossoNumero, 5));
+                    }
+                    /*
+                      * Convênio de 4 posições
+                      * Nosso Número com 11 posições
+                      */
+                    else if (boleto.Cedente.Convenio.ToString().Length == 4)
+                    {
+                        if (boleto.NossoNumero.Length > 7)
+                            throw new NotImplementedException(string.Format("Para a carteira {0}, a quantidade máxima são de 7 de posições para o nosso número [{1}]", boleto.Carteira, boleto.NossoNumero));
+
+                        boleto.NossoNumero = string.Format("{0}{1}", boleto.Cedente.Convenio, Utils.FormatCode(boleto.NossoNumero, 7));
+                    }
+                    else
+                        boleto.NossoNumero = Utils.FormatCode(boleto.NossoNumero, 11);
+                }
+                #endregion Carteira 17-019, 17-067 e 17-167
+
+                #region Carteira 17-027, 17-051
+                //Carteira 17, com variação 027, 129 e 140
+                if (boleto.Carteira.Equals("17-027") || boleto.Carteira.Equals("17-051") || boleto.Carteira.Equals("17-159") || boleto.Carteira.Equals("17-140"))
+                {
+                    /*
+                     * Convênio de 7 posições
+                     * Nosso Número com 17 posições
+                     */
+                    if (boleto.Cedente.Convenio.ToString().Length == 7)
+                    {
+                        if (boleto.NossoNumero.Length > 10)
+                            throw new NotImplementedException(string.Format("Para a carteira {0}, a quantidade máxima são de 10 de posições para o nosso número", boleto.Carteira));
+
+                        boleto.NossoNumero = string.Format("{0}{1}", boleto.Cedente.Convenio, Utils.FormatCode(boleto.NossoNumero, 10));
+                    }
+                    /*
+                     * Convênio de 6 posições
+                     * Nosso Número com 11 posições
+                     */
+                    else if (boleto.Cedente.Convenio.ToString().Length == 6)
+                    {
+                        //Nosso Número com 17 posições
+                        if ((boleto.Cedente.Codigo.ToString().Length + boleto.NossoNumero.Length) > 11)
+                            throw new NotImplementedException(string.Format("Para a carteira {0}, a quantidade máxima são de 11 de posições para o nosso número. Onde o nosso número é formado por CCCCCCNNNNN-X: C -> número do convênio fornecido pelo Banco, N -> seqüencial atribuído pelo cliente e X -> dígito verificador do “Nosso-Número”.", boleto.Carteira));
+
+                        boleto.NossoNumero = string.Format("{0}{1}", boleto.Cedente.Convenio, Utils.FormatCode(boleto.NossoNumero, 5));
+                    }
+                    /*
+                      * Convênio de 4 posições
+                      * Nosso Número com 11 posições
+                      */
+                    else if (boleto.Cedente.Convenio.ToString().Length == 4)
+                    {
+                        if (boleto.NossoNumero.Length > 7)
+                            throw new NotImplementedException(string.Format("Para a carteira {0}, a quantidade máxima são de 7 de posições para o nosso número [{1}]", boleto.Carteira, boleto.NossoNumero));
+
+                        boleto.NossoNumero = string.Format("{0}{1}", boleto.Cedente.Convenio, Utils.FormatCode(boleto.NossoNumero, 7));
+                    }
+                    else
+                        boleto.NossoNumero = Utils.FormatCode(boleto.NossoNumero, 11);
+                }
+                #endregion Carteira 17-027, 17-051
+
+                #region Carteira 17-035
+                //Carteira 17, com variação 035
+                if (boleto.Carteira.Equals("17-035"))
+                {
+                    /*
+                     * Convênio de 7 posições
+                     * Nosso Número com 17 posições
+                     */
+                    if (boleto.Cedente.Convenio.ToString().Length == 7)
+                    {
+                        if (boleto.NossoNumero.Length > 10)
+                            throw new NotImplementedException(string.Format("Para a carteira {0}, a quantidade máxima são de 10 de posições para o nosso número", boleto.Carteira));
+
+                        boleto.NossoNumero = string.Format("{0}{1}", boleto.Cedente.Convenio, Utils.FormatCode(boleto.NossoNumero, 10));
+                    }
+                    /*
+                     * Convênio de 6 posições
+                     * Nosso Número com 11 posições
+                     */
+                    else if (boleto.Cedente.Convenio.ToString().Length == 6)
+                    {
+                        if ((boleto.Cedente.Codigo.ToString().Length + boleto.NossoNumero.Length) > 11)
+                            throw new NotImplementedException(string.Format("Para a carteira {0}, a quantidade máxima são de 11 de posições para o nosso número. Onde o nosso número é formado por CCCCCCNNNNN-X: C -> número do convênio fornecido pelo Banco, N -> seqüencial atribuído pelo cliente e X -> dígito verificador do “Nosso-Número”.", boleto.Carteira));
+
+                        boleto.NossoNumero = string.Format("{0}{1}", boleto.Cedente.Convenio, Utils.FormatCode(boleto.NossoNumero, 5));
+                    }
+                    /*
+                      * Convênio de 4 posições
+                      * Nosso Número com 11 posições
+                      */
+                    else if (boleto.Cedente.Convenio.ToString().Length == 4)
+                    {
+                        if (boleto.NossoNumero.Length > 7)
+                            throw new NotImplementedException(string.Format("Para a carteira {0}, a quantidade máxima são de 7 de posições para o nosso número [{1}]", boleto.Carteira, boleto.NossoNumero));
+
+                        boleto.NossoNumero = string.Format("{0}{1}", boleto.Cedente.Convenio, Utils.FormatCode(boleto.NossoNumero, 7));
+                    }
+                    else
+                        boleto.NossoNumero = Utils.FormatCode(boleto.NossoNumero, 11);
+                }
+                #endregion Carteira 17-035
+                /*
+                #region Carteira 18
+                //Carteira 18 com nosso número de 11 posições
+                if (boleto.Carteira.Equals("18"))
+                {
+                    boleto.BancoCarteira.ValidaBoleto(boleto);
+                    boleto.BancoCarteira.FormataNossoNumero(boleto);
+                }
+                #endregion Carteira 18
+                 */
+                #region Carteira 18-019
+                //Carteira 18, com variação 019
+                if (boleto.Carteira.Equals("18-019"))
+                {
+                    /*
+                     * Convênio de 7 posições
+                     * Nosso Número com 17 posições
+                     */
+                    if (boleto.Cedente.Convenio.ToString().Length == 7)
+                    {
+                        if (boleto.NossoNumero.Length > 10)
+                            throw new NotImplementedException(string.Format("Para a carteira {0}, a quantidade máxima são de 10 de posições para o nosso número", boleto.Carteira));
+
+                        boleto.NossoNumero = string.Format("{0}{1}", boleto.Cedente.Convenio, Utils.FormatCode(boleto.NossoNumero, 10));
+                    }
+                    /*
+                     * Convênio de 6 posições
+                     * Nosso Número com 11 posições
+                     */
+                    else if (boleto.Cedente.Convenio.ToString().Length == 6)
+                    {
+                        //Modalidades de Cobrança Sem Registro – Carteira 16 e 18
+                        //Nosso Número com 17 posições
+                        if (!boleto.TipoModalidade.Equals("21"))
+                        {
+                            if ((boleto.Cedente.Codigo.ToString().Length + boleto.NossoNumero.Length) > 11)
+                                throw new NotImplementedException(string.Format("Para a carteira {0}, a quantidade máxima são de 11 de posições para o nosso número. Onde o nosso número é formado por CCCCCCNNNNN-X: C -> número do convênio fornecido pelo Banco, N -> seqüencial atribuído pelo cliente e X -> dígito verificador do “Nosso-Número”.", boleto.Carteira));
+
+                            boleto.NossoNumero = string.Format("{0}{1}", boleto.Cedente.Convenio, Utils.FormatCode(boleto.NossoNumero, 5));
+                        }
+                        else
+                        {
+                            if (boleto.Cedente.Convenio.ToString().Length != 6)
+                                throw new NotImplementedException(string.Format("Para a carteira {0} e o tipo da modalidade 21, o número do convênio são de 6 posições", boleto.Carteira));
+
+                            boleto.NossoNumero = Utils.FormatCode(boleto.NossoNumero, 17);
+                        }
+                    }
+                    /*
+                      * Convênio de 4 posições
+                      * Nosso Número com 11 posições
+                      */
+                    else if (boleto.Cedente.Convenio.ToString().Length == 4)
+                    {
+                        if (boleto.NossoNumero.Length > 7)
+                            throw new NotImplementedException(string.Format("Para a carteira {0}, a quantidade máxima são de 7 de posições para o nosso número [{1}]", boleto.Carteira, boleto.NossoNumero));
+
+                        boleto.NossoNumero = string.Format("{0}{1}", boleto.Cedente.Convenio, Utils.FormatCode(boleto.NossoNumero, 7));
+                    }
+                    else
+                        boleto.NossoNumero = Utils.FormatCode(boleto.NossoNumero, 11);
+                }
+                #endregion Carteira 18-019
+
+                //Para atender o cliente Fiemg foi adaptado no código na variação 18-027 as variações 18-035 e 18-140
+                #region Carteira 18-027
+                //Carteira 18, com variação 019
+                if (boleto.Carteira.Equals("18-027"))
+                {
+                    /*
+                     * Convênio de 7 posições
+                     * Nosso Número com 17 posições
+                     */
+                    if (boleto.Cedente.Convenio.ToString().Length == 7)
+                    {
+                        if (boleto.NossoNumero.Length > 10)
+                            throw new NotImplementedException(string.Format("Para a carteira {0}, a quantidade máxima são de 10 de posições para o nosso número", boleto.Carteira));
+
+                        boleto.NossoNumero = string.Format("{0}{1}", boleto.Cedente.Convenio, Utils.FormatCode(boleto.NossoNumero, 10));
+                    }
+                    /*
+                     * Convênio de 6 posições
+                     * Nosso Número com 11 posições
+                     */
+                    else if (boleto.Cedente.Convenio.ToString().Length == 6)
+                    {
+                        //Modalidades de Cobrança Sem Registro – Carteira 16 e 18
+                        //Nosso Número com 17 posições
+                        if (!boleto.TipoModalidade.Equals("21"))
+                        {
+                            if ((boleto.Cedente.Codigo.ToString().Length + boleto.NossoNumero.Length) > 11)
+                                throw new NotImplementedException(string.Format("Para a carteira {0}, a quantidade máxima são de 11 de posições para o nosso número. Onde o nosso número é formado por CCCCCCNNNNN-X: C -> número do convênio fornecido pelo Banco, N -> seqüencial atribuído pelo cliente e X -> dígito verificador do “Nosso-Número”.", boleto.Carteira));
+
+                            boleto.NossoNumero = string.Format("{0}{1}", boleto.Cedente.Convenio, Utils.FormatCode(boleto.NossoNumero, 5));
+                        }
+                        else
+                        {
+                            if (boleto.Cedente.Convenio.ToString().Length != 6)
+                                throw new NotImplementedException(string.Format("Para a carteira {0} e o tipo da modalidade 21, o número do convênio são de 6 posições", boleto.Carteira));
+
+                            boleto.NossoNumero = Utils.FormatCode(boleto.NossoNumero, 17);
+                        }
+                    }
+                    /*
+                      * Convênio de 4 posições
+                      * Nosso Número com 11 posições
+                      */
+                    else if (boleto.Cedente.Convenio.ToString().Length == 4)
+                    {
+                        if (boleto.NossoNumero.Length > 7)
+                            throw new NotImplementedException(string.Format("Para a carteira {0}, a quantidade máxima são de 7 de posições para o nosso número [{1}]", boleto.Carteira, boleto.NossoNumero));
+
+                        boleto.NossoNumero = string.Format("{0}{1}", boleto.Cedente.Convenio, Utils.FormatCode(boleto.NossoNumero, 7));
+                    }
+                    else
+                        boleto.NossoNumero = Utils.FormatCode(boleto.NossoNumero, 11);
+                }
+                #endregion Carteira 18-027
+
+                #region Carteira 18-035
+                //Carteira 18, com variação 019
+                if (boleto.Carteira.Equals("18-035"))
+                {
+                    /*
+                     * Convênio de 7 posições
+                     * Nosso Número com 17 posições
+                     */
+                    if (boleto.Cedente.Convenio.ToString().Length == 7)
+                    {
+                        if (boleto.NossoNumero.Length > 10)
+                            throw new NotImplementedException(string.Format("Para a carteira {0}, a quantidade máxima são de 10 de posições para o nosso número", boleto.Carteira));
+
+                        boleto.NossoNumero = string.Format("{0}{1}", boleto.Cedente.Convenio, Utils.FormatCode(boleto.NossoNumero, 10));
+                    }
+                    /*
+                     * Convênio de 6 posições
+                     * Nosso Número com 11 posições
+                     */
+                    else if (boleto.Cedente.Convenio.ToString().Length == 6)
+                    {
+                        //Modalidades de Cobrança Sem Registro – Carteira 16 e 18
+                        //Nosso Número com 17 posições
+                        if (!boleto.TipoModalidade.Equals("21"))
+                        {
+                            if ((boleto.Cedente.Codigo.ToString().Length + boleto.NossoNumero.Length) > 11)
+                                throw new NotImplementedException(string.Format("Para a carteira {0}, a quantidade máxima são de 11 de posições para o nosso número. Onde o nosso número é formado por CCCCCCNNNNN-X: C -> número do convênio fornecido pelo Banco, N -> seqüencial atribuído pelo cliente e X -> dígito verificador do “Nosso-Número”.", boleto.Carteira));
+
+                            boleto.NossoNumero = string.Format("{0}{1}", boleto.Cedente.Convenio, Utils.FormatCode(boleto.NossoNumero, 5));
+                        }
+                        else
+                        {
+                            if (boleto.Cedente.Convenio.ToString().Length != 6)
+                                throw new NotImplementedException(string.Format("Para a carteira {0} e o tipo da modalidade 21, o número do convênio são de 6 posições", boleto.Carteira));
+
+                            boleto.NossoNumero = Utils.FormatCode(boleto.NossoNumero, 17);
+                        }
+                    }
+                    /*
+                      * Convênio de 4 posições
+                      * Nosso Número com 11 posições
+                      */
+                    else if (boleto.Cedente.Convenio.ToString().Length == 4)
+                    {
+                        if (boleto.NossoNumero.Length > 7)
+                            throw new NotImplementedException(string.Format("Para a carteira {0}, a quantidade máxima são de 7 de posições para o nosso número [{1}]", boleto.Carteira, boleto.NossoNumero));
+
+                        boleto.NossoNumero = string.Format("{0}{1}", boleto.Cedente.Convenio, Utils.FormatCode(boleto.NossoNumero, 7));
+                    }
+                    else
+                        boleto.NossoNumero = Utils.FormatCode(boleto.NossoNumero, 11);
+                }
+                #endregion Carteira 18-035
+
+                #region Carteira 18-140
+                //Carteira 18, com variação 019
+                if (boleto.Carteira.Equals("18-140"))
+                {
+                    /*
+                     * Convênio de 7 posições
+                     * Nosso Número com 17 posições
+                     */
+                    if (boleto.Cedente.Convenio.ToString().Length == 7)
+                    {
+                        if (boleto.NossoNumero.Length > 10)
+                            throw new NotImplementedException(string.Format("Para a carteira {0}, a quantidade máxima são de 10 de posições para o nosso número", boleto.Carteira));
+
+                        boleto.NossoNumero = string.Format("{0}{1}", boleto.Cedente.Convenio, Utils.FormatCode(boleto.NossoNumero, 10));
+                    }
+                    /*
+                     * Convênio de 6 posições
+                     * Nosso Número com 11 posições
+                     */
+                    else if (boleto.Cedente.Convenio.ToString().Length == 6)
+                    {
+                        //Modalidades de Cobrança Sem Registro – Carteira 16 e 18
+                        //Nosso Número com 17 posições
+                        if (!boleto.TipoModalidade.Equals("21"))
+                        {
+                            if ((boleto.Cedente.Codigo.ToString().Length + boleto.NossoNumero.Length) > 11)
+                                throw new NotImplementedException(string.Format("Para a carteira {0}, a quantidade máxima são de 11 de posições para o nosso número. Onde o nosso número é formado por CCCCCCNNNNN-X: C -> número do convênio fornecido pelo Banco, N -> seqüencial atribuído pelo cliente e X -> dígito verificador do “Nosso-Número”.", boleto.Carteira));
+
+                            boleto.NossoNumero = string.Format("{0}{1}", boleto.Cedente.Convenio, Utils.FormatCode(boleto.NossoNumero, 5));
+                        }
+                        else
+                        {
+                            if (boleto.Cedente.Convenio.ToString().Length != 6)
+                                throw new NotImplementedException(string.Format("Para a carteira {0} e o tipo da modalidade 21, o número do convênio são de 6 posições", boleto.Carteira));
+
+                            boleto.NossoNumero = Utils.FormatCode(boleto.NossoNumero, 17);
+                        }
+                    }
+                    /*
+                      * Convênio de 4 posições
+                      * Nosso Número com 11 posições
+                      */
+                    else if (boleto.Cedente.Convenio.ToString().Length == 4)
+                    {
+                        if (boleto.NossoNumero.Length > 7)
+                            throw new NotImplementedException(string.Format("Para a carteira {0}, a quantidade máxima são de 7 de posições para o nosso número [{1}]", boleto.Carteira, boleto.NossoNumero));
+
+                        boleto.NossoNumero = string.Format("{0}{1}", boleto.Cedente.Convenio, Utils.FormatCode(boleto.NossoNumero, 7));
+                    }
+                    else
+                        boleto.NossoNumero = Utils.FormatCode(boleto.NossoNumero, 11);
+                }
+                #endregion Carteira 18-140
+
+                #region Carteira 31
+                //Carteira 31
+                if (boleto.Carteira.Equals("31"))
+                {
+                    switch (boleto.Cedente.Convenio.ToString().Length)
+                    {
+                        //O BB manda como padrão 7 posições, mas é possível solicitar um convênio com 6 posições na carteira 31
+                        case 5:
+                            if (boleto.NossoNumero.Length > 12)
+                                throw new NotImplementedException(string.Format("Para a carteira {0}, a quantidade máxima são de 12 de posições para o nosso número", boleto.Carteira));
+                            boleto.NossoNumero = Utils.FormatCode(boleto.NossoNumero, 12);
+                            break;
+                        case 6:
+                            if (boleto.NossoNumero.Length > 12)
+                                throw new NotImplementedException(string.Format("Para a carteira {0}, a quantidade máxima são de 12 de posições para o nosso número", boleto.Carteira));
+                            boleto.NossoNumero = Utils.FormatCode(boleto.NossoNumero, 12);
+                            break;
+                        case 7:
+                            if (boleto.NossoNumero.Length > 17)
+                                throw new NotImplementedException(string.Format("Para a carteira {0}, a quantidade máxima são de 10 de posições para o nosso número", boleto.Carteira));
+                            boleto.NossoNumero = string.Format("{0}{1}", boleto.Cedente.Convenio, Utils.FormatCode(boleto.NossoNumero, 10));
+                            break;
+                        default:
+                            throw new NotImplementedException(string.Format("Para a carteira {0}, o número do convênio deve ter 6 ou 7 posições", boleto.Carteira));
+                    }
+                }
+                #endregion Carteira 31
+            #endregion
+                
             if (boleto.Cedente.Convenio.ToString().Length == 6) //somente monta o digito verificador no nosso numero se o convenio tiver 6 posições
             {
                 switch (boleto.Carteira)
