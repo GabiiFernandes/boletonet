@@ -2310,7 +2310,7 @@ namespace BoletoNet
 
                 reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediNumericoSemSeparador_, 0148, 002, 0, especie, '0'));                                   //148-149
                 reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediAlphaAliEsquerda_____, 0150, 001, 0, boleto.Aceite, ' '));                             //150-150
-                reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediDataDDMMAA___________, 0151, 006, 0, boleto.DataProcessamento, ' '));                  //151-156
+                reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediDataDDMMAA___________, 0151, 006, 0, boleto.DataDocumento, ' '));                  //151-156
                 reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediNumericoSemSeparador_, 0157, 002, 0, vInstrucao1, '0'));                               //157-158
                 reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediNumericoSemSeparador_, 0159, 002, 0, vInstrucao2, '0'));                               //159-160
                 reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediNumericoSemSeparador_, 0161, 013, 2, boleto.JurosMora, '0'));                          //161-173
@@ -2458,8 +2458,6 @@ namespace BoletoNet
                 detalhe.Carteira = reg.Carteira;
                 detalhe.CodigoOcorrencia = Utils.ToInt32(reg.Comando);
                 //
-                int dataLiquidacao = Utils.ToInt32(reg.DataLiquidacao);
-                detalhe.DataLiquidacao = Utils.ToDateTime(dataLiquidacao.ToString("##-##-##"));
                 //
                 detalhe.NumeroDocumento = reg.NumeroTituloCedente;
                 //detalhe. = reg.Brancos2;
@@ -2473,8 +2471,12 @@ namespace BoletoNet
                 //detalhe. = reg.DVPrefixoRecebedora;
                 detalhe.Especie = Utils.ToInt32(reg.EspecieTitulo);
                 //
+                int dataLiquidacao = Utils.ToInt32(reg.DataLiquidacao);
+                detalhe.DataLiquidacao = Utils.ToDateTime(dataLiquidacao.ToString("##-##-##"));
+                detalhe.DataOcorrencia = Utils.ToDateTime(dataLiquidacao.ToString("##-##-##"));
+
                 int dataCredito = Utils.ToInt32(reg.DataCredito);
-                detalhe.DataOcorrencia = Utils.ToDateTime(dataCredito.ToString("##-##-##"));
+                detalhe.DataCredito = Utils.ToDateTime(dataCredito.ToString("##-##-##"));
                 //
                 detalhe.TarifaCobranca = (Convert.ToDecimal(reg.ValorTarifa) / 100);
                 detalhe.OutrasDespesas = (Convert.ToDecimal(reg.OutrasDespesas) / 100);
