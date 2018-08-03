@@ -520,7 +520,7 @@ namespace BoletoNet
             }
             catch (Exception ex)
             {
-                throw new Exception("Erro durante a geração do DETALHE do arquivo de REMESSA.", ex);
+                throw new Exception("Erro durante a geração do DETALHE do arquivo de REMESSA. 1" + ex.Message, ex);
             }
         }
 
@@ -644,6 +644,9 @@ namespace BoletoNet
                 detalhe += Utils.FormatCode(boleto.Cedente.ContaBancaria.DigitoConta, 1);  //Posição 036  Dígito Verificador da Conta: vide planilha "Capa" deste arquivo
                 detalhe += " ";  //Posição 037 Dígito Verificador da Ag/Conta: Brancos
                 detalhe += Utils.FormatCode(NossoNumeroFormatado(boleto), 20);  //Posição 038 a 057 Nosso Número
+
+                //throw new Exception("NossoNumeroFormatado(boleto):" + NossoNumeroFormatado(boleto) + "; boleto.numeroparcela" + boleto.NumeroParcela.ToString());
+
                 detalhe += (Convert.ToInt16(boleto.Carteira) == 1 ? "1" : "2");  //Posição 058 Código da Carteira: vide planilha "Capa" deste arquivo
                 detalhe += "0";  //Posição 059 Forma de Cadastr. do Título no Banco: "0"
                 detalhe += " ";  //Posição 060 Tipo de Documento: Brancos
@@ -694,7 +697,7 @@ namespace BoletoNet
             }
             catch (Exception e)
             {
-                throw new Exception("Erro durante a geração do SEGMENTO P DO DETALHE do arquivo de REMESSA.", e);
+                throw new Exception("Erro durante a geração do SEGMENTO P DO DETALHE do arquivo de REMESSA. " + e.Message, e);
             }
         }
 

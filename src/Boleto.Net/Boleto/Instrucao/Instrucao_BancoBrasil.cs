@@ -18,6 +18,7 @@ namespace BoletoNet
         NaoReceberAposNDias = 91,
         DevolverAposNDias = 92,
         JurosdeMora = 998,
+        DescontoAteDataEstipulada = 22,
         DescontoporDia = 999,
     }
 
@@ -146,6 +147,10 @@ namespace BoletoNet
                     case EnumInstrucoes_BancoBrasil.DescontoporDia:
                         this.Codigo = (int)EnumInstrucoes_BancoBrasil.DescontoporDia;
                         this.Descricao = "Conceder desconto de R$ "; // por dia de antecipação
+                        break;
+                    case EnumInstrucoes_BancoBrasil.DescontoAteDataEstipulada:
+                        this.Codigo = (int)EnumInstrucoes_BancoBrasil.DescontoAteDataEstipulada;
+                        this.Descricao = "Conceder desconto até a data estipulada"; // por dia de antecipação
                         break;
                     default:
                         this.Codigo = 0;

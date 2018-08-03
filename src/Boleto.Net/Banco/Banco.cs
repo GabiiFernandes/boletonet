@@ -274,7 +274,7 @@ namespace BoletoNet
 			}
 			catch (Exception ex)
 			{
-				throw new Exception("Erro durante a geração do registro HEADER do arquivo de REMESSA.", ex);
+				throw new Exception("Erro durante a geração do registro HEADER do arquivo de REMESSA. " + ex.Message, ex);
 			}
 		}
 
@@ -286,7 +286,7 @@ namespace BoletoNet
 			}
 			catch (Exception ex)
 			{
-				throw new Exception("Erro durante a geração do registro HEADER do arquivo de REMESSA.", ex);
+				throw new Exception("Erro durante a geração do registro HEADER do arquivo de REMESSA. " + ex.Message, ex);
 			}
 		}
 
@@ -298,7 +298,7 @@ namespace BoletoNet
 			}
 			catch (Exception ex)
 			{
-				throw new Exception("Erro durante a geração dos registros de DETALHE do arquivo de REMESSA.", ex);
+				throw new Exception("Erro durante a geração dos registros de DETALHE do arquivo de REMESSA. " + ex.Message, ex);
 			}
 		}
 
@@ -310,7 +310,7 @@ namespace BoletoNet
 			}
 			catch (Exception ex)
 			{
-				throw new Exception("Erro durante a geração do registro TRAILER do arquivo de REMESSA.", ex);
+				throw new Exception("Erro durante a geração do registro TRAILER do arquivo de REMESSA. " + ex.Message, ex);
 			}
 		}
 
@@ -322,7 +322,7 @@ namespace BoletoNet
 			}
 			catch (Exception ex)
 			{
-				throw new Exception("Erro durante a geração do registro TRAILER do arquivo de REMESSA.", ex);
+				throw new Exception("Erro durante a geração do registro TRAILER do arquivo de REMESSA. " + ex.Message, ex);
 			}
 		}
 
@@ -334,7 +334,7 @@ namespace BoletoNet
 			}
 			catch (Exception ex)
 			{
-				throw new Exception("Erro durante a geração do registro HEADER do arquivo de REMESSA.", ex);
+				throw new Exception("Erro durante a geração do registro HEADER do arquivo de REMESSA. " + ex.Message, ex);
 			}
 		}
 
@@ -346,7 +346,7 @@ namespace BoletoNet
 			}
 			catch (Exception ex)
 			{
-				throw new Exception("Erro durante a geração do registro HEADER do arquivo de REMESSA.", ex);
+				throw new Exception("Erro durante a geração do registro HEADER do arquivo de REMESSA. " + ex.Message, ex);
 			}
 		}
 
@@ -358,7 +358,7 @@ namespace BoletoNet
 			}
 			catch (Exception ex)
 			{
-				throw new Exception("Erro durante a geração do registro HEADER do arquivo de REMESSA.", ex);
+				throw new Exception("Erro durante a geração do registro HEADER do arquivo de REMESSA. " + ex.Message, ex);
 			}
 		}
 
@@ -370,7 +370,7 @@ namespace BoletoNet
 			}
 			catch (Exception ex)
 			{
-				throw new Exception("Erro durante a geração do registro HEADER do arquivo de REMESSA.", ex);
+				throw new Exception("Erro durante a geração do registro HEADER do arquivo de REMESSA. " + ex.Message, ex);
 			}
 		}
 
@@ -382,7 +382,7 @@ namespace BoletoNet
 			}
 			catch (Exception ex)
 			{
-				throw new Exception("Erro durante a geração dos registros de DETALHE do arquivo de REMESSA.", ex);
+				throw new Exception("Erro durante a geração dos registros de DETALHE do arquivo de REMESSA. " + ex.Message, ex);
 			}
 		}
 
@@ -394,7 +394,7 @@ namespace BoletoNet
 			}
 			catch (Exception ex)
 			{
-				throw new Exception("Erro durante a geração dos registros de DETALHE do arquivo de REMESSA.", ex);
+				throw new Exception("Erro durante a geração dos registros de DETALHE do arquivo de REMESSA. " + ex.Message, ex);
 			}
 		}
 
@@ -406,7 +406,7 @@ namespace BoletoNet
 			}
 			catch (Exception ex)
 			{
-				throw new Exception("Erro durante a geração dos registros de DETALHE do arquivo de REMESSA.", ex);
+				throw new Exception("Erro durante a geração dos registros de DETALHE do arquivo de REMESSA. " + ex.Message, ex);
 			}
 		}
 
@@ -418,7 +418,7 @@ namespace BoletoNet
 			}
 			catch (Exception ex)
 			{
-				throw new Exception("Erro durante a geração dos registros de DETALHE do arquivo de REMESSA.", ex);
+				throw new Exception("Erro durante a geração dos registros de DETALHE do arquivo de REMESSA. " + ex.Message, ex);
 			}
 		}
 
@@ -430,7 +430,7 @@ namespace BoletoNet
 			}
 			catch (Exception ex)
 			{
-				throw new Exception("Erro durante a geração dos registros de DETALHE do arquivo de REMESSA.", ex);
+				throw new Exception("Erro durante a geração dos registros de DETALHE do arquivo de REMESSA. " + ex.Message, ex);
 			}
 		}
 
@@ -442,7 +442,7 @@ namespace BoletoNet
 			}
 			catch (Exception ex)
 			{
-				throw new Exception("Erro durante a geração dos registros de DETALHE do arquivo de REMESSA.", ex);
+				throw new Exception("Erro durante a geração dos registros de DETALHE do arquivo de REMESSA. " + ex.Message, ex);
 			}
 		}
 
@@ -454,7 +454,7 @@ namespace BoletoNet
 			}
 			catch (Exception ex)
 			{
-				throw new Exception("Erro durante a geração dos registros de DETALHE do arquivo de REMESSA.", ex);
+				throw new Exception("Erro durante a geração dos registros de DETALHE do arquivo de REMESSA. " + ex.Message, ex);
 			}
 		}
 
@@ -466,7 +466,7 @@ namespace BoletoNet
 			}
 			catch (Exception ex)
 			{
-				throw new Exception("Erro durante a geração dos registros de DETALHE do arquivo de REMESSA.", ex);
+				throw new Exception("Erro durante a geração dos registros de DETALHE do arquivo de REMESSA. " + ex.Message, ex);
 			}
 		}
 
@@ -478,7 +478,7 @@ namespace BoletoNet
 			}
 			catch (Exception ex)
 			{
-				throw new Exception("Erro durante a geração dos registros de DETALHE do arquivo de REMESSA.", ex);
+				throw new Exception("Erro durante a geração dos registros de DETALHE do arquivo de REMESSA. " + ex.Message, ex);
 			}
 		}
 
@@ -490,7 +490,7 @@ namespace BoletoNet
 			}
 			catch (Exception ex)
 			{
-				throw new Exception("Erro durante a geração do registro TRAILER do arquivo de REMESSA.", ex);
+				throw new Exception("Erro durante a geração do registro TRAILER do arquivo de REMESSA. " + ex.Message, ex);
 			}
 		}
 
@@ -502,7 +502,7 @@ namespace BoletoNet
 			}
 			catch (Exception ex)
 			{
-				throw new Exception("Erro durante a geração do registro TRAILER do arquivo de REMESSA.", ex);
+				throw new Exception("Erro durante a geração do registro TRAILER do arquivo de REMESSA. " + ex.Message, ex);
 			}
 		}
 
@@ -514,7 +514,7 @@ namespace BoletoNet
 			}
 			catch (Exception ex)
 			{
-				throw new Exception("Erro durante a geração do registro TRAILER do arquivo de REMESSA.", ex);
+				throw new Exception("Erro durante a geração do registro TRAILER do arquivo de REMESSA. " + ex.Message, ex);
 			}
 		}
 
@@ -526,7 +526,7 @@ namespace BoletoNet
 			}
 			catch (Exception ex)
 			{
-				throw new Exception("Erro durante a geração do registro TRAILER do arquivo de REMESSA.", ex);
+				throw new Exception("Erro durante a geração do registro TRAILER do arquivo de REMESSA. " + ex.Message, ex);
 			}
 		}
 
@@ -538,7 +538,7 @@ namespace BoletoNet
 			}
 			catch (Exception ex)
 			{
-				throw new Exception("Erro durante a geração do registro MENSAGEM VARIAVEL do arquivo de REMESSA.", ex);
+				throw new Exception("Erro durante a geração do registro MENSAGEM VARIAVEL do arquivo de REMESSA. " + ex.Message, ex);
 			}
 		}
 
