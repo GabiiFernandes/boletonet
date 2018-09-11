@@ -948,7 +948,7 @@ namespace BoletoNet
                 //Condição para Emissão da Papeleta de Cobrança(1, N)
                 _detalhe += boleto.ApenasRegistrar ? "2" : "1";
                 //Ident. se emite papeleta para Débito Automático (1, A)
-                _detalhe += "N";
+                _detalhe += " ";
                 //Identificação da Operação do Banco (10, A) Em Branco
                 _detalhe += identificaOperacaoBanco;
 
