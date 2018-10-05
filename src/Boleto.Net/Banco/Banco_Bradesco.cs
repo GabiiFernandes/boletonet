@@ -206,6 +206,15 @@ namespace BoletoNet
         }
 
 
+        public override void MontaNossoNumero(Boleto boleto)
+        {
+            // Calcula o DAC do Nosso Número
+            _dacNossoNumero = CalcularDigitoNossoNumero(boleto);
+            boleto.DigitoNossoNumero = _dacNossoNumero;
+            
+            FormataNossoNumero(boleto);
+        }
+
         public override void FormataNossoNumero(Boleto boleto)
         {
             boleto.NossoNumero = string.Format("{0}/{1}-{2}", Utils.FormatCode(boleto.Carteira, 3), boleto.NossoNumero, boleto.DigitoNossoNumero);
