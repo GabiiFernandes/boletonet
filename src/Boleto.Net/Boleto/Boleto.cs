@@ -47,9 +47,10 @@ namespace BoletoNet
 		private decimal _valorDesconto;
         private decimal _valorDescontoAntecipacao;
 		private Sacado _sacado;
+		private bool _NaoInformarAvalista;
 		private bool _jurosPermanente;
 
-		private decimal _percJurosMora;
+        private decimal _percJurosMora;
 		private decimal _jurosMora;
         private string _codJurosMora = string.Empty;
 		private decimal _iof;
@@ -406,6 +407,7 @@ namespace BoletoNet
 		/// O avalista deve ser exibido para que estes bancos homologuem.
 		/// </summary>
 		public Cedente Avalista { get; set; }
+		public bool NaoInformarAvalista { get; set; }
 
 		/// <summary> 
 		/// Para uso do banco 

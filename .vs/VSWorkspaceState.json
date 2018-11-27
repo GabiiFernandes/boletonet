@@ -1,6 +1,9 @@
 {
   "ExpandedNodes": [
-    ""
+    "",
+    "\\src\\Boleto.Net\\Banco\\Carteiras",
+    "\\src\\Boleto.Net\\Boleto",
+    "\\src\\Boleto.Net\\Boleto\\EspecieDocumento"
   ],
   "PreviewInSolutionExplorer": false
 }
