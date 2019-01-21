@@ -144,6 +144,10 @@ namespace BoletoNet
                         this.Codigo = (int)EnumInstrucoes_BancoBrasil.JurosdeMora;
                         this.Descricao = "Após vencimento cobrar R$ "; // por dia de atraso
                         break;
+                    case EnumInstrucoes_BancoBrasil.Multa:
+                        this.Codigo = (int)EnumInstrucoes_BancoBrasil.Multa;
+                        this.Descricao = "Cobrar Multa";
+                        break;
                     case EnumInstrucoes_BancoBrasil.DescontoporDia:
                         this.Codigo = (int)EnumInstrucoes_BancoBrasil.DescontoporDia;
                         this.Descricao = "Conceder desconto de R$ "; // por dia de antecipação
