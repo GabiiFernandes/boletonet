@@ -353,6 +353,13 @@ namespace BoletoNet
 
             return detalhe;
         }
+        /// <summary>
+        /// GeraDetalheMultaCNAB400
+        /// </summary>
+        public virtual String GeraDetalheMultaCNAB400(Boleto boleto, int sequencialRemessa)
+        {
+            return "";
+        }
 
         public virtual DetalheRetorno LerDetalheRetornoCNAB400(string registro)
         {

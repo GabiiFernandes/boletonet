@@ -123,6 +123,11 @@ namespace BoletoNet
         /// </summary>
         string GerarMensagemVariavelRemessa(Boleto boleto, ref int numeroRegistro, TipoArquivo tipoArquivo);
 
+        /// <summary>
+        /// Gera os registros de Multa na Remessa
+        /// </summary>
+        string GerarDetalheMultaRemessaCNAB400(Boleto boleto, int numeroRegistro);
+
         DetalheSegmentoTRetornoCNAB240 LerDetalheSegmentoTRetornoCNAB240(string registro);
 
         DetalheSegmentoURetornoCNAB240 LerDetalheSegmentoURetornoCNAB240(string registro);

@@ -50,7 +50,12 @@ namespace BoletoNet
 			base.FormataNossoNumero(boleto);
 		}
 
-		public override string GerarDetalheRemessa(Boleto boleto, int numeroRegistro, TipoArquivo tipoArquivo)
+        public string GerarDetalheMultaRemessaCNAB400(Boleto boleto, int numeroRegistro)
+        {
+            throw new NotImplementedException();
+        }
+
+        public override string GerarDetalheRemessa(Boleto boleto, int numeroRegistro, TipoArquivo tipoArquivo)
 		{
 			try
 			{

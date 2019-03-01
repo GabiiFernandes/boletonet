@@ -317,7 +317,12 @@ Posição|Tamanho|Picture|Conteúdo
             throw new NotImplementedException();
         }
 
-        public void MontaNossoNumero(Boleto boleto)
+        public override void MontaNossoNumero(Boleto boleto)
+        {
+            throw new NotImplementedException();
+        }
+
+        public string GerarDetalheMultaRemessaCNAB400(Boleto boleto, int sequencialRemessa)
         {
             throw new NotImplementedException();
         }

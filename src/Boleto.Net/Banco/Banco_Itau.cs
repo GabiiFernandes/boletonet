@@ -1737,5 +1737,10 @@ namespace BoletoNet
                 return numero;
             throw new NossoNumeroInvalidoException();
         }
+
+        public string GerarDetalheMultaRemessaCNAB400(Boleto boleto, int numeroRegistro)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

@@ -240,5 +240,9 @@ namespace BoletoNet
             return vRetorno;
         }
 
+        public string GerarDetalheMultaRemessaCNAB400(Boleto boleto, int numeroRegistro)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

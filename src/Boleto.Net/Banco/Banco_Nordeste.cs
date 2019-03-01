@@ -645,6 +645,11 @@ namespace BoletoNet
                 throw new Exception("Erro ao ler detalhe do arquivo de RETORNO / CNAB 400.", ex);
             }
         }
+
+        public string GerarDetalheMultaRemessaCNAB400(Boleto boleto, int numeroRegistro)
+        {
+            throw new NotImplementedException();
+        }
         #endregion CNAB400 RETORNO
 
         #endregion CNAB400

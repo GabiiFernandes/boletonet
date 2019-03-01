@@ -45,7 +45,7 @@ namespace BoletoNet
             int resto = 0;
             String constante = "319731973197319731973";
             String cooperativa  = Utils.FormatCode(boleto.Cedente.ContaBancaria.Agencia, "0", 4, true);
-            String codigo       = Utils.FormatCode(boleto.Cedente.Codigo + boleto.Cedente.DigitoCedente.ToString(), "0", 10, true); 
+            String codigo       = Utils.FormatCode(boleto.Cedente.Codigo.Substring(0, 6) + boleto.Cedente.DigitoCedente.ToString(), "0", 10, true); 
             String nossoNumero  = Utils.FormatCode(boleto.NossoNumero, "0", 7, true);
 
 
@@ -1182,5 +1182,10 @@ namespace BoletoNet
             return vRetorno;
         }
 
+
+        public string GerarDetalheMultaRemessaCNAB400(Boleto boleto, int numeroRegistro)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

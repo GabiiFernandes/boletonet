@@ -482,7 +482,21 @@ namespace BoletoNet
 			}
 		}
 
-		public override string GerarTrailerArquivoRemessa(int numeroRegistro)
+        public string GerarDetalheMultaRemessaCNAB400(Boleto boleto, int numeroRegistro)
+        {
+            try
+            {
+                return _IBanco.GerarDetalheMultaRemessaCNAB400(boleto, numeroRegistro);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Erro durante a geração dos registros de DETALHE do arquivo de REMESSA. " + ex.Message, ex);
+            }
+
+        }
+        
+
+        public override string GerarTrailerArquivoRemessa(int numeroRegistro)
 		{
 			try
 			{

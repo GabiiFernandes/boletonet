@@ -199,7 +199,7 @@ namespace BoletoNet
 			return detalheRetorno;
 		}
 
-        public void MontaNossoNumero(Boleto boleto)
+        public override void MontaNossoNumero(Boleto boleto)
         {
             throw new NotImplementedException();
         }
@@ -364,6 +364,11 @@ namespace BoletoNet
 			}
 		}
 
-		#endregion
-	}
+        #endregion
+
+        public string GerarDetalheMultaRemessaCNAB400(Boleto boleto, int numeroRegistro)
+        {
+            throw new NotImplementedException();
+        }
+    }
 }

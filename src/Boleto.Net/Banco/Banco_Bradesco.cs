@@ -1122,9 +1122,9 @@ namespace BoletoNet
 
                 //CEP (5, N) + Sufixo do CEP (3, N) Total (8, N)
                 _detalhe += Utils.FitStringLength(boleto.Sacado.Endereco.CEP.Replace("-", ""), 8, 8, '0', 0, true, true, true);
-
+                
                 //Sacador|Avalista ou 2ª Mensagem (60, A)
-                _detalhe += Utils.FitStringLength(mensagem2, 60, 60, ' ', 0, true, true, false);
+                _detalhe += Utils.FitStringLength((boleto.Avalista != null ? boleto.Avalista.CPFCNPJ + " " + boleto.Avalista.Nome: mensagem2), 60, 60, ' ', 0, true, true, false);
 
                 //Nº Seqüencial do Registro (06, N)
                 _detalhe += Utils.FitStringLength(numeroRegistro.ToString(), 6, 6, '0', 0, true, true, true);
@@ -1318,5 +1318,9 @@ namespace BoletoNet
             return Utils.SubstituiCaracteresEspeciais(_detalhe);
         }
 
+        public string GerarDetalheMultaRemessaCNAB400(Boleto boleto, int numeroRegistro)
+        {
+            throw new NotImplementedException();
+        }
     }
 }
