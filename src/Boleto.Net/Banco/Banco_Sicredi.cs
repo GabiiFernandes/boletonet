@@ -1206,6 +1206,9 @@ namespace BoletoNet
                 //Juros Mora
                 decimal jurosMora = Convert.ToUInt64(reg.JurosMora);
                 detalhe.JurosMora = jurosMora / 100;
+                //Multa
+                decimal multa = Convert.ToUInt64(reg.Multa);
+                detalhe.ValorMulta = multa / 100;
                 //Filler7
                 //SomenteOcorrencia19
                 //Filler8
