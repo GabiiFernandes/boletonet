@@ -1586,13 +1586,23 @@ namespace BoletoNet
                 {
                     switch ((EnumInstrucoes_BancoBrasil)instrucao.Codigo)
                     {
-                        case EnumInstrucoes_BancoBrasil.ProtestarAposNDiasCorridos:
-                            codigo_protesto = "1";
-                            dias_protesto = Utils.FitStringLength(instrucao.QuantidadeDias.ToString(), 2, 2, '0', 0, true, true, true); //Para código '1' – é possível, de 6 a 29 dias
+                        case EnumInstrucoes_BancoBrasil.ProtestarNo10DiaCorridoAposVencido:
+                        case EnumInstrucoes_BancoBrasil.ProtestarNo15DiaCorridoAposVencido:
+                        case EnumInstrucoes_BancoBrasil.ProtestarNo20DiaCorridoAposVencido:
+                        case EnumInstrucoes_BancoBrasil.ProtestarNo25DiaCorridoAposVencido:
+                        case EnumInstrucoes_BancoBrasil.ProtestarNo30DiaCorridoAposVencido:
+                        case EnumInstrucoes_BancoBrasil.ProtestarNo35DiaCorridoAposVencido:
+                        case EnumInstrucoes_BancoBrasil.ProtestarNo40DiaCorridoAposVencido:
+                        case EnumInstrucoes_BancoBrasil.ProtestarNo45DiaCorridoAposVencido:
+                            codigo_protesto = "1"; //Para código '1' – é possível, de 6 a 29 dias
+                            dias_protesto = Utils.FitStringLength(instrucao.QuantidadeDias.ToString(), 2, 2, '0', 0, true, true, true); 
                             break;
-                        case EnumInstrucoes_BancoBrasil.ProtestarAposNDiasUteis:
-                            codigo_protesto = "2";
-                            dias_protesto = Utils.FitStringLength(instrucao.QuantidadeDias.ToString(), 2, 2, '0', 0, true, true, true); //Para código '2' – é possível, 3º, 4º ou 5º dia útil
+
+                        case EnumInstrucoes_BancoBrasil.ProtestarNo3DiaUtilAposVencido:
+                        case EnumInstrucoes_BancoBrasil.ProtestarNo4DiaUtilAposVencido:
+                        case EnumInstrucoes_BancoBrasil.ProtestarNo5DiaUtilAposVencido:
+                            codigo_protesto = "2"; //Para código '2' – é possível, 3º, 4º ou 5º dia útil
+                            dias_protesto = Utils.FitStringLength(instrucao.QuantidadeDias.ToString(), 2, 2, '0', 0, true, true, true); 
                             break;
                         case EnumInstrucoes_BancoBrasil.NaoProtestar:
                             codigo_protesto = "3";
@@ -2259,7 +2269,7 @@ namespace BoletoNet
                 reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediDataDDMMAA___________, 005, 006, 0, boleto.DataVencimento, ' '));      //005-010
 
                 //Valor/Percentual Multa
-                reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediNumericoSemSeparador_, 0011, 012, 2, vMulta, '0'));                    //011-022
+                reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediNumericoSemSeparador_, 0011, 012, 2, vMulta.ApenasNumeros(), '0'));    //011-022
 
 
 
