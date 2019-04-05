@@ -453,68 +453,54 @@ namespace BoletoNet
         {
             try
             {
-                //Código do Banco 001 003 9(003) 033
+                //Código do Banco na compensação ==> 001 - 003
                 string header = Utils.FormatCode(Codigo.ToString(), "0", 3, true);
 
-                //Lote de Serviço 004 007 9(004) 0000
-                header += Utils.FormatCode("", "0", 4, true); // "0000";
+                //Lote de serviço ==> 004 - 007
+                header += "0000";
 
-                //Tipo de Registro 008 008 9(001) 0
-                header += Utils.FormatCode("", "0", 1, true); ; // "0";
+                //Tipo de registro ==> 008 - 008
+                header += "0";
 
-                //Filler 009 017 X(009) Brancos
-                header += Utils.FormatCode("", " ", 9);
+                //Reservado (uso Banco) ==> 009 - 016
+                header += Utils.FormatCode("", " ", 8);
 
-                //Tipo de Inscrição da Empresa 018 018 9(001) Nota G023
+                //Tipo de inscrição da empresa ==> 017 - 017
                 header += (cedente.CPFCNPJ.Length == 11 ? "1" : "2");
 
-                //Número Inscrição da Empresa 019 032 9(014) CNPJ / CPF
+                //Nº de inscrição da empresa ==> 018 – 032
                 header += Utils.FormatCode(cedente.CPFCNPJ, "0", 15, true);
 
-                //Código do Convenio no Banco 033 052 X(020) Nota G009
-                header += "????????";
+                //Código de Transmissão ==> 033 – 047
+                header += Utils.FormatCode(cedente.CodigoTransmissao, "0", 15, true);
 
-                 //Agência Mantenedora da Conta 053 057 9(005) Nota G003
-                header += Utils.FitStringLength(cedente.ContaBancaria.Agencia, 5, 5, '0', 0, true, true, true);
-                //Dígito Verificador da Agência 058 058 X(001) Branco
-                header += Utils.FitStringLength(cedente.ContaBancaria.DigitoAgencia, 1, 1, '0', 0, true, true, true);
-                //Número da Conta Corrente 059 070 9(012) Nota G003
-                header += Utils.FitStringLength(cedente.ContaBancaria.Conta, 12, 12, '0', 0, true, true, true);
-                //Dígito Verificador da Conta 071 071 X(001) Nota G003
-                header += Utils.FitStringLength(cedente.ContaBancaria.DigitoConta, 1, 1, '0', 0, true, true, true);
-                //Dígito Verificador da Agência / Conta 072 072 X(001) Branco
-                header += " ";
+                //Reservado (uso Banco) ==> 048 - 072
+                header += Utils.FormatCode("", " ", 25);
 
-                //Nome da Empresa 073 102 X(030) Obrigatório
+                //Nome da empresa ==> 073 - 102
                 header += Utils.FitStringLength(cedente.Nome, 30, 30, ' ', 0, true, true, false).ToUpper();
 
-                //Nome do Banco 103 132 X(030) Banco Santander
+                //Nome do Banco ==> 103 - 132
                 header += Utils.FitStringLength("BANCO SANTANDER", 30, 30, ' ', 0, true, true, false);
-                
-                //Filler 133 142 X(010) Brancos
+
+                //Reservado (uso Banco) ==> 133 - 142
                 header += Utils.FormatCode("", " ", 10);
 
-                //Código Remessa / Retorno 143 143 9(001) 1 = Remessa / 2 = Retorno
+                //Código remessa ==> 143 - 143
                 header += "1";
 
-                //Data da Geração do Arquivo 144 151 9(008) DDMMAAAA
+                //Data de geração do arquivo ==> 144 - 151
                 header += DateTime.Now.ToString("ddMMyyyy");
 
-                //Hora da Geração do Arquivo 152 157 9(006) hhMMSS
+                //Reservado (uso Banco) ==> 152 - 157
                 header += Utils.FormatCode("", " ", 6);
-
-
-                //Número Seqüencial do Arquivo 158 163 9(006) Nota G010
+                //Nº seqüencial do arquivo ==> 158 - 163
                 header += Utils.FormatCode(numeroArquivoRemessa.ToString(), "0", 6, true);
 
-                //Número da Versão do Layout 164 166 9(003) 060
-                header += "060";
+                //Nº da versão do layout do arquivo ==> 164 - 166
+                header += "040";
 
-                //Densidade de Gravação Arquivo 167 171 9(005) Zeros
-                //Uso Reservado do Banco 172 191 X(020) Brancos//
-                //Uso Reservado da Empresa 192 211 X(020) Opcional
-                //Filler 212 230 X(019) Brancos
-                //Ocorrências para o Retorno 231 240 X(010) Nota G007
+                //Reservado (uso Banco) ==> 167 - 240
                 header += Utils.FormatCode("", " ", 74);
 
                 return Utils.SubstituiCaracteresEspeciais(header);
@@ -1480,7 +1466,7 @@ namespace BoletoNet
                 var instrucao = boleto.Instrucoes.FirstOrDefault(x => x.Codigo == 6);
                 if (instrucao != null)
                 {
-                    _detalhe += Utils.FitStringLength(((Instrucao_Santander)instrucao).QuantidadeDias.ToString(), 2, 2, '0', 0, true, true, true);
+                    _detalhe += Utils.FitStringLength((instrucao).QuantidadeDias.ToString(), 2, 2, '0', 0, true, true, true);
                 }
                 else
                     _detalhe += "00";
@@ -1742,7 +1728,7 @@ namespace BoletoNet
                 switch (tipoArquivo)
                 {
                     case TipoArquivo.CNAB240:
-                        _trailer = GerarTrailerRemessa240();
+                        _trailer = GerarTrailerArquivoRemessa(numeroRegistro);
                         break;
                     case TipoArquivo.CNAB400:
                         _trailer = GerarTrailerRemessa400(numeroRegistro, vltitulostotal);

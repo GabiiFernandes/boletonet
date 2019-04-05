@@ -809,7 +809,7 @@ namespace BoletoNet
                 string _header;
 
                 _header = "01REMESSA01COBRANCA       ";
-                _header += Utils.FitStringLength(cedente.Codigo.ToString(), 20, 20, '0', 0, true, true, true);
+                _header += Utils.FitStringLength(cedente.CodigoTransmissao.ToString(), 20, 20, '0', 0, true, true, true);
                 _header += Utils.FitStringLength(cedente.Nome, 30, 30, ' ', 0, true, true, false).ToUpper();
                 _header += "237";
                 _header += "BRADESCO       ";

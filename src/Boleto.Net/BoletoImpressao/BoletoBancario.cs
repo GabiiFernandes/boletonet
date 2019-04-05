@@ -1216,6 +1216,10 @@ namespace BoletoNet
                 string base64CodigoBarras = Convert.ToBase64String(cb.ToByte());
                 string fnCodigoBarras = string.Format("data:image/gif;base64,{0}", base64CodigoBarras);
 
+
+
+
+
                 if (convertLinhaDigitavelToImage)
                 {
 
@@ -1342,7 +1346,7 @@ namespace BoletoNet
             Stream streamLogo = null;
             try
             {
-                var assembly = Assembly.GetExecutingAssembly();
+                Assembly assembly = Assembly.GetExecutingAssembly();
                 streamLogo = assembly.GetManifestResourceStream(string.Format("BoletoNet.Imagens.{0}.jpg", codigoBanco.ToString("000")));
                 return new BinaryReader(streamLogo).ReadBytes((int)streamLogo.Length);
             }

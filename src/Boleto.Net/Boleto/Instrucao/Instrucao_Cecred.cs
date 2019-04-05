@@ -47,10 +47,54 @@ namespace BoletoNet {
             try {
 
                 this.Banco = new Banco_Cecred();
-
-                this.Codigo = codigo;
-                // TODO Implementar descricao do código de remessa para cecred
-
+                
+                switch ((EnumInstrucoes_Cecred)codigo)
+                {
+                    case EnumInstrucoes_Cecred.CadastroDeTitulo:
+                        this.Codigo = (int)EnumInstrucoes_Bradesco.Protestar;
+                        this.Descricao = "Cadastro De Título";
+                        break;
+                    case EnumInstrucoes_Cecred.PedidoBaixa:
+                        this.Codigo = (int)EnumInstrucoes_Bradesco.Protestar;
+                        this.Descricao = "Pedido de Baixa";
+                        break;
+                    case EnumInstrucoes_Cecred.ConcessaoAbatimento:
+                        this.Codigo = (int)EnumInstrucoes_Bradesco.Protestar;
+                        this.Descricao = "Concessão de Abatimento";
+                        break;
+                    case EnumInstrucoes_Cecred.CancelamentoAbatimentoConcedido:
+                        this.Codigo = (int)EnumInstrucoes_Bradesco.Protestar;
+                        this.Descricao = "Cancelamento Abatimento Concedido";
+                        break;
+                    case EnumInstrucoes_Cecred.AlteracaoVencimento:
+                        this.Codigo = (int)EnumInstrucoes_Bradesco.Protestar;
+                        this.Descricao = "Alteração Vencimento";
+                        break;
+                    case EnumInstrucoes_Cecred.PedidoProtesto:
+                        this.Codigo = (int)EnumInstrucoes_Bradesco.Protestar;
+                        this.Descricao = "Pedido Protesto";
+                        break;
+                    case EnumInstrucoes_Cecred.SustarProtestoBaixarTitulo:
+                        this.Codigo = (int)EnumInstrucoes_Bradesco.Protestar;
+                        this.Descricao = "Sustar Protesto / Baixar Título";
+                        break;
+                    case EnumInstrucoes_Cecred.AlteracaoNomeEnderecoPagador:
+                        this.Codigo = (int)EnumInstrucoes_Bradesco.Protestar;
+                        this.Descricao = "Alteração Nome Endereço Pagador";
+                        break;
+                    case EnumInstrucoes_Cecred.LiquidacaoDeTituloNaoRegristroOuPagamentoEmDuplicidade:
+                        this.Codigo = (int)EnumInstrucoes_Bradesco.Protestar;
+                        this.Descricao = "Liquidação De Título Não Regristro Ou Pagamento Em Duplicidade";
+                        break;
+                    case EnumInstrucoes_Cecred.ConcederDesconto:
+                        this.Codigo = (int)EnumInstrucoes_Bradesco.Protestar;
+                        this.Descricao = "Conceder Desconto";
+                        break;
+                    case EnumInstrucoes_Cecred.NaoConcederDesconto:
+                        this.Codigo = (int)EnumInstrucoes_Bradesco.Protestar;
+                        this.Descricao = "Não Conceder Desconto";
+                        break;
+                }
             } catch (Exception ex) {
                 throw new Exception("Erro ao carregar objeto", ex);
             }

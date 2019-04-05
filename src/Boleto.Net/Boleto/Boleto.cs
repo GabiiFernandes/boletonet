@@ -1,5 +1,9 @@
+using System.Web.UI;
+
+[assembly: WebResource("BoletoNet.Imagens.barra.gif", "image/gif")]
 namespace BoletoNet
 {
+
 	using System;
 	using System.Collections.Generic;
 	using System.ComponentModel;
@@ -7,8 +11,12 @@ namespace BoletoNet
 	using System.Collections.ObjectModel;
 
 	using global::BoletoNet.DemonstrativoValoresBoleto;
+    using System.Drawing;
+    using System.IO;
+    using System.Reflection;
 
-	[Serializable, Browsable(false)]
+
+    [Serializable, Browsable(false)]
 	public class Boleto
 	{
 		#region Variaveis
@@ -673,6 +681,115 @@ namespace BoletoNet
         {
             this.Instrucoes.Add(instrucao);
         }
+
+        public string getLinhaDigitavelImageBase64()
+        {
+            string linhaDigitavel = CodigoBarra.LinhaDigitavel.Replace("  ", " ").Trim();
+
+            var imagemLinha = Utils.DrawText(linhaDigitavel, new Font("Arial", 30, FontStyle.Bold), Color.Black, Color.White);
+            string base64Linha = Convert.ToBase64String(Utils.ConvertImageToByte(imagemLinha));
+
+            //string fnLinha = string.Format("data:image/gif;base64,{0}", base64Linha);
+
+            return base64Linha;
+        }
+
+        public string getCodigoBarraImageBase64()
+        {
+
+            var cb = new C2of5i(CodigoBarra.Codigo, 1, 50, CodigoBarra.Codigo.Length);
+            string base64CodigoBarras = Convert.ToBase64String(cb.ToByte());
+            //string fnCodigoBarras = string.Format("data:image/gif;base64,{0}", base64CodigoBarras);
+            
+            return base64CodigoBarras;
+        }
+
+        public string getLogoBancoImageBase64()
+        {
+            string base64Logo = Convert.ToBase64String(ObterLogoDoBanco((short)Banco.Codigo));
+            //string fnLogo = string.Format("data:image/gif;base64,{0}", base64Logo);
+            
+            return base64Logo;
+        }
+
+        public string getAgenciaCodigoCedente()
+        {
+            string agenciaConta = Utils.FormataAgenciaConta(Cedente.ContaBancaria.Agencia, Cedente.ContaBancaria.DigitoAgencia, Cedente.ContaBancaria.Conta, Cedente.ContaBancaria.DigitoConta);
+
+            // Trecho adicionado por Fabrício Nogueira de Almeida :fna - fnalmeida@gmail.com - 09/12/2008
+            /* Esse código foi inserido pq no campo Agência/Cod Cedente, estava sendo impresso sempre a agência / número da conta
+			 * No boleto da caixa que eu fiz, coloquei no método validarBoleto um trecho para calcular o dígito do cedente, e adicionei esse atributo na classe cedente
+			 * O trecho abaixo testa se esse digito foi calculado, se foi insere no campo Agencia/Cod Cedente, a agência e o código com seu digito
+			 * caso contrário mostra a agência / conta, como era anteriormente.
+			 * Com esse código ele ira atender as necessidades do boleto caixa e não afetará os demais
+			 * Caso queira que apareça o Agência/cod. cedente para outros boletos, basta calcular e setar o digito, como foi feito no boleto Caixa 
+			 */
+
+            string agenciaCodigoCedente;
+
+            if (!Cedente.DigitoCedente.Equals(-1))
+            {
+                if (!String.IsNullOrEmpty(Cedente.ContaBancaria.OperacaConta))
+                    agenciaCodigoCedente = string.Format("{0}/{1}.{2}-{3}", Cedente.ContaBancaria.Agencia, Cedente.ContaBancaria.OperacaConta, Utils.FormatCode(Cedente.Codigo.ToString(), 6), Cedente.DigitoCedente.ToString());
+
+                switch (Banco.Codigo)
+                {
+                    case 748:
+                        agenciaCodigoCedente = string.Format("{0}.{1}.{2}", Cedente.ContaBancaria.Agencia, Cedente.ContaBancaria.OperacaConta, Utils.FormatCode(Cedente.ContaBancaria.Conta, 5));
+                        break;
+                    case 41:
+                        agenciaCodigoCedente = string.Format("{0}.{1}/{2}.{3}.{4}", Cedente.ContaBancaria.Agencia, Cedente.ContaBancaria.DigitoAgencia, Cedente.Codigo.Substring(4, 6), Cedente.Codigo.Substring(10, 1), Cedente.DigitoCedente);
+                        break;
+                    case 1:
+                        agenciaCodigoCedente = string.Format("{0}-{1}/{2}-{3}", Cedente.ContaBancaria.Agencia, Cedente.ContaBancaria.DigitoAgencia, Utils.FormatCode(Cedente.ContaBancaria.Conta, 6), Cedente.ContaBancaria.DigitoConta);
+                        break;
+                    case 399:
+                        agenciaCodigoCedente = string.Format("{0}/{1}", Cedente.ContaBancaria.Agencia, Utils.FormatCode(Cedente.Codigo.ToString() + Cedente.DigitoCedente.ToString(), 7));
+                        break;
+                    default:
+                        agenciaCodigoCedente = string.Format("{0}/{1}-{2}", Cedente.ContaBancaria.Agencia, Utils.FormatCode(Cedente.Codigo.ToString(), 6), Cedente.DigitoCedente.ToString());
+                        break;
+                }
+            }
+            else
+            {
+                //Para banco SANTANDER, a formatação do campo "Agencia/Identif.Cedente" - por jsoda em 07/05/2012
+                if (Banco.Codigo == 33)
+                {
+                    agenciaCodigoCedente = string.Format("{0}-{1}/{2}", Cedente.ContaBancaria.Agencia, Cedente.ContaBancaria.DigitoAgencia, Utils.FormatCode(Cedente.Codigo.ToString(), 6));
+                    if (String.IsNullOrEmpty(Cedente.ContaBancaria.DigitoAgencia))
+                        agenciaCodigoCedente = String.Format("{0}/{1}", Cedente.ContaBancaria.Agencia, Utils.FormatCode(Cedente.Codigo.ToString(), 6));
+                }
+                else if (Banco.Codigo == 399)
+                    //agenciaCodigoCedente = Utils.FormatCode(Cedente.Codigo.ToString(), 7); -> para Banco HSBC mostra apenas código Cedente - por Ponce em 08/06/2012
+                    agenciaCodigoCedente = String.Format("{0}/{1}", Cedente.ContaBancaria.Agencia, Utils.FormatCode(Cedente.Codigo.ToString(), 7)); //Solicitação do HSBC que mostrasse agencia/Conta - por Transis em 24/02/15
+                else if (Banco.Codigo == 748)
+                    agenciaCodigoCedente = string.Format("{0}.{1}.{2}", Cedente.ContaBancaria.Agencia, Cedente.ContaBancaria.OperacaConta, Utils.FormatCode(Cedente.ContaBancaria.Conta, 5));
+                else
+                    agenciaCodigoCedente = agenciaConta;
+            }
+
+            return agenciaCodigoCedente;
+        }
+
+        private static byte[] ObterLogoDoBanco(short codigoBanco)
+        {
+            Stream streamLogo = null;
+            try
+            {
+                Assembly assembly = Assembly.GetExecutingAssembly();
+                streamLogo = assembly.GetManifestResourceStream(string.Format("BoletoNet.Imagens.{0}.jpg", codigoBanco.ToString("000")));
+                return new BinaryReader(streamLogo).ReadBytes((int)streamLogo.Length);
+            }
+            finally
+            {
+                if (streamLogo != null)
+                {
+                    streamLogo.Close();
+                }
+            }
+        }
+
         #endregion
     }
 }
