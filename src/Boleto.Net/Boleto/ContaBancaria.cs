@@ -80,11 +80,16 @@ namespace BoletoNet
         /// Digito da Conta Corrente
         /// </summary>
         public string DigitoConta { get; set; }
-        
+
         /// <summary>
         /// Opreração da Conta Corrente
         /// </summary>
         public string OperacaConta { get; set; }
+
+        /// <summary>
+        /// Opreração da Conta Corrente
+        /// </summary>
+        public string DigitoAgenciaConta { get; set; }
         #endregion Properties
     }
 }

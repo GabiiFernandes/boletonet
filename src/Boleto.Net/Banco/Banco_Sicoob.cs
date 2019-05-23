@@ -405,7 +405,7 @@ namespace BoletoNet
                 header += Utils.FormatCode(cedente.ContaBancaria.DigitoAgencia, "0", 1);  //Posição 058 a 058 Digito Agência
                 header += Utils.FormatCode(cedente.ContaBancaria.Conta, "0", 12, true);   //Posição 059 a 070
                 header += cedente.ContaBancaria.DigitoConta;  //Posição 071 a 71
-                header += new string(' ', 1); //Posição 072 a 72     Dígito Verificador da Ag/Conta: Brancos
+                header += Utils.FormatCode(cedente.ContaBancaria.DigitoAgenciaConta, " ", 1, true); //Posição 072 a 72     Dígito Verificador da Ag/Conta: Brancos
                 header += Utils.FormatCode(cedente.Nome, " ", 30);  //Posição 073 a 102      Nome do Banco: SICOOB
                 header += Utils.FormatCode("SICOOB", " ", 30);     //Posição 103 a 132       Nome da Empresa
                 header += Utils.FormatCode("", " ", 10);     //Posição 133 a 142  Uso Exclusivo FEBRABAN / CNAB: Brancos
@@ -480,7 +480,7 @@ namespace BoletoNet
                 header += Utils.FormatCode(cedente.ContaBancaria.DigitoAgencia, "0", 1, true);//Posição 059 a 059
                 header += Utils.FormatCode(cedente.ContaBancaria.Conta, "0", 12, true);   //Posição 060 a 071
                 header += Utils.FormatCode(cedente.ContaBancaria.DigitoConta, "0", 1, true);  //Posição 072 a 72
-                header += new string(' ', 1); //Posição 073     Dígito Verificador da Ag/Conta: Brancos
+                header += Utils.FormatCode(cedente.ContaBancaria.DigitoAgenciaConta, " ", 1, true); //Posição 073     Dígito Verificador da Ag/Conta: Brancos
                 header += Utils.FormatCode(cedente.Nome, " ", 30);  //Posição 074 a 103      Nome do Banco: SICOOB
                 header += Utils.FormatCode("", " ", 40);   // Posição 104 a 143 Informação 1			
                 header += Utils.FormatCode("", " ", 40);   // Posição 144 a 183 Informação 2
@@ -721,7 +721,7 @@ namespace BoletoNet
                 detalhe += Utils.FormatCode(instrucaoProtesto,  1);     //Posição 221       - Código do protesto
                 detalhe += Utils.FormatCode(diasProtesto,       2);     //Posição 222 a 223 - Número de dias para protesto
                 detalhe += Utils.FormatCode("0", 1);     //Posição 224  - Código para Baixa/Devolução: "0"
-                detalhe += Utils.FormatCode("0", 3);     //Posição 225 A 227  - Número de Dias para Baixa/Devolução: Brancos
+                detalhe += Utils.FormatCode("   ", 3);     //Posição 225 A 227  - Número de Dias para Baixa/Devolução: Brancos
                 #endregion
                 
                 detalhe += Utils.FormatCode(boleto.Moeda.ToString(), "0", 2, true); //Posição 228 A 229  - Código da Moeda
@@ -1099,8 +1099,8 @@ namespace BoletoNet
                 detalhe.NossoNumero = registro.Substring(37, 20);
                 detalhe.CodigoCarteira = Convert.ToInt32(registro.Substring(57, 1));
                 detalhe.NumeroDocumento = registro.Substring(58, 15);
-                int dataVencimento = Convert.ToInt32(registro.Substring(73, 8));
-                detalhe.DataVencimento = Convert.ToDateTime(dataVencimento.ToString("##-##-####"));
+                //int dataVencimento = Convert.ToInt32(registro.Substring(73, 8));
+               // detalhe.DataVencimento = Convert.ToDateTime(dataVencimento.ToString("##-##-####"));
                 decimal valorTitulo = Convert.ToInt64(registro.Substring(81, 15));
                 detalhe.ValorTitulo = valorTitulo / 100;
                 detalhe.IdentificacaoTituloEmpresa = registro.Substring(105, 25);
