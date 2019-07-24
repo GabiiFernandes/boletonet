@@ -19,7 +19,7 @@ namespace BoletoNet {
     // class via a tool like ResGen or Visual Studio.
     // To add or remove a member, edit your .ResX file then rerun ResGen
     // with the /str option, or rebuild your VS project.
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "4.0.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "15.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     internal class Html {
@@ -559,8 +559,8 @@ namespace BoletoNet {
         ///						&lt;td class=&quot;w478 BL&quot;&gt;
         ///								&lt;div class=&quot;cpN pL6&quot;&gt;@INFOSACADO&lt;/div&gt;
         ///						&lt;/td&gt;
-        ///						&lt;td class=&quot;Ab BL&quot;&gt;
-        ///								&lt;div class=&quot;ctN pL6&quot;&gt;Cód. baixa&lt;/div&gt;
+        ///						&lt;td class=&quot;Ab BL w186&quot;&gt;
+        ///								&lt;div class=&quot;ctN pL6 w186&quot;&gt;Cód. baixa&lt;/div&gt;
         ///						&lt;/td&gt;
         ///				&lt;/tr&gt;
         ///		&lt;/table&gt;.

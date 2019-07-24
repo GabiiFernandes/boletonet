@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Globalization;
 using System.Text;
 using System.Web.UI;
 using BoletoNet.Util;
@@ -405,7 +406,7 @@ namespace BoletoNet
                 header += Utils.FormatCode(cedente.ContaBancaria.DigitoAgencia, "0", 1);  //Posição 058 a 058 Digito Agência
                 header += Utils.FormatCode(cedente.ContaBancaria.Conta, "0", 12, true);   //Posição 059 a 070
                 header += cedente.ContaBancaria.DigitoConta;  //Posição 071 a 71
-                header += Utils.FormatCode(cedente.ContaBancaria.DigitoAgenciaConta, " ", 1, true); //Posição 072 a 72     Dígito Verificador da Ag/Conta: Brancos
+                header += Utils.FormatCode((cedente.ContaBancaria.DigitoAgenciaConta != null ? cedente.ContaBancaria.DigitoAgenciaConta:" "), " ", 1, true); //Posição 072 a 72     Dígito Verificador da Ag/Conta: Brancos
                 header += Utils.FormatCode(cedente.Nome, " ", 30);  //Posição 073 a 102      Nome do Banco: SICOOB
                 header += Utils.FormatCode("SICOOB", " ", 30);     //Posição 103 a 132       Nome da Empresa
                 header += Utils.FormatCode("", " ", 10);     //Posição 133 a 142  Uso Exclusivo FEBRABAN / CNAB: Brancos
@@ -422,7 +423,7 @@ namespace BoletoNet
             }
             catch (Exception ex)
             {
-                throw new Exception("Erro ao gerar HEADER do arquivo de remessa do CNAB400.", ex);
+                throw new Exception("Erro ao gerar HEADER do arquivo de remessa do CNAB240.", ex);
             }
         }
 
@@ -480,7 +481,7 @@ namespace BoletoNet
                 header += Utils.FormatCode(cedente.ContaBancaria.DigitoAgencia, "0", 1, true);//Posição 059 a 059
                 header += Utils.FormatCode(cedente.ContaBancaria.Conta, "0", 12, true);   //Posição 060 a 071
                 header += Utils.FormatCode(cedente.ContaBancaria.DigitoConta, "0", 1, true);  //Posição 072 a 72
-                header += Utils.FormatCode(cedente.ContaBancaria.DigitoAgenciaConta, " ", 1, true); //Posição 073     Dígito Verificador da Ag/Conta: Brancos
+                header += Utils.FormatCode((cedente.ContaBancaria.DigitoAgenciaConta != null ? cedente.ContaBancaria.DigitoAgenciaConta : " "), " ", 1, true); //Posição 073     Dígito Verificador da Ag/Conta: Brancos
                 header += Utils.FormatCode(cedente.Nome, " ", 30);  //Posição 074 a 103      Nome do Banco: SICOOB
                 header += Utils.FormatCode("", " ", 40);   // Posição 104 a 143 Informação 1			
                 header += Utils.FormatCode("", " ", 40);   // Posição 144 a 183 Informação 2
@@ -1090,6 +1091,8 @@ namespace BoletoNet
                 if (registro.Substring(13, 1) != "T")
                     throw new Exception("Registro inválido. O detalhe não possuí as características do segmento T.");
 
+                CultureInfo cultureBr = new CultureInfo("pt-BR");
+
                 detalhe.CodigoBanco = Convert.ToInt32(registro.Substring(0, 3));
                 detalhe.idCodigoMovimento = Convert.ToInt32(registro.Substring(15, 2));
                 detalhe.Agencia = Convert.ToInt32(registro.Substring(17, 5));
@@ -1099,8 +1102,8 @@ namespace BoletoNet
                 detalhe.NossoNumero = registro.Substring(37, 20);
                 detalhe.CodigoCarteira = Convert.ToInt32(registro.Substring(57, 1));
                 detalhe.NumeroDocumento = registro.Substring(58, 15);
-                //int dataVencimento = Convert.ToInt32(registro.Substring(73, 8));
-               // detalhe.DataVencimento = Convert.ToDateTime(dataVencimento.ToString("##-##-####"));
+                int dataVencimento = Convert.ToInt32(registro.Substring(73, 8));
+                detalhe.DataVencimento = Convert.ToDateTime(dataVencimento.ToString("##-##-####"), cultureBr);
                 decimal valorTitulo = Convert.ToInt64(registro.Substring(81, 15));
                 detalhe.ValorTitulo = valorTitulo / 100;
                 detalhe.IdentificacaoTituloEmpresa = registro.Substring(105, 25);
@@ -1130,13 +1133,18 @@ namespace BoletoNet
                     throw new Exception("Registro inválido. O detalhe não possuí as características do segmento U.");
 
                 detalhe.CodigoOcorrenciaSacado = registro.Substring(15, 2);
+
+                CultureInfo cultureBr = new CultureInfo("pt-BR");
+
                 int DataCredito = Convert.ToInt32(registro.Substring(145, 8));
-                detalhe.DataCredito = (DataCredito > 0) ? Convert.ToDateTime(DataCredito.ToString("##-##-####")) : new DateTime();
+                detalhe.DataCredito = (DataCredito > 0) ? Convert.ToDateTime(DataCredito.ToString("##-##-####"), cultureBr) : new DateTime();
+
                 int DataOcorrencia = Convert.ToInt32(registro.Substring(137, 8));
-                detalhe.DataOcorrencia = (DataOcorrencia > 0) ? Convert.ToDateTime(DataOcorrencia.ToString("##-##-####")) : new DateTime();
+                detalhe.DataOcorrencia = (DataOcorrencia > 0) ? Convert.ToDateTime(DataOcorrencia.ToString("##-##-####"), cultureBr) : new DateTime();
+
                 int DataOcorrenciaSacado = Convert.ToInt32(registro.Substring(157, 8));
                 if (DataOcorrenciaSacado > 0)
-                    detalhe.DataOcorrenciaSacado = Convert.ToDateTime(DataOcorrenciaSacado.ToString("##-##-####"));
+                    detalhe.DataOcorrenciaSacado = Convert.ToDateTime(DataOcorrenciaSacado.ToString("##-##-####"), cultureBr);
                 else
                     detalhe.DataOcorrenciaSacado = DateTime.Now;
 

@@ -30,13 +30,14 @@ img {
 }
 
 .ld {
-	font: bold 15px arial;
+	font: bold 21px arial;
 	color: #000000;
 }
 
 .ct {
-	font: 9px "arial narrow";
-	color: #000033;
+    font: 9px "arial";
+    /*font: 9px "arial narrow";*/
+    color: #000033;
 }
 
 .cn {
@@ -86,8 +87,9 @@ img {
 }
 
 .ctN {
-	font: 9px "arial narrow";
-	color: #000033;
+    /*font: 9px "arial narrow";*/
+    font: 9px "arial";
+    color: #000033;
 }
 
 .pL0 {
@@ -106,10 +108,10 @@ img {
 	width: 150px;
 }
 
-	.imgLogo img {
-		width: 150px;
-		height: 40px;
-	}
+    .imgLogo img {
+	    width: 100%;
+	    height: 40px;
+    }
 
 .barra {
 	width: 3px;
@@ -338,9 +340,10 @@ img {
 }
 
 .rc6 .t {
-	font: 9px "arial narrow";
-	color: #000033;
-	height: 13px;
+    /*font: 9px "arial narrow";*/
+    font: 9px "arial";
+    color: #000033;
+    height: 13px;
 }
 
 .rc6 .c {

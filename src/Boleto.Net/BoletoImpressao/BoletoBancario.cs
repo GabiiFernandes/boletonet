@@ -670,6 +670,8 @@ namespace BoletoNet
 
             string dataVencimento = Boleto.DataVencimento.ToString("dd/MM/yyyy");
 
+            string numeroDocumento = string.Format("{0}/{1}/{2}", Boleto.NumeroDocumento.Substring(0, 6), Boleto.NumeroDocumento.Substring(8), Boleto.NumeroDocumento.Substring(6, 2));
+
             if (MostrarContraApresentacaoNaDataVencimento)
                 dataVencimento = "Contra Apresentação";
 
@@ -696,7 +698,7 @@ namespace BoletoNet
                         : string.Format("{0}&nbsp;&nbsp;&nbsp;CNPJ: {1}", Cedente.Nome, Cedente.CPFCNPJcomMascara))
                 .Replace("@CEDENTE", Cedente.Nome)
                 .Replace("@DATADOCUMENTO", Boleto.DataDocumento.ToString("dd/MM/yyyy"))
-                .Replace("@NUMERODOCUMENTO", Boleto.NumeroDocumento)
+                .Replace("@NUMERODOCUMENTO", numeroDocumento)
                 .Replace("@ESPECIEDOCUMENTO", EspecieDocumento.ValidaSigla(Boleto.EspecieDocumento))
                 .Replace("@DATAPROCESSAMENTO", Boleto.DataProcessamento.ToString("dd/MM/yyyy"))
 
@@ -1281,7 +1283,7 @@ namespace BoletoNet
         /// <param name="BoletosPorPagina">Quantidade de Boletos até o próximo LineBreak. Lembre de Utilizar o Zoom para ajustar a página</param>
         /// <param name="ZoomPercent">Percentual da Scala do PDF. Para 3 Boletos na mesma Página com Carnê utilize 80%</param>				
         /// <returns>byte[], Vetor de bytes do PDF</returns>
-        public byte[] MontaBytesListaBoletosPDF(List<BoletoBancario> boletos, string tituloNaView = "", string CustomSwitches = "", string tituloPDF = "", bool PretoBranco = false, bool convertLinhaDigitavelToImage = false, int BoletosPorPagina = 1, float ZoomPercent = 100)
+        public byte[] MontaBytesListaBoletosPDF(List<BoletoBancario> boletos, string tituloNaView = "Boleto Bancário", string CustomSwitches = "", string tituloPDF = "", bool PretoBranco = false, bool convertLinhaDigitavelToImage = false, int BoletosPorPagina = 1, float ZoomPercent = 100)
         {
             StringBuilder htmlBoletos = new StringBuilder();
             HtmlOfflineHeader(htmlBoletos, true, tituloNaView);
@@ -1327,6 +1329,23 @@ namespace BoletoNet
             }
 
             return converter.GeneratePdf(htmlBoletos.ToString());
+        }
+
+        public void GravaPdfArquivo(List<BoletoBancario> boletos, string path)
+        {
+            //Read file to byte array
+
+           // FileStream stream = File.OpenRead(path);
+            byte[] fileBytes = MontaBytesListaBoletosPDF(boletos);
+
+           // stream.Read(fileBytes, 0, fileBytes.Length);
+           // stream.Close();
+            //Begins the process of writing the byte array back to a file
+
+            using (Stream file = File.OpenWrite(path))
+            {
+                file.Write(fileBytes, 0, fileBytes.Length);
+            }
         }
 
         #endregion Geração do Html OffLine

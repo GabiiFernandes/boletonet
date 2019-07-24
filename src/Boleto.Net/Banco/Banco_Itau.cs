@@ -1257,7 +1257,10 @@ namespace BoletoNet
                 // a) 2o e 3o descontos: para de operar com mais de um desconto(depende de cadastramento prévio do 
                 // indicador 19.0 pelo Banco Itaú, conforme item 5)
                 // b) Mensagens ao sacado: se utilizados as instruções 93 ou 94 (Nota 11), transcrever a mensagem desejada
-                _detalhe += Utils.FitStringLength(boleto.Sacado.Nome, 30, 30, ' ', 0, true, true, false).ToUpper();
+
+                _detalhe += Utils.FitStringLength((boleto.Avalista != null ? boleto.Avalista.CPFCNPJ + " " + boleto.Avalista.Nome : ""), 30, 30, ' ', 0, true, true, false);
+
+
                 _detalhe += "    "; // Complemento do registro
                 _detalhe += boleto.DataVencimento.ToString("ddMMyy");
                 // PRAZO - Quantidade de DIAS - ver nota 11(A) - depende das instruções de cobrança 

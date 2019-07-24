@@ -19,6 +19,7 @@ namespace BoletoNet
         private int _numeroBordero;
         private int _digitoCedente = -1;
         private string _carteira;
+        private string _variacaoCarteira;
         private Endereco _endereco;
         private IList<IInstrucao> _instrucoes = new List<IInstrucao>();
         private bool _mostrarCNPJnoBoleto = false;
@@ -27,6 +28,7 @@ namespace BoletoNet
 
         public Cedente()
         {
+
         }
 
         public Cedente(ContaBancaria contaBancaria)
@@ -244,6 +246,21 @@ namespace BoletoNet
             set
             {
                 _carteira = value;
+            }
+        }
+
+        /// <summary>
+        /// Variação da Carteira
+        /// </summary>
+        public string VariacaoCarteira
+        {
+            get
+            {
+                return _variacaoCarteira;
+            }
+            set
+            {
+                _variacaoCarteira = value;
             }
         }
 

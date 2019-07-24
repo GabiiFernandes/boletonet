@@ -1864,14 +1864,20 @@ namespace BoletoNet
                 _headerLote += Utils.FitStringLength(cedente.CPFCNPJ, 15, 15, '0', 0, true, true, true);
                 _headerLote += Utils.FitStringLength(numeroConvenio, 9, 9, '0', 0, true, true, true);
                 _headerLote += "0014";
-                // O Código da carteira é dividida em 2 partes:
-                // - nº da carteira 9(02)
-                // - variação (se houver) 9(03)
-                if (cedente.Carteira.Length == 2)
-                    _headerLote += cedente.Carteira.ToString() + "019  ";
-                else
-                    _headerLote += cedente.Carteira.Replace("-", "") + "  ";
 
+
+
+                _headerLote += Utils.FitStringLength(cedente.Carteira, 2, 2, '0', 0, true, true, true);
+                _headerLote += Utils.FitStringLength(cedente.VariacaoCarteira, 3, 3, '0', 0, true, true, true);
+
+                /*// adicionado por Heric Souza em 02/06/2017
+                if (cedente.Carteira.Length == 2)
+                    _header += cedente.Carteira.ToString() + "019";
+                else
+                    _header += Utils.FitStringLength(cedente.Carteira.Replace("-", ""), 5, 5, ' ', 0, true, true, false);
+                */
+
+                _headerLote += "  ";
                 _headerLote += Utils.FitStringLength(cedente.ContaBancaria.Agencia, 5, 5, '0', 0, true, true, true);
                 _headerLote += Utils.FitStringLength(cedente.ContaBancaria.DigitoAgencia, 1, 1, '0', 0, true, true, true);
                 _headerLote += Utils.FitStringLength(cedente.ContaBancaria.Conta, 12, 12, '0', 0, true, true, true);
@@ -1914,13 +1920,17 @@ namespace BoletoNet
                 _header += Utils.FitStringLength(cedente.CPFCNPJ, 14, 14, '0', 0, true, true, true);
                 _header += Utils.FitStringLength(cedente.Convenio.ToString(), 9, 9, '0', 0, true, true, true);
                 _header += "0014";
-                // adicionado por Heric Souza em 02/06/2017
+
+                _header += Utils.FitStringLength(cedente.Carteira, 2, 2, '0', 0, true, true, true);
+                _header += Utils.FitStringLength(cedente.VariacaoCarteira, 3, 3, '0', 0, true, true, true);
+
+                /*// adicionado por Heric Souza em 02/06/2017
                 if (cedente.Carteira.Length == 2)
                     _header += cedente.Carteira.ToString() + "019";
                 else
                     _header += Utils.FitStringLength(cedente.Carteira.Replace("-", ""), 5, 5, ' ', 0, true, true, false);
-                //_header += Utils.FitStringLength(cedente.Carteira, 2, 2, '0', 0, true, true, true);
-                //_header += "019";
+                */
+
                 _header += "  ";
                 _header += Utils.FitStringLength(cedente.ContaBancaria.Agencia, 5, 5, '0', 0, true, true, true);
                 _header += Utils.FitStringLength(cedente.ContaBancaria.DigitoAgencia, 1, 1, ' ', 0, true, true, false);
