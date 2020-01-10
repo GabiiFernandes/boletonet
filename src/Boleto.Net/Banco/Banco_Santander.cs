@@ -248,7 +248,8 @@ namespace BoletoNet
 
             foreach (var numero in nossoNumeroArray)
             {
-                total += multiplicador * numero;
+                int numeroint = int.Parse(numero.ToString());
+                total += multiplicador * numeroint;
 
                 if (++multiplicador > 9)
                 {

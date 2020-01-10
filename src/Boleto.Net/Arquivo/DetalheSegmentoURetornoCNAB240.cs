@@ -184,9 +184,10 @@ namespace BoletoNet
                 string dataOcorrencia = registro.Substring(137, 8);
                 //DataOcorrencia = Convert.ToDateTime(dataOcorrencia.ToString("##-##-####"));
                 DataOcorrencia = DateTime.ParseExact(dataOcorrencia, "ddMMyyyy", CultureInfo.InvariantCulture);
-                string dataCredito = registro.Substring(145, 8);
+                string dataCredito = registro.Substring(145, 8).Trim();
                 if (!string.IsNullOrEmpty(dataCredito) && (dataCredito) != "00000000")
                 {
+                    //throw new Exception("dataCredito - SEGMENTO U. " + dataCredito);
                     //DataCredito = Convert.ToDateTime(dataCredito.ToString("##-##-####"));
                     DataCredito = DateTime.ParseExact(dataCredito, "ddMMyyyy", CultureInfo.InvariantCulture);
                 }

@@ -208,12 +208,13 @@ namespace BoletoNet
                 DigitoAgencia = registro.Substring(22, 1);
                 Conta = Convert.ToInt32(registro.Substring(23, 12));
                 DigitoConta = registro.Substring(35, 1);
-
                 NossoNumero = registro.Substring(37, 20);
                 CodigoCarteira = Convert.ToInt32(registro.Substring(57, 1));
                 NumeroDocumento = registro.Substring(58, 15);
-                int dataVencimento = Convert.ToInt32(registro.Substring(73, 8));
-                DataVencimento = Convert.ToDateTime(dataVencimento.ToString("##-##-####"));
+
+                //int dataVencimento = Convert.ToInt32(registro.Substring(73, 8));
+                //DataVencimento = Convert.ToDateTime(dataVencimento.ToString("##-##-####"));
+
                 decimal valorTitulo = Convert.ToInt64(registro.Substring(81, 15));
                 ValorTitulo = valorTitulo / 100;
                 IdentificacaoTituloEmpresa = registro.Substring(105, 25);

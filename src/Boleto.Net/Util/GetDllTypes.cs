@@ -228,7 +228,7 @@ namespace BoletoNet
                         break;
                     //85 - CECRED
                     case 85:
-                        _IInstrucao = new Instrucao_Cecred(codigoInstrucao);
+                        _IInstrucao = new Instrucao_Cecred(codigoInstrucao, quantidadeDias);
                         break;
                     //748 - Sicredi
                     case 748:

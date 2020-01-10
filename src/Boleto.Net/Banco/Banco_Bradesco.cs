@@ -1036,15 +1036,11 @@ namespace BoletoNet
                     {
                         case EnumInstrucoes_Bradesco.Protestar:
                             vInstrucao1 = "06"; //Indicar o código “06” - (Protesto)
-                            vInstrucao2 = "00";
                             break;
                         case EnumInstrucoes_Bradesco.NaoProtestar:
-                            vInstrucao1 = "00";
-                            vInstrucao2 = "00";
                             break;
                         case EnumInstrucoes_Bradesco.ProtestoFinsFalimentares:
                             vInstrucao1 = "06"; //Indicar o código “06” - (Protesto)
-                            vInstrucao2 = "00";
                             break;
                         case EnumInstrucoes_Bradesco.ProtestarAposNDiasCorridos:
                             vInstrucao1 = "06"; //Indicar o código “06” - (Protesto)
@@ -1055,12 +1051,32 @@ namespace BoletoNet
                             vInstrucao2 = Utils.FitStringLength(instrucao.QuantidadeDias.ToString(), 2, 2, '0', 0, true, true, true);
                             break;
                         case EnumInstrucoes_Bradesco.NaoReceberAposNDias:
-                            vInstrucao1 = "00";
-                            vInstrucao2 = "00";
                             break;
                         case EnumInstrucoes_Bradesco.DevolverAposNDias:
-                            vInstrucao1 = "00";
-                            vInstrucao2 = "00";
+                            break;
+                        case EnumInstrucoes_Bradesco.NaoCobrarJurosDeMora:
+                            vInstrucao1 = "08";
+                            break;
+                        case EnumInstrucoes_Bradesco.NaoReceberAposOVencimento:
+                            vInstrucao1 = "09";
+                            break;
+                        case EnumInstrucoes_Bradesco.MultasDe10AposO4DiaDoVencimento:
+                            vInstrucao1 = "10";
+                            break;
+                        case EnumInstrucoes_Bradesco.NaoReceberposo8DiaDoVencimento:
+                            vInstrucao1 = "11";
+                            break;
+                        case EnumInstrucoes_Bradesco.CobrarEncargosAposO5DiaDoVencimento:
+                            vInstrucao1 = "12";
+                            break;
+                        case EnumInstrucoes_Bradesco.CobrarEncargosAposO10DiaDoVencimento:
+                            vInstrucao1 = "13";
+                            break;
+                        case EnumInstrucoes_Bradesco.CobrarEncargosAposO15DiaDoVencimento:
+                            vInstrucao1 = "14";
+                            break;
+                        case EnumInstrucoes_Bradesco.ConcederDescontoMesmoSePagoAposOVencimento:
+                            vInstrucao1 = "15";
                             break;
                     }
                 }

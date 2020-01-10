@@ -572,12 +572,12 @@ namespace BoletoNet {
                         switch ((EnumInstrucoes_Cecred)instrucao.Codigo)
                         {
                             case EnumInstrucoes_Cecred.PedidoProtesto:
+                            case EnumInstrucoes_Cecred.PedidoBaixa:
                                 codProtesto = "1";
                                 diasProtesto = instrucao.QuantidadeDias.ToString();
                                 break;
-
-                            case EnumInstrucoes_Cecred.PedidoBaixa:
-                                codProtesto = "1";
+                            case EnumInstrucoes_Cecred.PedidoNegativacao:
+                                codProtesto = "2";
                                 diasProtesto = instrucao.QuantidadeDias.ToString();
                                 break;
                         }

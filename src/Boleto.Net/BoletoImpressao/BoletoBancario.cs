@@ -638,6 +638,9 @@ namespace BoletoNet
                     case 399:
                         agenciaCodigoCedente = string.Format("{0}/{1}", Cedente.ContaBancaria.Agencia, Utils.FormatCode(Cedente.Codigo.ToString() + Cedente.DigitoCedente.ToString(), 7));
                         break;
+                    case 237:
+                        agenciaCodigoCedente = string.Format("{0}-{1}/{2}-{3}", Cedente.ContaBancaria.Agencia, Cedente.ContaBancaria.DigitoAgencia, Utils.FormatCode(Cedente.Codigo.ToString(),6), Cedente.DigitoCedente.ToString());
+                        break;
                     default:
                         agenciaCodigoCedente = string.Format("{0}/{1}-{2}", Cedente.ContaBancaria.Agencia, Utils.FormatCode(Cedente.Codigo.ToString(), 6), Cedente.DigitoCedente.ToString());
                         break;
@@ -680,6 +683,13 @@ namespace BoletoNet
 
             var valorBoleto = (Boleto.ValorBoleto == 0 ? "" : Boleto.ValorBoleto.ToString("C", CultureInfo.GetCultureInfo("PT-BR")));
 
+            string especieDocumento;
+            if (Boleto.Banco.Codigo == 237)
+            {
+                especieDocumento = Boleto.EspecieDocumento.Especie;
+            }
+            else especieDocumento = EspecieDocumento.ValidaSigla(Boleto.EspecieDocumento);
+
             return html.Replace("@CODIGOBANCO", Utils.FormatCode(_ibanco.Codigo.ToString(), 3))
                 .Replace("@DIGITOBANCO", _ibanco.Digito)
                 //.Replace("@URLIMAGEMBARRAINTERNA", urlImagemBarraInterna)
@@ -699,7 +709,7 @@ namespace BoletoNet
                 .Replace("@CEDENTE", Cedente.Nome)
                 .Replace("@DATADOCUMENTO", Boleto.DataDocumento.ToString("dd/MM/yyyy"))
                 .Replace("@NUMERODOCUMENTO", numeroDocumento)
-                .Replace("@ESPECIEDOCUMENTO", EspecieDocumento.ValidaSigla(Boleto.EspecieDocumento))
+                .Replace("@ESPECIEDOCUMENTO", especieDocumento)
                 .Replace("@DATAPROCESSAMENTO", Boleto.DataProcessamento.ToString("dd/MM/yyyy"))
 
             #region Implementação para o Banco do Brasil

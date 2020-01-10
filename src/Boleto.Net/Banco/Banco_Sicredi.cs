@@ -434,7 +434,7 @@ namespace BoletoNet
                 reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediNumericoSemSeparador_, 0127, 015, 2, jurosMora, '0'));
 
                 //30.3P Cód. desc. 1 Código do desconto 1 142 142 1 - Num Código do desconto
-                reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediNumericoSemSeparador_, 0142, 001, 0, (boleto.ValorDesconto > 0 ? "1" : "0"), '0'));
+                reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediNumericoSemSeparador_, 0142, 001, 0, '1', '0'));
 
                 //31.3P Data desc. 1 Data do desconto 1 143 150 8 - Num (formato DDMMAAAA)
                 reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediNumericoSemSeparador_, 0143, 008, 0, boleto.DataDesconto, '0'));
@@ -482,7 +482,7 @@ namespace BoletoNet
                 reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediNumericoSemSeparador_, 228, 002, 0, boleto.Moeda, '0'));
 
                 //41.3P Número do contrato Nº do contrato da operação de créd. 230 239 10 - Num Zeros (C030) O Sicredi atualmente não utiliza este campo
-                reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediNumericoSemSeparador_, 0230, 010, 0, numeroRegistro, '0'));
+                reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediNumericoSemSeparador_, 0230, 010, 0, 0, '0'));
 
                 //42.3P CNAB Uso exclusivo FEBRABAN/CNAB 240 240 1 - Alfa Brancos
                 reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediAlphaAliEsquerda_____, 0240, 001, 0, "", ' '));
@@ -603,7 +603,7 @@ namespace BoletoNet
                 reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediNumericoSemSeparador_, 0016, 002, 0, boleto.Remessa.CodigoOcorrencia, '0'));                                          // posição 016-017 (002) - Código de Movimento Remessa
 
                 //08.3Q Dados Inscrição Tipo Tipo de inscrição 18 18 1 - Num 
-                reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediNumericoSemSeparador_, 0018, 001, 0, boleto.Cedente.CPFCNPJ.Length == 11 ? "1" : "2", '0'));                                   // posição 018-018 (001) - Tipo de Inscrição 
+                reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediNumericoSemSeparador_, 0018, 001, 0, boleto.Sacado.CPFCNPJ.Length > 11 ? "2" : "1", '0'));                                   // posição 018-018 (001) - Tipo de Inscrição 
 
                 //09.3Q Número Número de inscrição 19 33 15 - Num 
                 reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediNumericoSemSeparador_, 0019, 015, 0, boleto.Sacado.CPFCNPJ, '0'));                         // posição 019-033 (015) - Número de Inscrição da empresa
@@ -719,7 +719,7 @@ namespace BoletoNet
                 reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediAlphaAliEsquerda_____, 0012, 002, 0, "", ' '));
 
                 //07.1 Leiaute do lote Nº da versão do leiaute do lote 14 16 3 - Num '040'
-                reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediNumericoSemSeparador_, 0014, 003, 0, "1", '0'));
+                reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediNumericoSemSeparador_, 0014, 003, 0, "040", '0'));
 
                 //08.1 CNAB Uso exclusivo FEBRABAN/CNAB 17 17 1 - Alfa Brancos 
                 reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediAlphaAliEsquerda_____, 0017, 001, 0, "", ' '));
@@ -731,7 +731,7 @@ namespace BoletoNet
                 reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediNumericoSemSeparador_, 0019, 015, 0, cedente.CPFCNPJ, '0'));
 
                 //11.1 Código do convênio no banco 34 53 20 - Alfa Brancos
-                reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediAlphaAliEsquerda_____, 0034, 020, 0, cedente.Convenio.ToString(), ' '));
+                reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediAlphaAliEsquerda_____, 0034, 020, 0, "", ' '));
 
                 //12.1 C/ Agência C Agência mantenedora da conta 54 58 5 - Num 
                 reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediNumericoSemSeparador_, 0054, 005, 0, cedente.ContaBancaria.Agencia, '0'));
@@ -808,7 +808,7 @@ namespace BoletoNet
                 reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediNumericoSemSeparador_, 0019, 014, 0, cedente.CPFCNPJ, '0'));
 
                 //07.0 Convênio Código do convênio no banco 33 52 20 - Alfa Brancos
-                reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediAlphaAliEsquerda_____, 0033, 020, 0, cedente.Convenio.ToString(), ' '));
+                reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediAlphaAliEsquerda_____, 0033, 020, 0, "", ' '));
 
                 //08.0 Agência Código Agência mantenedora da conta 53 57 5 - Num 
                 reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediNumericoSemSeparador_, 0053, 005, 0, cedente.ContaBancaria.Agencia, '0'));
@@ -998,17 +998,36 @@ namespace BoletoNet
         {
             try
             {
-                string complemento = new string(' ', 205);
-                string _trailer;
+                TRegistroEDI reg = new TRegistroEDI();
 
-                _trailer = "74899999";
-                _trailer += Utils.FormatCode("", " ", 9);
-                _trailer += Utils.FormatCode("", 6);
-                _trailer += Utils.FormatCode(numeroRegistro.ToString(), 6);
-                _trailer += Utils.FormatCode("", 6);
-                _trailer += complemento;
+                //01.9 Banco Código do banco na compensação 1 3 3 - Num 748 
+                reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediNumericoSemSeparador_, 0001, 003, 0, base.Codigo, '0'));
+                
+                //02.9 Lote Lote de serviço 4 7 4 - Num ‘9999’ 
+                reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediNumericoSemSeparador_, 0004, 004, 0, "9999", '0'));
+                
+                //03.9 Registro Tipo de registro 8 8 1 - Num '9' = Trailer de arquivo
+                reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediNumericoSemSeparador_, 0008, 001, 0, "9", '0'));
+                
+                //04.9 CNAB Uso exclusivo FEBRABAN/CNAB 9 17 9 - Alfa Brancos 
+                reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediAlphaAliEsquerda_____, 0009, 009, 0, string.Empty, ' '));
+                
+                //05.9 Qtde. de lotes Quantidade de lotes do arquivo 18 23 6 - Num 
+                reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediNumericoSemSeparador_, 0018, 006, 0, "1", '0'));
+                
+                //06.9 Qtde de registros Quantidade de registros do arquivo 24 29 6 - Num Totais Somatória dos registros de tipo 0, 1, 3, 5 e 9.
+                reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediNumericoSemSeparador_, 0024, 006, 0, numeroRegistro, '0'));
+                
+                //07.9 Qtde de contas concil. Quantidade de contas p/ concil. (lotes) 30 35 6 - Num Zeros 
+                reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediNumericoSemSeparador_, 0030, 006, 0, "0", '0'));
+                
+                //08.9 CNAB Uso exclusivo FEBRABAN/CNAB 36 240 205 - Alfa Brancos 
+                reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediAlphaAliEsquerda_____, 0036, 205, 0, string.Empty, ' '));
 
-                _trailer = Utils.SubstituiCaracteresEspeciais(_trailer);
+                reg.CodificarLinha();
+
+                string vLinha = reg.LinhaRegistro;
+                string _trailer = Utils.SubstituiCaracteresEspeciais(vLinha);
 
                 return _trailer;
             }
