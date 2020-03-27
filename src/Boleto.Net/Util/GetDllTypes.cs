@@ -51,7 +51,7 @@ namespace BoletoNet
         {
             return new Instrucao(codigoBanco);
         }
-        public Instrucoes getInstrucoes(int codigoBanco)
+        public Instrucoes getInstrucoes(int codigoBanco, int numeroInstrucao)
         {
             Type enumInstucao_banco = null;
 
@@ -81,7 +81,11 @@ namespace BoletoNet
                         break;
                     //422 - Safra
                     case 422:
-                        enumInstucao_banco = typeof(EnumInstrucoes_Safra);
+                        if(numeroInstrucao == 1) {
+                            enumInstucao_banco = typeof(EnumInstrucoes_Safra1);
+                        } else {
+                            enumInstucao_banco = typeof(EnumInstrucoes_Safra2);
+                        }
                         break;
                     //237 - Bradesco
                     //707 - Daycoval
@@ -157,11 +161,11 @@ namespace BoletoNet
 
             return instrucoes;
         }
-        public String getInstrucoesJson(int codigoBanco)
+        public String getInstrucoesJson(int codigoBanco, int numeroInstrucao)
         {
-            return JsonConvert.SerializeObject(getInstrucoes(codigoBanco));
+            return JsonConvert.SerializeObject(getInstrucoes(codigoBanco, numeroInstrucao));
         }
-        public Instrucao CarregaInstrucao(int codigoBanco, int codigoInstrucao, int quantidadeDias)
+        public Instrucao CarregaInstrucao(int codigoBanco, int codigoInstrucao, int quantidadeDias, int numeroInstrucao)
         {
             IInstrucao _IInstrucao = null;
             //Instrucao instrucao;
@@ -191,7 +195,7 @@ namespace BoletoNet
                         break;
                     //422 - Safra
                     case 422:
-                        _IInstrucao = new Instrucao_Safra(codigoInstrucao, quantidadeDias);
+                        _IInstrucao = new Instrucao_Safra(codigoInstrucao, quantidadeDias, numeroInstrucao);
                         break;
                     //237 - Bradesco
                     //707 - Daycoval
