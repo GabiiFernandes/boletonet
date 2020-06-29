@@ -439,16 +439,6 @@ namespace BoletoNet
                 reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediAlphaAliEsquerda_____, 0102, 001, 0, "0", '0'));                                       //102-102
                 reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediAlphaAliEsquerda_____, 0103, 002, 0, "00", '0'));                                      //103-104
                 reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediAlphaAliEsquerda_____, 0105, 001, 0, string.Empty, ' '));                              //105-105
-
-                //SEGUNDA INSTRUÇÃO DE COBRANÇA
-                foreach (Instrucao_Safra instrucao in boleto.Instrucoes)
-                    if (instrucao.NumeroInstrucao == 2)
-                    {
-                        instrucao2 = instrucao.Codigo;
-                        if(instrucao2 == 10) //SE INSTRUÇÃO NÃO FOR 10, O NUMERO DE DIAS DEVE SER 0
-                            numeroDias = instrucao.QuantidadeDias;
-                    }
-
                 reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediInteiro______________, 0106, 002, 0, numeroDias, '0'));                                //106-107
                 reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediInteiro______________, 0108, 001, 0, boleto.Carteira, '0'));                           //108-108
                 reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediAlphaAliEsquerda_____, 0109, 002, 0, "01", '0'));                                      //109-110

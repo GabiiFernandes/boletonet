@@ -78,7 +78,8 @@ namespace BoletoNet
                     //422 - Safra
                     case 422:
                         //_ICodigoMovimento = new CodigoMovimento_Safra();
-                        throw new Exception("Código do banco não implementando: " + codigoBanco);
+                        _ICodigoMovimento = new CodigoMovimento_Safra(codigoMovimento);
+                        break;
                     //237 - Bradesco
                     case 237:
                         //_ICodigoMovimento = new CodigoMovimento_Bradesco();

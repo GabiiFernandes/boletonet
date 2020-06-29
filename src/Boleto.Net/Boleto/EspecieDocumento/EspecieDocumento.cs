@@ -92,43 +92,16 @@ namespace BoletoNet
             {
                 switch (codigoBanco)
                 {
-                    //341 - Itaú
-                    case 341:
-                        _IEspecieDocumento = new EspecieDocumento_Itau(codigoEspecie);
-                        break;
-                    //479 - BankBoston
-                    case 479:
-                        _IEspecieDocumento = new EspecieDocumento_BankBoston(codigoEspecie);
-                        break;
-                    //422 - Safra
                     case 1:
                         _IEspecieDocumento = new EspecieDocumento_BancoBrasil(codigoEspecie);
                         break;
-                    //237 - Bradesco
-                    case 237:
-                        _IEspecieDocumento = new EspecieDocumento_Bradesco(codigoEspecie);
-                        break;
-                    case 356:
-                        _IEspecieDocumento = new EspecieDocumento_Real(codigoEspecie);
+                    //004 Banco do Nordeste
+                    case 4:
+                        _IEspecieDocumento = new EspecieDocumento_Nordeste(codigoEspecie);
                         break;
                     //033 - Santander
                     case 33:
                         _IEspecieDocumento = new EspecieDocumento_Santander(codigoEspecie);
-                        break;
-                    case 347:
-                        _IEspecieDocumento = new EspecieDocumento_Sudameris(codigoEspecie);
-                        break;
-                    //104 - Caixa
-                    case 104:
-                        _IEspecieDocumento = new EspecieDocumento_Caixa(codigoEspecie);
-                        break;
-                    //399 - HSBC
-                    case 399:
-                        _IEspecieDocumento = new EspecieDocumento_HSBC(codigoEspecie);
-                        break;
-                    //748 - Sicredi
-                    case 748:
-                        _IEspecieDocumento = new EspecieDocumento_Sicredi(codigoEspecie);
                         break;
                     //41 - Banrisul - sidneiklein
                     case 41:
@@ -138,13 +111,38 @@ namespace BoletoNet
                     case 85:
                         _IEspecieDocumento = new EspecieDocumento_Cecred(codigoEspecie);
                         break;
-                    //756 - Sicoob
-                    case 756:
-                        _IEspecieDocumento = new EspecieDocumento_Sicoob(codigoEspecie);
+                    //104 - Caixa
+                    case 104:
+                        _IEspecieDocumento = new EspecieDocumento_Caixa(codigoEspecie);
                         break;
-                    //004 Banco do Nordeste
-                    case 4:
-                        _IEspecieDocumento = new EspecieDocumento_Nordeste(codigoEspecie);
+                    //237 - Bradesco
+                    case 237:
+                        _IEspecieDocumento = new EspecieDocumento_Bradesco(codigoEspecie);
+                        break;
+                    //341 - Itaú
+                    case 341:
+                        _IEspecieDocumento = new EspecieDocumento_Itau(codigoEspecie);
+                        break;
+                    case 347:
+                        _IEspecieDocumento = new EspecieDocumento_Sudameris(codigoEspecie);
+                        break;
+                    case 356:
+                        _IEspecieDocumento = new EspecieDocumento_Real(codigoEspecie);
+                        break;
+                    //399 - HSBC
+                    case 399:
+                        _IEspecieDocumento = new EspecieDocumento_HSBC(codigoEspecie);
+                        break;
+                    //422 - Safra
+                    case 422:
+                        _IEspecieDocumento = new EspecieDocumento_Safra(codigoEspecie);
+                        break;
+                    //479 - BankBoston
+                    case 479:
+                        _IEspecieDocumento = new EspecieDocumento_BankBoston(codigoEspecie);
+                        break;
+                    case 637:
+                        this._IEspecieDocumento = new EspecieDocumento_Sofisa(codigoEspecie);
                         break;
                     //655 - Votorantim
                     case 655:
@@ -153,8 +151,13 @@ namespace BoletoNet
                     case 707:
                         this._IEspecieDocumento = new EspecieDocumento_Daycoval(codigoEspecie);
                         break;
-                    case 637:
-                        this._IEspecieDocumento = new EspecieDocumento_Sofisa(codigoEspecie);
+                    //748 - Sicredi
+                    case 748:
+                        _IEspecieDocumento = new EspecieDocumento_Sicredi(codigoEspecie);
+                        break;
+                    //756 - Sicoob
+                    case 756:
+                        _IEspecieDocumento = new EspecieDocumento_Sicoob(codigoEspecie);
                         break;
                     default:
                         throw new Exception("Código do banco não implementando: " + codigoBanco);
@@ -180,10 +183,14 @@ namespace BoletoNet
                 {
                     case 1:
                         return EspecieDocumento_BancoBrasil.CarregaTodas();
+                    case 4:
+                        return EspecieDocumento_Nordeste.CarregaTodas();
                     case 33:
                         return EspecieDocumento_Santander.CarregaTodas();
                     case 41:
                         return EspecieDocumento_Banrisul.CarregaTodas();
+                    case 85:
+                        return EspecieDocumento_Cecred.CarregaTodas();
                     case 104:
                         return EspecieDocumento_Caixa.CarregaTodas();
                     case 237:
@@ -196,16 +203,14 @@ namespace BoletoNet
                         return EspecieDocumento_Real.CarregaTodas();
                     case 399:
                         return EspecieDocumento_HSBC.CarregaTodas();
+                    case 422:
+                        return EspecieDocumento_Safra.CarregaTodas();
                     case 479:
                         return EspecieDocumento_BankBoston.CarregaTodas();
                     case 748:
                         return EspecieDocumento_Sicredi.CarregaTodas();
                     case 756:
                         return EspecieDocumento_Sicoob.CarregaTodas();
-                    case 85:
-                        return EspecieDocumento_Cecred.CarregaTodas();
-                    case 5:
-                        return EspecieDocumento_Nordeste.CarregaTodas();
                     default:
                         throw new Exception("Espécies do Documento não implementado para o banco : " + codigoBanco);
                 }
@@ -258,22 +263,22 @@ namespace BoletoNet
 
 
         private static Dictionary<int, AbstractEspecieDocumento> especiesDocumentosBancos = new Dictionary<int, AbstractEspecieDocumento>() {
-                { 341, new EspecieDocumento_Itau       ()  },
-                { 479, new EspecieDocumento_BankBoston ()  },
-                { 1, new EspecieDocumento_BancoBrasil  ()  },
-                { 237, new EspecieDocumento_Bradesco   ()  },
-                { 356, new EspecieDocumento_Real       ()  },
-                { 33, new EspecieDocumento_Santander   ()  },
-                { 347, new EspecieDocumento_Sudameris  ()  },
-                { 104, new EspecieDocumento_Caixa      ()  },
-                { 399, new EspecieDocumento_HSBC       ()  },
-                { 748, new EspecieDocumento_Sicredi    ()  },
-                { 41, new EspecieDocumento_Banrisul    ()  },
-                { 85, new EspecieDocumento_Cecred      ()  },
-                { 756, new EspecieDocumento_Sicoob     ()  },
-                { 4, new EspecieDocumento_Nordeste     ()  },
-                { 707, new EspecieDocumento_Daycoval   ()  },
-                { 637, new EspecieDocumento_Sofisa     ()  }
+            { 1, new EspecieDocumento_BancoBrasil  ()  },
+            { 4, new EspecieDocumento_Nordeste     ()  },
+            { 33, new EspecieDocumento_Santander   ()  },
+            { 41, new EspecieDocumento_Banrisul    ()  },
+            { 85, new EspecieDocumento_Cecred      ()  },
+            { 104, new EspecieDocumento_Caixa      ()  },
+            { 237, new EspecieDocumento_Bradesco   ()  },
+            { 356, new EspecieDocumento_Real       ()  },
+            { 341, new EspecieDocumento_Itau       ()  },
+            { 347, new EspecieDocumento_Sudameris  ()  },
+            { 399, new EspecieDocumento_HSBC       ()  },
+            { 479, new EspecieDocumento_BankBoston ()  },
+            { 637, new EspecieDocumento_Sofisa     ()  },
+            { 707, new EspecieDocumento_Daycoval   ()  },
+            { 748, new EspecieDocumento_Sicredi    ()  },
+            { 756, new EspecieDocumento_Sicoob     ()  },
         };
     }
 }

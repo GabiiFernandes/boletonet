@@ -51,7 +51,7 @@ namespace BoletoNet
         {
             return new Instrucao(codigoBanco);
         }
-        public Instrucoes getInstrucoes(int codigoBanco, int numeroInstrucao)
+        public Instrucoes getInstrucoes(int codigoBanco)
         {
             Type enumInstucao_banco = null;
 
@@ -81,11 +81,7 @@ namespace BoletoNet
                         break;
                     //422 - Safra
                     case 422:
-                        if(numeroInstrucao == 1) {
-                            enumInstucao_banco = typeof(EnumInstrucoes_Safra1);
-                        } else {
-                            enumInstucao_banco = typeof(EnumInstrucoes_Safra2);
-                        }
+                        enumInstucao_banco = typeof(EnumInstrucoes_Safra1);
                         break;
                     //237 - Bradesco
                     //707 - Daycoval
@@ -161,11 +157,11 @@ namespace BoletoNet
 
             return instrucoes;
         }
-        public String getInstrucoesJson(int codigoBanco, int numeroInstrucao)
+        public String getInstrucoesJson(int codigoBanco)
         {
-            return JsonConvert.SerializeObject(getInstrucoes(codigoBanco, numeroInstrucao));
+            return JsonConvert.SerializeObject(getInstrucoes(codigoBanco));
         }
-        public Instrucao CarregaInstrucao(int codigoBanco, int codigoInstrucao, int quantidadeDias, int numeroInstrucao)
+        public Instrucao CarregaInstrucao(int codigoBanco, int codigoInstrucao, int quantidadeDias)
         {
             IInstrucao _IInstrucao = null;
             //Instrucao instrucao;
@@ -195,7 +191,7 @@ namespace BoletoNet
                         break;
                     //422 - Safra
                     case 422:
-                        _IInstrucao = new Instrucao_Safra(codigoInstrucao, quantidadeDias, numeroInstrucao);
+                        _IInstrucao = new Instrucao_Safra(codigoInstrucao, quantidadeDias);
                         break;
                     //237 - Bradesco
                     //707 - Daycoval
@@ -423,35 +419,14 @@ namespace BoletoNet
                     case 1:
                         enumComandosRetorno = typeof(EnumCodigoMovimento_BancoBrasil);
                         break;
-                    //356 - Real
-                    //case 356:
-                    //enumComandosRetorno = typeof(EnumCodigoMovimento_Real);
-                    // throw new Exception("Código do banco não implementando: " + codigoBanco);
-                    //422 - Safra
-                    //case 422:
-                    //enumComandosRetorno = typeof(EnumCodigoMovimento_Safra);
-                    // throw new Exception("Código do banco não implementando: " + codigoBanco);
-                    //237 - Bradesco
+
                     case 237:
-                    //enumComandosRetorno = typeof(EnumCodigoMovimento_Bradesco);
-                    //throw new Exception("Código do banco não implementando: " + codigoBanco);
-                    //347 - Sudameris
-                    //case 347:
-                    //enumComandosRetorno = typeof(EnumCodigoMovimento_Sudameris);
-                    // throw new Exception("Código do banco não implementando: " + codigoBanco);
-                    //353 - Santander
+
                     case 353:
-                    //enumComandosRetorno = typeof(EnumCodigoMovimento_Santander);
-                    // throw new Exception("Código do banco não implementando: " + codigoBanco);
-                    //070 - BRB
-                    //case 70:
-                    //enumComandosRetorno = typeof(EnumCodigoMovimento_BRB);
-                    // throw new Exception("Código do banco não implementando: " + codigoBanco);
-                    //479 - BankBoston
-                    //case 479:
-                    //enumComandosRetorno = typeof(EnumCodigoMovimento_BankBoston);
-                    // throw new Exception("Código do banco não implementando: " + codigoBanco);
-                    // 756 - Sicoob
+
+                    case 422: //Safra
+                        enumComandosRetorno = typeof(EnumCodigoMovimento_Safra);
+                        break;
                     case 756:
                     // 85 - CECRED
                     case 85:
