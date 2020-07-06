@@ -434,7 +434,7 @@ namespace BoletoNet
                 reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediNumericoSemSeparador_, 0127, 015, 2, jurosMora, '0'));
 
                 //30.3P Cód. desc. 1 Código do desconto 1 142 142 1 - Num Código do desconto
-                reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediNumericoSemSeparador_, 0142, 001, 0, '1', '0'));
+                reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediNumericoSemSeparador_, 0142, 001, 0, (boleto.ValorDesconto > 0)? '1':'0', '0'));
 
                 //31.3P Data desc. 1 Data do desconto 1 143 150 8 - Num (formato DDMMAAAA)
                 reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediNumericoSemSeparador_, 0143, 008, 0, boleto.DataDesconto, '0'));
