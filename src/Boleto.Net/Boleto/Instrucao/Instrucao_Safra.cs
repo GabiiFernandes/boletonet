@@ -13,6 +13,7 @@ namespace BoletoNet
         DevolverAteTrintaDias = 3,
         DevolverAPedido = 4,
         NaoCobrarJurosMora = 8,
+        CobrarJurosMora = 16
     }
 
     #endregion
@@ -75,6 +76,10 @@ namespace BoletoNet
                 case EnumInstrucoes_Safra1.NaoCobrarJurosMora:
                     this.Codigo = (int)EnumInstrucoes_Safra1.NaoCobrarJurosMora;
                     this.Descricao = "NÃO COBRAR JUROS DE MORA";
+                    break;
+                case EnumInstrucoes_Safra1.CobrarJurosMora:
+                    this.Codigo = (int)EnumInstrucoes_Safra1.CobrarJurosMora;
+                    this.Descricao = "COBRAR JUROS DE MORA";
                     break;
             }
             
