@@ -72,11 +72,10 @@ namespace BoletoNet
         public string CampoLivre(Boleto boleto)
         {
 
-            string campolivre = "7" + boleto.Cedente.ContaBancaria.Conta.ToString() + boleto.Cedente.ContaBancaria.Agencia.ToString() +
-                                boleto.NossoNumero.Substring(0, 9) + "2";
-            return campolivre;
+            return "7" + FormatZerosEsquerda(boleto.Cedente.ContaBancaria.Agencia.ToString(), 5)
+                + FormatZerosEsquerda(boleto.Cedente.ContaBancaria.Conta.ToString(), 9)
+                + boleto.NossoNumero.Substring(0, 9) + "2";
         }
-
 
 
         #region IBanco Members
@@ -264,16 +263,10 @@ namespace BoletoNet
         /// </summary>
         public override void FormataCodigoBarra(Boleto boleto)
         {
-            string valorBoleto = boleto.ValorBoleto.ToString("f").Replace(",", "").Replace(".", "");
-            valorBoleto = Utils.FormatCode(valorBoleto, 14);
-
-            boleto.CodigoBarra.Codigo = string.Format("{0}{1}{2}{3}{4}", Codigo, boleto.Moeda,
-                    FatorVencimento(boleto), valorBoleto, CampoLivre(boleto));
-
-            _dacBoleto = 0;
-            //Mod11(Boleto.CodigoBarra.Codigo.Substring(0, 3) + Boleto.CodigoBarra.Codigo.Substring(5, 43), 9, 0);
-
-            boleto.CodigoBarra.Codigo = Strings.Left(boleto.CodigoBarra.Codigo, 4) + _dacBoleto + Strings.Right(boleto.CodigoBarra.Codigo, 39);
+            boleto.CodigoBarra.Codigo = string.Format("{0}{1}{2}{3}{4}{5}",
+                Codigo, boleto.Moeda, 0, FatorVencimento(boleto), GetValorBoletoFormatado(boleto.ValorBoleto), CampoLivre(boleto));
+            _dacBoleto = GetDacBoleto(boleto.CodigoBarra.Codigo);
+            boleto.CodigoBarra.Codigo = boleto.CodigoBarra.Codigo.Substring(0, 4) + _dacBoleto.ToString() + boleto.CodigoBarra.Codigo.Substring(5, 39);
         }
 
         /// <summary>
@@ -296,68 +289,19 @@ namespace BoletoNet
         /// </summary>
         public override void FormataLinhaDigitavel(Boleto boleto)
         {
+            string agencia = FormatZerosEsquerda(boleto.Cedente.ContaBancaria.Agencia.ToString(), 4);
+            string conta = FormatZerosEsquerda(boleto.Cedente.ContaBancaria.Conta.ToString(), 9);
+            string nossoNumero = boleto.NossoNumero.Substring(0, 9);
+            int[] digitosVerificadores;
+            int asciiZero = 48;
+            boleto.CodigoBarra.LinhaDigitavel = string.Format("{0}{1}{2}{3}{4}{5}{6}{7}{8}{9}{10}{11}{12}{13}", 
+                this.Codigo, boleto.Moeda, 7, agencia, 'X', 0, conta, 'Y', nossoNumero, 2, 'Z', _dacBoleto, FatorVencimento(boleto), GetValorBoletoFormatado(boleto.ValorBoleto));
 
-            //AAABC.CCCCX DDDDD.DDDDDY EEEEE.EEEEEZ K VVVVVVVVVVVVVV
-
-            string LD = string.Empty; //Linha Digitável
-
-            #region Campo 1
-
-            //Campo 1
-            string AAA = Utils.FormatCode(Codigo.ToString(), 3);
-            string B = boleto.Moeda.ToString();
-            string CCCCC = CampoLivre(boleto).Substring(0, 4);
-            string X = Mod10(AAA + B + CCCCC).ToString();
-
-            LD = string.Format("{0}{1}{2}.", AAA, B, CCCCC.Substring(0, 1));
-            LD += string.Format("{0}{1}", CCCCC.Substring(0, 4), X);
-
-            #endregion Campo 1
-
-            #region Campo 2
-
-            string DDDDDD = CampoLivre(boleto).Substring(6, 15);
-            string Y = Mod10(DDDDDD).ToString();
-
-            LD += string.Format("{0}.", DDDDDD.Substring(0, 5));
-            LD += string.Format("{0}{1} ", DDDDDD.Substring(5, 10), Y);
-
-            #endregion Campo 2
-
-            #region Campo 3
-
-            string EEEEE = CampoLivre(boleto).Substring(12, 10);
-            string Z = Mod10(EEEEE).ToString();
-
-            LD += string.Format("{0}.", EEEEE.Substring(0, 5));
-            LD += string.Format("{0}{1} ", EEEEE.Substring(5, 5), Z);
-
-            #endregion Campo 3
-
-            #region Campo 4
-
-            string K = _dacBoleto.ToString();
-
-            LD += string.Format(" {0} ", K);
-
-            #endregion Campo 4
-
-            #region Campo 5
-            string VVVVVVVVVVVVVV;
-            if (boleto.ValorBoleto != 0)
-            {
-                VVVVVVVVVVVVVV = boleto.ValorBoleto.ToString("f").Replace(",", "").Replace(".", "");
-                VVVVVVVVVVVVVV = Utils.FormatCode(VVVVVVVVVVVVVV, 14);
-            }
-            else
-                VVVVVVVVVVVVVV = "000";
-
-            LD += VVVVVVVVVVVVVV;
-
-            #endregion Campo 5
-
-            boleto.CodigoBarra.LinhaDigitavel = LD;
-
+            digitosVerificadores = GetDigitosVerificadoresLinhaDigitavel(boleto.CodigoBarra.LinhaDigitavel);
+            boleto.CodigoBarra.LinhaDigitavel = boleto.CodigoBarra.LinhaDigitavel
+                .Replace('X', Convert.ToChar(asciiZero + digitosVerificadores[0]))
+                .Replace('Y', Convert.ToChar(asciiZero + digitosVerificadores[1]))
+                .Replace('Z', Convert.ToChar(asciiZero + digitosVerificadores[2]));
         }
         #endregion IBanco Members
 
@@ -551,6 +495,93 @@ namespace BoletoNet
             this.numeroDocumento = numeroDocumento;
 
             return numeroDocumento;
+        }
+
+        internal int GetDacBoleto(string codigoBarras)
+        {
+            char[] digitosBarras;
+            digitosBarras = codigoBarras.ToCharArray(0, 43);
+            int dac;
+
+            int x = 0;
+            int mult = 1;
+            int sum = 0;
+
+            for (int i = 43; i >= 1; i--)
+            {
+                mult++;
+                if (mult > 9)
+                    mult = 2;
+
+                x++;
+                if (x == 5)
+                    continue;
+
+                sum += (int)Char.GetNumericValue(digitosBarras[i - 1]) * mult;
+            }
+
+            dac = 11 - (sum % 11);
+            if (dac >= 10)
+                dac = 1;
+
+            return dac;
+        }
+
+        internal int[] GetDigitosVerificadoresLinhaDigitavel(string linhaDigitavel)
+        {
+            string primeiraLinha = linhaDigitavel.Substring(0, linhaDigitavel.IndexOf('X'));
+            string segundaLinha = linhaDigitavel.Substring(linhaDigitavel.IndexOf('X') + 1, linhaDigitavel.IndexOf('Y') - linhaDigitavel.IndexOf('X') - 1);
+            string terceiraLinha = linhaDigitavel.Substring(linhaDigitavel.IndexOf('Y') + 1, linhaDigitavel.IndexOf('Z') - linhaDigitavel.IndexOf('Y') - 1);
+            int[] verificadores = new int[3];
+
+            verificadores[0] = CalcularDigitoLinhaDigitavel(primeiraLinha);
+            verificadores[1] = CalcularDigitoLinhaDigitavel(segundaLinha);
+            verificadores[2] = CalcularDigitoLinhaDigitavel(terceiraLinha);
+
+            return verificadores;
+        }
+
+        internal int CalcularDigitoLinhaDigitavel(string sequenciaNumerica)
+        {
+            char[] digitos = sequenciaNumerica.ToCharArray(0, sequenciaNumerica.Length);
+            int digitosMultSum = 0;
+            bool even = false;
+            int aux;
+            int divisao;
+
+            foreach (char digito in digitos)
+            {
+                if (even)
+                {
+                    aux = ((int)Char.GetNumericValue(digito));
+                }
+                else
+                {
+                    aux = ((int)Char.GetNumericValue(digito)*2);
+                }
+                digitosMultSum += (aux >= 10) ? aux-9 : aux;
+                even = !even;
+            }
+
+            divisao = (digitosMultSum % 10);
+            return (divisao % 10 == 0) ? 0 : (10-divisao);
+        }
+
+        internal string GetValorBoletoFormatado(decimal valor)
+        {
+            string valorBoleto = valor.ToString("f").Replace(",", "").Replace(".", "");
+            return FormatZerosEsquerda(valorBoleto, 10);
+        }
+
+        internal string FormatZerosEsquerda(string texto, int tamanhoMax)
+        {
+            string resultado = "";
+            for(int i = texto.Length; i < tamanhoMax; i++)
+            {
+                resultado += "0";
+            }
+            resultado += texto;
+            return resultado;
         }
         #endregion
     }
