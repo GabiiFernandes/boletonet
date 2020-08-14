@@ -72,8 +72,8 @@ namespace BoletoNet
         public string CampoLivre(Boleto boleto)
         {
 
-            return "7" + FormatZerosEsquerda(boleto.Cedente.ContaBancaria.Agencia.ToString(), 5)
-                + FormatZerosEsquerda(boleto.Cedente.ContaBancaria.Conta.ToString(), 9)
+            return "7" + FormatZerosEsquerda(boleto.Cedente.ContaBancaria.Agencia.ToString()+"0", 5)
+                + FormatZerosEsquerda(boleto.Cedente.ContaBancaria.Conta.ToString() + boleto.Cedente.ContaBancaria.DigitoConta, 9)
                 + boleto.NossoNumero.Substring(0, 9) + "2";
         }
 
@@ -264,38 +264,21 @@ namespace BoletoNet
         public override void FormataCodigoBarra(Boleto boleto)
         {
             boleto.CodigoBarra.Codigo = string.Format("{0}{1}{2}{3}{4}{5}",
-                Codigo, boleto.Moeda, 0, FatorVencimento(boleto), GetValorBoletoFormatado(boleto.ValorBoleto), CampoLivre(boleto));
+                Codigo, boleto.Moeda, 'D', FatorVencimento(boleto), GetValorBoletoFormatado(boleto.ValorBoleto), CampoLivre(boleto));
             _dacBoleto = GetDacBoleto(boleto.CodigoBarra.Codigo);
-            boleto.CodigoBarra.Codigo = boleto.CodigoBarra.Codigo.Substring(0, 4) + _dacBoleto.ToString() + boleto.CodigoBarra.Codigo.Substring(5, 39);
+            boleto.CodigoBarra.Codigo = boleto.CodigoBarra.Codigo.Replace("D", _dacBoleto.ToString());
         }
 
-        /// <summary>
-        /// A linha digitável será composta por cinco campos:
-        ///    1º CAMPO - Composto pelo código do banco ( sem o dígito verificador = 422 ), 
-        ///       código da moeda, as cinco primeiras posições do campo livre ou seja, da 
-        ///       posição 20 à 24 do código de barras, e mais um dígito verificador deste campo. 
-        ///       Após os 5 primeiros dígitos deste campo separar o conteúdo por um ponto ( . ). 
-        ///    2º CAMPO - Composto pelas posições 6 à 15 do campo livre ou seja, da 
-        ///       posição 25 à 34 do código de barras e mais um dígito verificador deste campo. 
-        ///       Após os 5 primeiros dígitos deste campo separar o conteúdo por um ponto ( . ).
-        ///    3º CAMPO - Composto pelas posições 16 à 25 do campo livre ou seja, da 
-        ///       posição 35 à 44 do código de barras, e mais um dígito verificador deste campo. 
-        ///       Após os 5 primeiros dígitos deste campo separar o conteúdo por um ponto ( . ).
-        ///    4º CAMPO  - Composto pelo dígito de autoconferência do código de barras.
-        ///    5º CAMPO - Composto pelo valor nominal do documento ou seja, pelas 
-        ///       posições 06 à 19 do código de barras, com supressão de zeros a esquerda e 
-        ///       sem edição ( sem ponto e vírgula ). Quando se tratar de valor zerado, a 
-        ///       representação deverá ser 000 ( três zeros ).
-        /// </summary>
+
         public override void FormataLinhaDigitavel(Boleto boleto)
         {
             string agencia = FormatZerosEsquerda(boleto.Cedente.ContaBancaria.Agencia.ToString(), 4);
-            string conta = FormatZerosEsquerda(boleto.Cedente.ContaBancaria.Conta.ToString(), 9);
+            string conta = FormatZerosEsquerda(boleto.Cedente.ContaBancaria.Conta.ToString()+ boleto.Cedente.ContaBancaria.DigitoConta.ToString(), 9);
             string nossoNumero = boleto.NossoNumero.Substring(0, 9);
             int[] digitosVerificadores;
             int asciiZero = 48;
             boleto.CodigoBarra.LinhaDigitavel = string.Format("{0}{1}{2}{3}{4}{5}{6}{7}{8}{9}{10}{11}{12}{13}", 
-                this.Codigo, boleto.Moeda, 7, agencia, 'X', 0, conta, 'Y', nossoNumero, 2, 'Z', _dacBoleto, FatorVencimento(boleto), GetValorBoletoFormatado(boleto.ValorBoleto));
+                this.Codigo, boleto.Moeda, 7, agencia, 'X', 0, conta, 'Y', nossoNumero, 2, 'Z', _dacBoleto.ToString(), FatorVencimento(boleto), GetValorBoletoFormatado(boleto.ValorBoleto));
 
             digitosVerificadores = GetDigitosVerificadoresLinhaDigitavel(boleto.CodigoBarra.LinhaDigitavel);
             boleto.CodigoBarra.LinhaDigitavel = boleto.CodigoBarra.LinhaDigitavel
@@ -500,7 +483,7 @@ namespace BoletoNet
         internal int GetDacBoleto(string codigoBarras)
         {
             char[] digitosBarras;
-            digitosBarras = codigoBarras.ToCharArray(0, 43);
+            digitosBarras = codigoBarras.Replace("D", String.Empty).ToCharArray(0, 43); //Deve conter o caractere 'D' na posicao onde se encontra o digito DAC
             int dac;
 
             int x = 0;
@@ -545,7 +528,7 @@ namespace BoletoNet
         {
             char[] digitos = sequenciaNumerica.ToCharArray(0, sequenciaNumerica.Length);
             int digitosMultSum = 0;
-            bool even = false;
+            bool even = (sequenciaNumerica.Length % 2) > 0;
             int aux;
             int divisao;
 
@@ -553,11 +536,11 @@ namespace BoletoNet
             {
                 if (even)
                 {
-                    aux = ((int)Char.GetNumericValue(digito));
+                    aux = ((int)Char.GetNumericValue(digito)*2);
                 }
                 else
                 {
-                    aux = ((int)Char.GetNumericValue(digito)*2);
+                    aux = ((int)Char.GetNumericValue(digito)*1);
                 }
                 digitosMultSum += (aux >= 10) ? aux-9 : aux;
                 even = !even;
