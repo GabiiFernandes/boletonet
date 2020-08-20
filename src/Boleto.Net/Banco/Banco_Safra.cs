@@ -486,7 +486,6 @@ namespace BoletoNet
             digitosBarras = codigoBarras.Replace("D", String.Empty).ToCharArray(0, 43); //Deve conter o caractere 'D' na posicao onde se encontra o digito DAC
             int dac;
 
-            int x = 0;
             int mult = 1;
             int sum = 0;
 
@@ -495,10 +494,6 @@ namespace BoletoNet
                 mult++;
                 if (mult > 9)
                     mult = 2;
-
-                x++;
-                if (x == 5)
-                    continue;
 
                 sum += (int)Char.GetNumericValue(digitosBarras[i - 1]) * mult;
             }

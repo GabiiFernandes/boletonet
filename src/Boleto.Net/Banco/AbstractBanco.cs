@@ -494,7 +494,7 @@ namespace BoletoNet
         ///         ...
         ///         05/03/2025 = 1011
         /// </remarks>
-        public static long FatorVencimento(Boleto boleto)
+        public static int FatorVencimento(Boleto boleto)
         {
             var dateBase = new DateTime(1997, 10, 7, 0, 0, 0);
 
@@ -508,7 +508,7 @@ namespace BoletoNet
             while (boleto.DataVencimento > dateBase.AddDays(9999))
                 dateBase = boleto.DataVencimento.AddDays(-(((Utils.DateDiff(DateInterval.Day, dateBase, boleto.DataVencimento) - 9999) - 1) + 1000));
 
-            return Utils.DateDiff(DateInterval.Day, dateBase, boleto.DataVencimento);
+            return (int)Utils.DateDiff(DateInterval.Day, dateBase, boleto.DataVencimento);
         }
 
         #region Mod
