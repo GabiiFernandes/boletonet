@@ -165,7 +165,7 @@ namespace BoletoNet
             String campo3 = string.Empty;
             String campo4 = string.Empty;
             String campo5 = string.Empty;
-            String indice = "1212121212";
+            String indice = "2121212121";
             StringBuilder linhaDigitavel = new StringBuilder();
             int soma = 0;
             int temp = 0;
@@ -173,7 +173,7 @@ namespace BoletoNet
             //throw new Exception("NNComDvSemcaracteres " + NNComDvSemcaracteres);
             //Formatando o campo 1
 
-            campo1 = boleto.Banco.Codigo.ToString() + boleto.Moeda.ToString() + boleto.Cedente.Carteira + boleto.Cedente.ContaBancaria.Agencia;
+            campo1 = String.Empty + boleto.Banco.Codigo + boleto.Moeda + boleto.Cedente.Carteira + boleto.Cedente.ContaBancaria.Agencia;
 
             //Calculando CAMPO 1
             for (int i = 0; i < campo1.Length; i++)
@@ -296,7 +296,7 @@ namespace BoletoNet
             int resto = 0;
             String constante = "319731973197319731973";
             String cooperativa = Utils.FormatCode(boleto.Cedente.ContaBancaria.Agencia, "0", 4, true);
-            String codigo = Utils.FormatCode(boleto.Cedente.Codigo + boleto.Cedente.DigitoCedente.ToString(), "0", 10, true);
+            String codigo = Utils.FormatCode(boleto.Cedente.Codigo, "0", 10, true);
             String nossoNumero = Utils.FormatCode(boleto.NossoNumero, "0", 7, true);
 
 
