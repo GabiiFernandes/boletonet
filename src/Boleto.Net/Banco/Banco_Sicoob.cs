@@ -165,7 +165,7 @@ namespace BoletoNet
             String campo3 = string.Empty;
             String campo4 = string.Empty;
             String campo5 = string.Empty;
-            String indice = "2121212121";
+            String indice = "1212121212";
             StringBuilder linhaDigitavel = new StringBuilder();
             int soma = 0;
             int temp = 0;
@@ -196,7 +196,7 @@ namespace BoletoNet
             temp = 0;
             //Formatando o campo 2
             //campo2 = boleto.CodigoBarra.Codigo.Substring(24, 10);
-            campo2 = Utils.FormatCode(boleto.TipoModalidade.ToString(), 2) + Utils.FormatCode(boleto.Cedente.Codigo, 6) + Utils.FormatCode(Convert.ToString(boleto.Cedente.DigitoCedente), 1) + Utils.FormatCode(NNComDvSemcaracteres.Substring(0,1),1);
+            campo2 = Utils.FormatCode(boleto.TipoModalidade.ToString(), 2) + Utils.FormatCode(boleto.Cedente.Codigo, 7) + Utils.FormatCode(NNComDvSemcaracteres.Substring(0,1),1);
             for (int i = 0; i < campo2.Length; i++)
             {
                 //Calculando Indice 2

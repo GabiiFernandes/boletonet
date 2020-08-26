@@ -409,9 +409,7 @@ namespace BoletoNet
             if (boleto.Cedente.Codigo.Length < 6 || boleto.Cedente.Codigo.Length > 7)
                 throw new Exception("O código do cedente deve conter de 6 a 7 dígitos");
 
-            //Atribui o nome do banco ao local de pagamento
-            if (string.IsNullOrEmpty(boleto.LocalPagamento))
-                boleto.LocalPagamento = "PREFERENCIALMENTE NAS CASAS LOTÉRICAS ATÉ O VALOR LIMITE.";
+            boleto.LocalPagamento = "PREFERENCIALMENTE NAS CASAS LOTÉRICAS ATÉ O VALOR LIMITE.";
 
             /* 
              * Na Carteira Simples não é necessário gerar a impressão do boleto,
