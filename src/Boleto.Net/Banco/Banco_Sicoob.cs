@@ -97,59 +97,45 @@ namespace BoletoNet
 
         public override void FormataCodigoBarra(Boleto boleto)
         {
-            //Variaveis
-            int peso = 2;
-            int soma = 0;
-            int resultado = 0;
-            int dv = 0;
-            String codigoValidacao = 
-                    boleto.Banco.Codigo.ToString() + 
-                    boleto.Moeda.ToString() + 
-                    FatorVencimento(boleto).ToString() +
-                    Utils.FormatCode(boleto.ValorBoleto.ToString("f").Replace(",", "").Replace(".", ""), 10) + 
+            int dv = 1;
+            string codigoValidacao = string.Format("{0}{1}{2}{3}{4}{5}{6}{7}{8}{9}{10}",
+                    this.Codigo, boleto.Moeda, 'D', FatorVencimento(boleto), GetValorBoletoFormatado(boleto.ValorBoleto),
+                    boleto.Carteira, boleto.Cedente.ContaBancaria.Agencia, boleto.TipoModalidade, boleto.Cedente.Codigo.PadLeft(7, '0'), 
+                    this.FormataNumeroTitulo(boleto), this.FormataNumeroParcela(boleto));
 
-                    boleto.Carteira +
-                    boleto.Cedente.ContaBancaria.Agencia + 
-                    boleto.TipoModalidade +
-                    Utils.FormatCode(boleto.Cedente.Codigo, 6) + 
-                    Utils.FormatCode(Convert.ToString(boleto.Cedente.DigitoCedente), 1) +
-                    this.FormataNumeroTitulo(boleto) + 
-                    this.FormataNumeroParcela(boleto);
+            dv = this.GetDvCodBarras(codigoValidacao);
+            boleto.CodigoBarra.Codigo = codigoValidacao.Replace("D", string.Empty+dv);
+        }
 
-            //throw new Exception(String.Format("Banco:{0}; Moeda:{1}; FatorVencimento:{2}; Valor:{3}; Carteira:{4}; Agencia:{5}; TipoModalidade:{6}; Cedente:{7}; DigitoCedente:{8}; NumeroTitulo:{9}; Parcela:{10};",
-            //    boleto.Banco.Codigo.ToString(),
-            //    boleto.Moeda.ToString(),
-            //    FatorVencimento(boleto).ToString(),
-            //    Utils.FormatCode(boleto.ValorBoleto.ToString("f").Replace(",", "").Replace(".", ""), 10),
-            //    boleto.Carteira,
-            //    boleto.Cedente.ContaBancaria.Agencia,
-            //    boleto.TipoModalidade,
-            //    boleto.Cedente.Codigo,
-            //    boleto.Cedente.DigitoCedente,
-            //    this.FormataNumeroTitulo(boleto),
-            //    this.FormataNumeroParcela(boleto)
-            //    ));
+        internal string GetValorBoletoFormatado(decimal valor)
+        {
+            string valorBoleto = valor.ToString("f").Replace(",", "").Replace(".", "");
+            return valorBoleto.PadLeft(10, '0');
+        }
 
-            //Calculando
-            for (int i = (codigoValidacao.Length - 1); i >= 0; i--)
+        internal int GetDvCodBarras(string codigoBarras)
+        {
+            char[] digitosBarras;
+            digitosBarras = codigoBarras.Replace("D", String.Empty).ToCharArray(0, 43); //Deve conter o caractere 'D' na posicao onde se encontra o digito DAC
+            int dac;
+
+            int mult = 1;
+            int sum = 0;
+
+            for (int i = 43; i >= 1; i--)
             {
-                soma = soma + (Convert.ToInt16(codigoValidacao.Substring(i, 1)) * peso);
-                peso++;
-                //Verifica peso
-                if (peso > 9)
-                {
-                    peso = 2;
-                }
+                mult++;
+                if (mult > 9)
+                    mult = 2;
+
+                sum += (int)Char.GetNumericValue(digitosBarras[i - 1]) * mult;
             }
-            resultado = soma % 11;
-            dv = 11 - resultado;
-            //Verificando resultado
-            if (dv == 0 || dv == 1 || dv > 9)
-            {
-                dv = 1;
-            }
-            //Formatando
-            boleto.CodigoBarra.Codigo = codigoValidacao.Substring(0, 4) + dv + codigoValidacao.Substring(4);
+
+            dac = 11 - (sum % 11);
+            if (dac >= 10)
+                dac = 1;
+
+            return dac;
         }
 
         public override void FormataNumeroDocumento(Boleto boleto)
@@ -298,7 +284,6 @@ namespace BoletoNet
             String cooperativa = Utils.FormatCode(boleto.Cedente.ContaBancaria.Agencia, "0", 4, true);
             String codigo = Utils.FormatCode(boleto.Cedente.Codigo, "0", 10, true);
             String nossoNumero = Utils.FormatCode(boleto.NossoNumero, "0", 7, true);
-
 
 
             StringBuilder seqValidacao = new StringBuilder();
@@ -1200,7 +1185,6 @@ namespace BoletoNet
             mensagem = vMsg;
             return vRetorno;
         }
-
 
         public string GerarDetalheMultaRemessaCNAB400(Boleto boleto, int numeroRegistro)
         {
