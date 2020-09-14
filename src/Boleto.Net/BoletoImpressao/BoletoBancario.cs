@@ -343,7 +343,10 @@ namespace BoletoNet
                 }
 
                 html.Append(Html.ReciboSacadoParte4);
-                html.Append(Html.ReciboSacadoParte5);
+                
+                if(Boleto.Banco.Codigo != 104) { html.Append(Html.ReciboSacadoParte5); }
+                else { html.Append(Html.ReciboSacadoParte52); } //Banco CEF
+
                 html.Append(Html.ReciboSacadoParte6);
                 html.Append(Html.ReciboSacadoParte7);
 

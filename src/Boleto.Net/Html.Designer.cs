@@ -19,7 +19,7 @@ namespace BoletoNet {
     // class via a tool like ResGen or Visual Studio.
     // To add or remove a member, edit your .ResX file then rerun ResGen
     // with the /str option, or rebuild your VS project.
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "15.0.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "16.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     internal class Html {
@@ -709,6 +709,29 @@ namespace BoletoNet {
         internal static string ReciboSacadoParte5 {
             get {
                 return ResourceManager.GetString("ReciboSacadoParte5", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to &lt;table class=&quot;w666&quot;&gt;
+        ///				&lt;tr class=&quot;ct h13&quot;&gt;
+        ///						&lt;td class=&quot;w113&quot;&gt;(-) Desconto / Abatimentos&lt;/td&gt;
+        ///						&lt;td class=&quot;w112&quot;&gt;(-) Outras deduções&lt;/td&gt;
+        ///						&lt;td class=&quot;w113&quot;&gt;(+) Mora/Multa/Juros&lt;/td&gt;
+        ///						&lt;td class=&quot;w113&quot;&gt;(+) Outros acréscimos&lt;/td&gt;
+        ///						&lt;td class=&quot;w180&quot;&gt;(=) Valor cobrado&lt;/td&gt;
+        ///				&lt;/tr&gt;
+        ///				&lt;tr class=&quot;cp h12 rBb Ab&quot;&gt;
+        ///						&lt;td&gt;@DESCONTOS&lt;/td&gt;
+        ///						&lt;td&gt;@OUTRASDEDUCOES&lt;/td&gt;
+        ///						&lt;td&gt;@MORAMULTA&lt;/td&gt;
+        ///						&lt;td&gt;@OUTROSACRESCIMOS&lt;/td&gt;
+        ///						&lt;td class=&quot;Ar&quot;&gt;&amp;nbsp;@VALORCOBRADO&lt;/td&gt;
+        ///		 [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string ReciboSacadoParte52 {
+            get {
+                return ResourceManager.GetString("ReciboSacadoParte52", resourceCulture);
             }
         }
         
