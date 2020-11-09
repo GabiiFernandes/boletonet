@@ -100,6 +100,7 @@ namespace BoletoNet
                     case EnumInstrucoes_Sicoob.NaoProtestar:
                         this.Codigo = (int)EnumInstrucoes_Sicoob.NaoProtestar;
                         this.Descricao = "Não protestar";
+                        this.NaoImprimirInstrucao = true;
                         break;
                     case EnumInstrucoes_Sicoob.Protestar10DiasUteis:
                         this.Codigo = (int)EnumInstrucoes_Sicoob.Protestar10DiasUteis;

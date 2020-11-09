@@ -23,6 +23,7 @@ namespace BoletoNet
         private int _codigo;
         private string _descricao;
         private int _quantidadeDias;
+        private bool _naoImprimirInstrucao = false;
 
         #endregion
 
@@ -52,9 +53,14 @@ namespace BoletoNet
             set { _quantidadeDias = value; }
         }
 
-        # endregion
+        public bool NaoImprimirInstrucao { 
+            get { return _naoImprimirInstrucao; }
+            set { this._naoImprimirInstrucao = value; }
+        }
 
-        # region Metodos
+        #endregion
+
+        #region Metodos
 
         public virtual void Valida()
         {

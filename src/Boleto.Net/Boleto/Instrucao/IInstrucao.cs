@@ -16,6 +16,7 @@ namespace BoletoNet
         IBanco Banco { get; set; }
         int Codigo { get; set; }
         string Descricao { get; set; }
+        bool NaoImprimirInstrucao { get; set; }
         int QuantidadeDias { get; set; }
     }
 }

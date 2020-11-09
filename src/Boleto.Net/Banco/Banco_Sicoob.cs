@@ -257,7 +257,7 @@ namespace BoletoNet
             boleto.QuantidadeMoeda = 0;
 
             //Atribui o nome do banco ao local de pagamento
-            boleto.LocalPagamento = "PAGÁVEL EM QUALQUER CORRESPONDENTE BANCÁRIO PERTO DE VOCÊ!";
+            boleto.LocalPagamento = "PAGÁVEL PREFERENCIALMENTE NO SICOOB!";
 
             //Aplicando formatações
             //this.FormataCodigoCliente(boleto);

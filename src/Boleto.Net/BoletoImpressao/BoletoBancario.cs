@@ -459,12 +459,12 @@ namespace BoletoNet
                 //da div que contem as instruções a classe cpN se aplica, que é a mesma, em conteudo, da classe cp
                 foreach (IInstrucao instrucao in instrucoes)
                 {
-                    _instrucoesHtml += string.Format("{0}<br />", instrucao.Descricao);
-
-                    //Adiciona a instrução as instruções disponíveis no Boleto
-                    Instrucoes.Add(instrucao);
+                    if(!instrucao.NaoImprimirInstrucao) {
+                        _instrucoesHtml += string.Format("{0}<br />", instrucao.Descricao);
+                        //Adiciona a instrução as instruções disponíveis no Boleto
+                        Instrucoes.Add(instrucao);
+                    }
                 }
-
                 _instrucoesHtml = Strings.Left(_instrucoesHtml, _instrucoesHtml.Length - 6);
             }
         }
