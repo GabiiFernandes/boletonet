@@ -668,7 +668,8 @@ namespace BoletoNet
 
 
                 detalhe += "1"; //Posição 118  - Código do juros mora.
-                detalhe += Utils.FormatCode(boleto.DataVencimento.ToString("ddMMyyyy"), 8);  //Posição 119 a 126  - Data do Juros de Mora: preencher com a Data de Vencimento do Título
+                DateTime DataJuroMora = new DateTime(boleto.DataVencimento.Year, boleto.DataVencimento.Month, boleto.DataVencimento.Day+1);
+                detalhe += Utils.FormatCode(DataJuroMora.ToString("ddMMyyyy"), 8);  //Posição 119 a 126  - Data do Juros de Mora: preencher com a Data de Vencimento do Título + 1
                 detalhe += Utils.FormatCode(boleto.JurosMora.ToString("f").Replace(",", "").Replace(".", ""), 15);   //Posição 127 a 141  - Data do Juros de Mora: preencher com a Data de Vencimento do Título
 
                 
