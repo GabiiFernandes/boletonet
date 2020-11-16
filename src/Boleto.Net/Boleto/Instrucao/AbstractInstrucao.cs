@@ -55,7 +55,7 @@ namespace BoletoNet
 
         public bool NaoImprimirInstrucao { 
             get { return _naoImprimirInstrucao; }
-            set { this._naoImprimirInstrucao = value; }
+            set { _naoImprimirInstrucao = value; }
         }
 
         #endregion

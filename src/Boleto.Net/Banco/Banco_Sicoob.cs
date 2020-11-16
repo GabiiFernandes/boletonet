@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Globalization;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Web.UI;
 using BoletoNet.Util;
 
@@ -38,23 +39,9 @@ namespace BoletoNet
 
         #region FORMATAÇÕES
 
-        /**
-         * FormataCodigoCliente
-         * Inclui 0 a esquerda para preencher o tamanho do campo
-         */
+        internal int dvCodBarras;
+        internal bool isBoletoLegado;
 
-        public void FormataCodigoCliente(Cedente cedente)
-        {
-            if (cedente.Codigo.Length == 7)
-                cedente.DigitoCedente = Convert.ToInt32(cedente.Codigo.Substring(6));
-
-            cedente.Codigo = cedente.Codigo.Substring(0, 6).PadLeft(6, '0');
-        }
-
-        /**
-         * FormataNumeroTitulo
-         * Inclui 0 a esquerda para preencher o tamanho do campo
-         */
         public String FormataNumeroTitulo(Boleto boleto)
         {
             var novoTitulo = new StringBuilder();
@@ -97,14 +84,13 @@ namespace BoletoNet
 
         public override void FormataCodigoBarra(Boleto boleto)
         {
-            int dv = 1;
+            this.dvCodBarras = 1;
             string codigoValidacao = string.Format("{0}{1}{2}{3}{4}{5}{6}{7}{8}{9}{10}",
                     this.Codigo, boleto.Moeda, 'D', FatorVencimento(boleto), GetValorBoletoFormatado(boleto.ValorBoleto),
-                    boleto.Carteira, boleto.Cedente.ContaBancaria.Agencia, boleto.TipoModalidade, boleto.Cedente.Codigo.PadLeft(7, '0'), 
+                    boleto.Carteira, boleto.Cedente.ContaBancaria.Agencia, boleto.TipoModalidade, boleto.Cedente.Codigo.PadLeft(6, '0') + boleto.Cedente.DigitoCedente,
                     this.FormataNumeroTitulo(boleto), this.FormataNumeroParcela(boleto));
-
-            dv = this.GetDvCodBarras(codigoValidacao);
-            boleto.CodigoBarra.Codigo = codigoValidacao.Replace("D", string.Empty+dv);
+            this.dvCodBarras = this.GetDvCodBarras(codigoValidacao);
+            boleto.CodigoBarra.Codigo = codigoValidacao.Replace("D", string.Empty+this.dvCodBarras);
         }
 
         internal string GetValorBoletoFormatado(decimal valor)
@@ -145,92 +131,25 @@ namespace BoletoNet
 
         public override void FormataLinhaDigitavel(Boleto boleto)
         {
-            //Variaveis
-            String campo1 = string.Empty;
-            String campo2 = string.Empty;
-            String campo3 = string.Empty;
-            String campo4 = string.Empty;
-            String campo5 = string.Empty;
-            String indice = "1212121212";
-            StringBuilder linhaDigitavel = new StringBuilder();
-            int soma = 0;
-            int temp = 0;
-            string NNComDvSemcaracteres = boleto.NossoNumero.Replace("-", "").Substring((boleto.NossoNumero.Length-9));
-            //throw new Exception("NNComDvSemcaracteres " + NNComDvSemcaracteres);
-            //Formatando o campo 1
+            string agencia = boleto.Cedente.ContaBancaria.Agencia.ToString().PadLeft(4, '0');
+            string nossoNumero = boleto.NossoNumero.Replace("-", "").Substring(1, 7);
+            string modalidade = "01";
+            string cedente = boleto.Cedente.Codigo + boleto.Cedente.DigitoCedente;
+            string parcela = boleto.NumeroParcela.ToString().PadLeft(3, '0');
+            int[] digitosVerificadores;
+            int asciiZero = 48;
+            string linhaDigitavel = string.Format("{0}{1}{2}{3}{4}{5}{6}{7}{8}{9}{10}{11}{12}{13}{14}",
+                this.Codigo, boleto.Moeda, boleto.Carteira, agencia, 'X', modalidade, cedente, 0, 'Y',
+                nossoNumero, parcela, 'Z', this.dvCodBarras, FatorVencimento(boleto), GetValorBoletoFormatado(boleto.ValorBoleto));
 
-            campo1 = String.Empty + boleto.Banco.Codigo + boleto.Moeda + boleto.Cedente.Carteira + boleto.Cedente.ContaBancaria.Agencia;
-
-            //Calculando CAMPO 1
-            for (int i = 0; i < campo1.Length; i++)
-            {
-                //Calculando indice
-                temp = (Convert.ToInt16(campo1.Substring(i, 1)) * Convert.ToInt16(indice.Substring(i + 1, 1)));
-                //Verifica se resultado é igual ou superior a 10
-                if (temp >= 10)
-                {
-                    temp = Convert.ToInt16(temp.ToString().Substring(0, 1)) + Convert.ToInt16(temp.ToString().Substring(1, 1));
-                }
-                //Guardando soma
-                soma = soma + temp;
-            }
-            linhaDigitavel.Append(string.Format("{0}.{1}{2} ", campo1.Substring(0, 5), campo1.Substring(5, 4), Multiplo10(soma)));
-
-            //throw new Exception("boleto.Cedente.Codigo: " + boleto.Cedente.Codigo + "; Utils.FormatCode(boleto.Cedente.Codigo,7): " + Utils.FormatCode(boleto.Cedente.Codigo, 7) + "; campo3: " + campo3);
-
-            soma = 0;
-            temp = 0;
-            //Formatando o campo 2
-            //campo2 = boleto.CodigoBarra.Codigo.Substring(24, 10);
-            campo2 = Utils.FormatCode(boleto.TipoModalidade.ToString(), 2) + Utils.FormatCode(boleto.Cedente.Codigo, 7) + Utils.FormatCode(NNComDvSemcaracteres.Substring(0,1),1);
-            for (int i = 0; i < campo2.Length; i++)
-            {
-                //Calculando Indice 2
-                temp = (Convert.ToInt16(campo2.Substring(i, 1)) * Convert.ToInt16(indice.Substring(i, 1)));
-                //Verifica se resultado é igual ou superior a 10
-                if (temp >= 10)
-                {
-                    temp = Convert.ToInt16(temp.ToString().Substring(0, 1)) + Convert.ToInt16(temp.ToString().Substring(1, 1));
-                }
-                //Guardando soma
-                soma = soma + temp;
-            }
-            linhaDigitavel.Append(string.Format("{0}.{1}{2} ", campo2.Substring(0, 5), campo2.Substring(5, 5), Multiplo10(soma)));
-            //throw new Exception("campo1: " + campo1 + "; campo2: " + campo2 + "; campo3: " + campo3);
-
-
-
-            soma = 0;
-            temp = 0;
-            //Formatando campo 3
-            //campo3 = boleto.CodigoBarra.Codigo.Substring(34, 10);
-            //throw new Exception("NNComDvSemcaracteres: " + NNComDvSemcaracteres + "; Utils.FormatCode(NNComDvSemcaracteres.Substring(0,1),1): " + Utils.FormatCode(NNComDvSemcaracteres.Substring(0, 1), 1) + "; Utils.FormatCode(NNComDvSemcaracteres.Substring(1), 7): " + Utils.FormatCode(NNComDvSemcaracteres.Substring(1), 7));
-
-
-            campo3 = Utils.FormatCode(NNComDvSemcaracteres.Substring(1), 7) + Utils.FormatCode(boleto.NumeroParcela.ToString(), 3);
-            for (int i = 0; i < campo3.Length; i++)
-            {
-                //Calculando indice 2
-                temp = (Convert.ToInt16(campo3.Substring(i, 1)) * Convert.ToInt16(indice.Substring(i, 1)));
-                //Verifica se resultado é igual ou superior a 10
-                if (temp >= 10)
-                {
-                    temp = Convert.ToInt16(temp.ToString().Substring(0, 1)) + Convert.ToInt16(temp.ToString().Substring(1, 1));
-                }
-                //Guardando resultado
-                soma = soma + temp;
-            }
-            linhaDigitavel.Append(campo3.Substring(0, 5) + "." + campo3.Substring(5, 5) + Multiplo10(soma) + " ");
-
-
-            //Formatando Campo 4
-            campo4 = boleto.CodigoBarra.Codigo.Substring(4, 1);
-            linhaDigitavel.Append(campo4 + " ");
-
-            //Formatando Campo 5
-            campo5 = FatorVencimento(boleto).ToString() + Utils.FormatCode(boleto.ValorBoleto.ToString("f").Replace(",", "").Replace(".", ""), 10);
-            linhaDigitavel.Append(campo5);
-            boleto.CodigoBarra.LinhaDigitavel = linhaDigitavel.ToString();
+            digitosVerificadores = GetDigitosVerificadoresLinhaDigitavel(linhaDigitavel);
+            linhaDigitavel = linhaDigitavel
+                .Replace('X', Convert.ToChar(asciiZero + digitosVerificadores[0]))
+                .Replace('Y', Convert.ToChar(asciiZero + digitosVerificadores[1]))
+                .Replace('Z', Convert.ToChar(asciiZero + digitosVerificadores[2]));
+            linhaDigitavel = Regex.Replace(linhaDigitavel, "(.{5})(.{5})(.{5})(.{6})(.{5})(.{6})(.)(.{14})",
+                "$1.$2 $3.$4 $5.$6 $7 $8");
+            boleto.CodigoBarra.LinhaDigitavel = linhaDigitavel;
         }
 
         #endregion FORMATAÇÕES
@@ -260,18 +179,16 @@ namespace BoletoNet
             boleto.LocalPagamento = "PAGÁVEL PREFERENCIALMENTE NO SICOOB!";
 
             //Aplicando formatações
-            //this.FormataCodigoCliente(boleto);
+            this.isBoletoLegado = (boleto.Cedente.Convenio == 0);
             this.FormataNossoNumero(boleto);
-            this.FormataCodigoBarra(boleto);
-            this.FormataLinhaDigitavel(boleto);
-        }
-
-        public void FormataCodigoCliente(Boleto boleto)
-        {
-            if (boleto.Cedente.Codigo.Length == 7)
-                boleto.Cedente.DigitoCedente = Convert.ToInt32(boleto.Cedente.Codigo.Substring(6));
-
-            boleto.Cedente.Codigo = boleto.Cedente.Codigo.Substring(0, 6).PadLeft(6, '0');
+            if (this.isBoletoLegado) {
+                this.FormataCodigoBarra_legado(boleto);
+                this.FormataLinhaDigitavel_legado(boleto);
+            } else
+            {
+                this.FormataCodigoBarra(boleto);
+                this.FormataLinhaDigitavel(boleto);
+            }
         }
 
         public override void FormataNossoNumero(Boleto boleto)
@@ -282,9 +199,9 @@ namespace BoletoNet
             int resto = 0;
             String constante = "319731973197319731973";
             String cooperativa = Utils.FormatCode(boleto.Cedente.ContaBancaria.Agencia, "0", 4, true);
-            String codigo = Utils.FormatCode(boleto.Cedente.Codigo, "0", 10, true);
             String nossoNumero = Utils.FormatCode(boleto.NossoNumero, "0", 7, true);
-
+            String codigo = this.isBoletoLegado? boleto.Cedente.Codigo.PadLeft(10, '0')
+                :(boleto.Cedente.Codigo + boleto.Cedente.DigitoCedente).PadLeft(10, '0');
 
             StringBuilder seqValidacao = new StringBuilder();
 
@@ -314,6 +231,46 @@ namespace BoletoNet
             boleto.NossoNumero = boleto.NossoNumero + "-" + dv.ToString();
             boleto.DigitoNossoNumero = dv.ToString();
         }
+
+        internal int[] GetDigitosVerificadoresLinhaDigitavel(string linhaDigitavel)
+        {
+            string primeiraLinha = linhaDigitavel.Substring(0, linhaDigitavel.IndexOf('X'));
+            string segundaLinha = linhaDigitavel.Substring(linhaDigitavel.IndexOf('X') + 1, linhaDigitavel.IndexOf('Y') - linhaDigitavel.IndexOf('X') - 1);
+            string terceiraLinha = linhaDigitavel.Substring(linhaDigitavel.IndexOf('Y') + 1, linhaDigitavel.IndexOf('Z') - linhaDigitavel.IndexOf('Y') - 1);
+            int[] verificadores = new int[3];
+
+            verificadores[0] = CalcularDigitoLinhaDigitavel(primeiraLinha);
+            verificadores[1] = CalcularDigitoLinhaDigitavel(segundaLinha);
+            verificadores[2] = CalcularDigitoLinhaDigitavel(terceiraLinha);
+
+            return verificadores;
+        }
+
+        internal int CalcularDigitoLinhaDigitavel(string sequenciaNumerica)
+        {
+            char[] digitos = sequenciaNumerica.ToCharArray(0, sequenciaNumerica.Length);
+            int digitosMultSum = 0;
+            bool even = (sequenciaNumerica.Length % 2) > 0;
+            int aux;
+            int divisao;
+
+            foreach (char digito in digitos)
+            {
+                if (even)
+                {
+                    aux = ((int)Char.GetNumericValue(digito) * 2);
+                }
+                else
+                {
+                    aux = ((int)Char.GetNumericValue(digito) * 1);
+                }
+                digitosMultSum += (aux >= 10) ? aux - 9 : aux;
+                even = !even;
+            }
+
+            divisao = (digitosMultSum % 10);
+            return (divisao % 10 == 0) ? 0 : (10 - divisao);
+        }
         #endregion VALIDAÇÕES
 
         #region ARQUIVO DE REMESSA
@@ -327,8 +284,6 @@ namespace BoletoNet
             try
             {
                 string _header = " ";
-
-                //this.FormataCodigoCliente(cedente);
 
                 base.GerarHeaderRemessa(numeroConvenio, cedente, tipoArquivo, numeroArquivoRemessa);
 
@@ -474,7 +429,7 @@ namespace BoletoNet
                 header += Utils.FormatCode(cedente.ContaBancaria.DigitoAgencia, "0", 1, true);//Posição 059 a 059
                 header += Utils.FormatCode(cedente.ContaBancaria.Conta, "0", 12, true);   //Posição 060 a 071
                 header += Utils.FormatCode(cedente.ContaBancaria.DigitoConta, "0", 1, true);  //Posição 072 a 72
-                header += Utils.FormatCode((cedente.ContaBancaria.DigitoAgenciaConta != null ? cedente.ContaBancaria.DigitoAgenciaConta : " "), " ", 1, true); //Posição 073     Dígito Verificador da Ag/Conta: Brancos
+                header += Utils.FormatCode(" ", 1); //Posição 073 Branco
                 header += Utils.FormatCode(cedente.Nome, " ", 30);  //Posição 074 a 103      Nome do Banco: SICOOB
                 header += Utils.FormatCode("", " ", 40);   // Posição 104 a 143 Informação 1			
                 header += Utils.FormatCode("", " ", 40);   // Posição 144 a 183 Informação 2
@@ -668,8 +623,9 @@ namespace BoletoNet
 
 
                 detalhe += "1"; //Posição 118  - Código do juros mora.
-                DateTime DataJuroMora = new DateTime(boleto.DataVencimento.Year, boleto.DataVencimento.Month, boleto.DataVencimento.Day+1);
-                detalhe += Utils.FormatCode(DataJuroMora.ToString("ddMMyyyy"), 8);  //Posição 119 a 126  - Data do Juros de Mora: preencher com a Data de Vencimento do Título + 1
+                DateTime DataJurosMora = new DateTime(boleto.DataVencimento.Year, boleto.DataVencimento.Month, boleto.DataVencimento.Day);
+                DataJurosMora = DataJurosMora.AddDays(1);
+                detalhe += Utils.FormatCode(DataJurosMora.ToString("ddMMyyyy"), 8);  //Posição 119 a 126  - Data do Juros de Mora: preencher com a Data de Vencimento do Título + 1
                 detalhe += Utils.FormatCode(boleto.JurosMora.ToString("f").Replace(",", "").Replace(".", ""), 15);   //Posição 127 a 141  - Data do Juros de Mora: preencher com a Data de Vencimento do Título
 
                 
@@ -795,16 +751,19 @@ namespace BoletoNet
                 detalhe += Utils.FormatCode("", "0", 8, true); //Posição 43-50 Data desconto 3
                 detalhe += Utils.FormatCode("", "0", 15, true); //Posição 51-65 Valor Desconto 3
 
+
+                DateTime DataJurosMulta = new DateTime(boleto.DataVencimento.Year, boleto.DataVencimento.Month, boleto.DataVencimento.Day);
+                DataJurosMulta = DataJurosMulta.AddDays(1);
                 if (boleto.PercMulta > 0)//Posição 66  Código da multa 
                 {
-                    detalhe += "2";                             //Posição 66        -  Código da multa 2 - Percentual
-                    detalhe += Utils.FormatCode(boleto.DataMulta.ToString("ddMMyyyy"), 8);  //Posição 67 a 74  - Data da Multa: preencher com a Data de Vencimento do Título formato DDMMAAAA
+                    detalhe += "2"; //Posição 66        -  Código da multa 2 - Percentual
+                    detalhe += Utils.FormatCode(DataJurosMulta.ToString("ddMMyyyy"), 8);  //Posição 67 a 74  - Data da Multa: preencher com a Data de Vencimento do Título formato DDMMAAAA
                     detalhe += Utils.FitStringLength(boleto.PercMulta.ApenasNumeros(), 15, 15, '0', 0, true, true, true); //Posição 75 - 89   - Valor da Multa: "Valor/Percentual a Ser Aplicado Ex: 0000000000220 = 2,20 %; Ex: 0000000001040 = 10,40 % "
                 }
                 else if (boleto.ValorMulta > 0)
                 {
                     detalhe += "1";                             //Posição 66        -  Código da multa 1 - valor fixo
-                    detalhe += Utils.FormatCode(boleto.DataMulta.ToString("ddMMyyyy"), 8);  //Posição 67 a 74  - Data da Multa: preencher com a Data de Vencimento do Título formato DDMMAAAA
+                    detalhe += Utils.FormatCode(DataJurosMulta.ToString("ddMMyyyy"), 8);  //Posição 67 a 74  - Data da Multa: preencher com a Data de Vencimento do Título formato DDMMAAAA
                     detalhe += Utils.FitStringLength(boleto.ValorMulta.ApenasNumeros(), 15, 15, '0', 0, true, true, true); //Posição 75 - 89   - Valor da Multa: "Valor/Percentual a Ser Aplicado Ex: 0000000000220 = 2,20 %; Ex: 0000000001040 = 10,40 % "
                 }
                 else
@@ -1173,6 +1132,110 @@ namespace BoletoNet
 
         }
 
+        #endregion
+
+        #region metodos para boletos legados
+        public void FormataCodigoBarra_legado(Boleto boleto)
+        {
+            int dv = 1;
+            string codigoValidacao = string.Format("{0}{1}{2}{3}{4}{5}{6}{7}{8}{9}{10}",
+                    this.Codigo, boleto.Moeda, 'D', FatorVencimento(boleto), GetValorBoletoFormatado(boleto.ValorBoleto),
+                    boleto.Carteira, boleto.Cedente.ContaBancaria.Agencia, boleto.TipoModalidade, boleto.Cedente.Codigo.PadLeft(7, '0'),
+                    this.FormataNumeroTitulo(boleto), this.FormataNumeroParcela(boleto));
+
+            dv = this.GetDvCodBarras(codigoValidacao);
+            boleto.CodigoBarra.Codigo = codigoValidacao.Replace("D", string.Empty + dv);
+        }
+
+        public void FormataLinhaDigitavel_legado(Boleto boleto)
+        {
+            //Variaveis
+            String campo1 = string.Empty;
+            String campo2 = string.Empty;
+            String campo3 = string.Empty;
+            String campo4 = string.Empty;
+            String campo5 = string.Empty;
+            String indice = "1212121212";
+            StringBuilder linhaDigitavel = new StringBuilder();
+            int soma = 0;
+            int temp = 0;
+            string NNComDvSemcaracteres = boleto.NossoNumero.Replace("-", "").Substring((boleto.NossoNumero.Length - 9));
+            //throw new Exception("NNComDvSemcaracteres " + NNComDvSemcaracteres);
+            //Formatando o campo 1
+
+            campo1 = String.Empty + boleto.Banco.Codigo + boleto.Moeda + boleto.Cedente.Carteira + boleto.Cedente.ContaBancaria.Agencia;
+
+            //Calculando CAMPO 1
+            for (int i = 0; i < campo1.Length; i++)
+            {
+                //Calculando indice
+                temp = (Convert.ToInt16(campo1.Substring(i, 1)) * Convert.ToInt16(indice.Substring(i + 1, 1)));
+                //Verifica se resultado é igual ou superior a 10
+                if (temp >= 10)
+                {
+                    temp = Convert.ToInt16(temp.ToString().Substring(0, 1)) + Convert.ToInt16(temp.ToString().Substring(1, 1));
+                }
+                //Guardando soma
+                soma = soma + temp;
+            }
+            linhaDigitavel.Append(string.Format("{0}.{1}{2} ", campo1.Substring(0, 5), campo1.Substring(5, 4), Multiplo10(soma)));
+
+            //throw new Exception("boleto.Cedente.Codigo: " + boleto.Cedente.Codigo + "; Utils.FormatCode(boleto.Cedente.Codigo,7): " + Utils.FormatCode(boleto.Cedente.Codigo, 7) + "; campo3: " + campo3);
+
+            soma = 0;
+            temp = 0;
+            //Formatando o campo 2
+            //campo2 = boleto.CodigoBarra.Codigo.Substring(24, 10);
+            campo2 = Utils.FormatCode(boleto.TipoModalidade.ToString(), 2) + Utils.FormatCode(boleto.Cedente.Codigo, 7) + Utils.FormatCode(NNComDvSemcaracteres.Substring(0, 1), 1);
+            for (int i = 0; i < campo2.Length; i++)
+            {
+                //Calculando Indice 2
+                temp = (Convert.ToInt16(campo2.Substring(i, 1)) * Convert.ToInt16(indice.Substring(i, 1)));
+                //Verifica se resultado é igual ou superior a 10
+                if (temp >= 10)
+                {
+                    temp = Convert.ToInt16(temp.ToString().Substring(0, 1)) + Convert.ToInt16(temp.ToString().Substring(1, 1));
+                }
+                //Guardando soma
+                soma = soma + temp;
+            }
+            linhaDigitavel.Append(string.Format("{0}.{1}{2} ", campo2.Substring(0, 5), campo2.Substring(5, 5), Multiplo10(soma)));
+            //throw new Exception("campo1: " + campo1 + "; campo2: " + campo2 + "; campo3: " + campo3);
+
+
+
+            soma = 0;
+            temp = 0;
+            //Formatando campo 3
+            //campo3 = boleto.CodigoBarra.Codigo.Substring(34, 10);
+            //throw new Exception("NNComDvSemcaracteres: " + NNComDvSemcaracteres + "; Utils.FormatCode(NNComDvSemcaracteres.Substring(0,1),1): " + Utils.FormatCode(NNComDvSemcaracteres.Substring(0, 1), 1) + "; Utils.FormatCode(NNComDvSemcaracteres.Substring(1), 7): " + Utils.FormatCode(NNComDvSemcaracteres.Substring(1), 7));
+
+
+            campo3 = Utils.FormatCode(NNComDvSemcaracteres.Substring(1), 7) + Utils.FormatCode(boleto.NumeroParcela.ToString(), 3);
+            for (int i = 0; i < campo3.Length; i++)
+            {
+                //Calculando indice 2
+                temp = (Convert.ToInt16(campo3.Substring(i, 1)) * Convert.ToInt16(indice.Substring(i, 1)));
+                //Verifica se resultado é igual ou superior a 10
+                if (temp >= 10)
+                {
+                    temp = Convert.ToInt16(temp.ToString().Substring(0, 1)) + Convert.ToInt16(temp.ToString().Substring(1, 1));
+                }
+                //Guardando resultado
+                soma = soma + temp;
+            }
+            linhaDigitavel.Append(campo3.Substring(0, 5) + "." + campo3.Substring(5, 5) + Multiplo10(soma) + " ");
+
+
+            //Formatando Campo 4
+            campo4 = boleto.CodigoBarra.Codigo.Substring(4, 1);
+            linhaDigitavel.Append(campo4 + " ");
+
+            //Formatando Campo 5
+            campo5 = FatorVencimento(boleto).ToString() + Utils.FormatCode(boleto.ValorBoleto.ToString("f").Replace(",", "").Replace(".", ""), 10);
+            linhaDigitavel.Append(campo5);
+            boleto.CodigoBarra.LinhaDigitavel = linhaDigitavel.ToString();
+        }
         #endregion
 
         /// <summary>
