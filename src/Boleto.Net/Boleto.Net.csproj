@@ -100,6 +100,7 @@
     <Compile Include="Banco\Banco_Nordeste.cs" />
     <Compile Include="Banco\Banco_Cecred.cs" />
     <Compile Include="Banco\Banco_Sofisa.cs" />
+    <Compile Include="Banco\Banco_Unicred.cs" />
     <Compile Include="Banco\Banco_Votorantim.cs" />
     <Compile Include="Banco\Carteiras\BancoCarteiraFactory.cs" />
     <Compile Include="Banco\Carteiras\Brasil\Carteira18Brasil.cs" />
@@ -109,6 +110,7 @@
     <Compile Include="Boleto\CodigoMovimento\CodigoMovimento_Itau.cs" />
     <Compile Include="Boleto\CodigoMovimento\CodigoMovimento_Safra.cs" />
     <Compile Include="Boleto\CodigoMovimento\CodigoMovimento_Sicredi.cs" />
+    <Compile Include="Boleto\CodigoMovimento\CodigoMovimento_Unicred.cs" />
     <Compile Include="Boleto\EspecieDocumento\EspecieDocumento_Cecred.cs" />
     <Compile Include="Boleto\EspecieDocumento\EspecieDocumento_Daycoval.cs" />
     <Compile Include="Boleto\EspecieDocumento\EspecieDocumento_Nordeste.cs" />
@@ -191,6 +193,7 @@
     <Compile Include="Boleto\Instrucao\Instrucao_Sicoob.cs" />
     <Compile Include="Boleto\Instrucao\Instrucao_Sicredi.cs" />
     <Compile Include="Boleto\Instrucao\Instrucao_Sudameris.cs" />
+    <Compile Include="Boleto\Instrucao\Instrucao_Unicred.cs" />
     <Compile Include="Boleto\Instrucao\Instrucao_Votorantim.cs" />
     <Compile Include="Boleto\Remessa.cs" />
     <Compile Include="Boleto\DemonstrativoValoresBoleto\GrupoDemonstrativo.cs" />

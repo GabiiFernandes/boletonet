@@ -67,6 +67,9 @@ namespace BoletoNet
                     case 104:
                         enumInstucao_banco = typeof(EnumInstrucoes_Caixa);
                         break;
+                    case 136:
+                        enumInstucao_banco = typeof(EnumInstrucoes_Unicred1);
+                        break;
                     //341 - Itaú
                     case 341:
                         enumInstucao_banco = typeof(EnumInstrucoes_Itau);
@@ -237,6 +240,9 @@ namespace BoletoNet
                     //655 - Votorantim
                     case 655:
                         //_IInstrucao = new Instrucao_Votorantim();
+                        break;
+                    case 136:
+                        _IInstrucao = new Instrucao_Unicred(codigoInstrucao, quantidadeDias);
                         break;
                     default:
                         throw new Exception("Código do banco não implementando: " + codigoBanco);

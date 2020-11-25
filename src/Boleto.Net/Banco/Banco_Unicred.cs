@@ -63,6 +63,7 @@ namespace BoletoNet
 
             return DVNossoNumero;
         }
+
         public override string GerarHeaderRemessa(string numeroConvenio, Cedente cedente, TipoArquivo tipoArquivo, int numeroArquivoRemessa)
         {
             try

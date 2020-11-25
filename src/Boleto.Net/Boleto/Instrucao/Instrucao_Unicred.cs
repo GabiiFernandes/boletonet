@@ -32,7 +32,7 @@ namespace BoletoNet
         {
             try
             {
-                this.Banco = new Banco(422);
+                this.Banco = new Banco(136);
             }
             catch (Exception e)
             {
@@ -44,7 +44,7 @@ namespace BoletoNet
         {
             try
             {
-                this.Banco = new Banco_Safra();
+                this.Banco = new Banco_Unicred();
                 this.ExecInstrucao(codigo, nrDias);
             }
             catch (Exception e)
