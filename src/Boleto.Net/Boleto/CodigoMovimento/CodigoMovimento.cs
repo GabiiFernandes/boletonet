@@ -63,6 +63,10 @@ namespace BoletoNet
                     case 104:
                         _ICodigoMovimento = new CodigoMovimento_Caixa(codigoMovimento);
                         break;
+                    // 136 - Unicred
+                    case 136:
+                        _ICodigoMovimento = new CodigoMovimento_Unicred(codigoMovimento);
+                        break;
                     //341 - Itaú
                     case 341:
                         _ICodigoMovimento = new CodigoMovimento_Itau(codigoMovimento);
