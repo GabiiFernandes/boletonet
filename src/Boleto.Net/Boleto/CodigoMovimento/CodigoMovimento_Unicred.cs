@@ -1,4 +1,5 @@
-﻿using System;
+﻿using BoletoNet.Excecoes;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -40,7 +41,7 @@ namespace BoletoNet
             }
             catch (Exception ex)
             {
-            //  throw new BoletoNetException("Código de movimento é inválido", ex);
+              throw new BoletoNetException("Código de movimento é inválido", ex);
             }
         }
         
