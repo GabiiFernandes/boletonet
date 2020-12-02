@@ -13,7 +13,7 @@ namespace BoletoNet
         private string _dacNossoNumero = string.Empty;
         private int _dacContaCorrente = 0;
         private int _dacBoleto = 0;
-        private int sequencialArquivo = 0;
+        private int sequencialArquivo = 1;
 
         internal Banco_Unicred()
         {
@@ -68,17 +68,16 @@ namespace BoletoNet
         {
             try
             {
-                string _header = " ";
+                string _header = ""; 
 
-                this.sequencialArquivo = numeroArquivoRemessa;
-                base.GerarHeaderRemessa(numeroConvenio, cedente, tipoArquivo, this.sequencialArquivo);
+                base.GerarHeaderRemessa(numeroConvenio, cedente, tipoArquivo, numeroArquivoRemessa);
 
                 switch (tipoArquivo)
                 {
                     case TipoArquivo.CNAB240:
                         throw new Exception("Função não implementada: GerarHeaderRemessa() << CNAB240");
                     case TipoArquivo.CNAB400:
-                        _header = GerarHeaderRemessaCNAB400(cedente, this.sequencialArquivo);
+                        _header = GerarHeaderRemessaCNAB400(cedente, numeroArquivoRemessa);
                         break;
                     case TipoArquivo.Outro:
                         throw new Exception("Tipo de arquivo inexistente.");
@@ -101,18 +100,18 @@ namespace BoletoNet
                 reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediNumericoSemSeparador_, 0002, 001, 0, "1", '0'));                                    //002-002
                 reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediAlphaAliEsquerda_____, 0003, 007, 0, "REMESSA", ' '));                              //003-009
                 reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediNumericoSemSeparador_, 0010, 002, 0, "01", '0'));                                   //010-011
-                reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediAlphaAliEsquerda_____, 0012, 008, 0, "COBRANCA", ' '));                             //012-026
+                reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediAlphaAliEsquerda_____, 0012, 015, 0, "COBRANCA", ' '));                             //012-026
                 reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediAlphaAliDireita______, 0027, 020, 0, cedente.Codigo + cedente.DigitoCedente, '0')); //027-046
-                //reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediAlphaAliEsquerda_____, 0047, 020, 0, , ' '));                                     //047-076
+                reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediAlphaAliEsquerda_____, 0047, 030, 0, cedente.Nome, ' '));                           //047-076
                 reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediAlphaAliEsquerda_____, 0077, 003, 0, 136, '0'));                                    //077-079
                 reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediAlphaAliEsquerda_____, 0080, 015, 0, "UNICRED", ' '));                              //080-094
                 reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediDataDDMMAA___________, 0095, 006, 0, DateTime.Now, '0'));                           //095-100
                 reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediAlphaAliEsquerda_____, 0101, 007, 0, string.Empty, ' '));                           //101-107
-                reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediAlphaAliEsquerda_____, 0108, 003, 0, "0", '0'));                                    //108-110
-                reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediAlphaAliEsquerda_____, 0111, 007, 0, "0000001", '0'));                              //111-117
+                reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediNumericoSemSeparador_, 0108, 003, 0, "000", '0'));                                  //108-110
+                reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediAlphaAliDireita______, 0111, 007, 0, numeroArquivoRemessa, '0'));                   //111-117
                 reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediAlphaAliEsquerda_____, 0118, 277, 0, string.Empty, ' '));                           //118-394
-                reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediAlphaAliEsquerda_____, 0395, 006, 0, "000001", '0'));                               //395-400
-
+                reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediAlphaAliDireita______, 0395, 006, 0, this.sequencialArquivo, '0'));                               //395-400
+                this.sequencialArquivo++;
                 reg.CodificarLinha();
 
                 string vLinha = reg.LinhaRegistro;
@@ -130,23 +129,29 @@ namespace BoletoNet
         {
             try
             {
-                string _detalhe = " ";
+                string _detalhe = "";
+                string _detalhe5 = "";
+                string _detalhe7 = "";
 
                 base.GerarDetalheRemessa(boleto, this.sequencialArquivo, tipoArquivo);
 
                 switch (tipoArquivo)
                 {
                     case TipoArquivo.CNAB240:
-                    //throw new Exception("Função não implementada: GerarDetalheRemessa() << CNAB240");
+                        throw new Exception("Função não implementada: GerarDetalheRemessa() << CNAB240");
                     case TipoArquivo.CNAB400:
                         _detalhe = GerarDetalheRemessaCNAB400(boleto, this.sequencialArquivo);
+                        this.sequencialArquivo++;
+                        _detalhe5 = GerarDetalhe5RemessaCNAB400(boleto, this.sequencialArquivo);
+                        this.sequencialArquivo++;
+                        _detalhe7 = GerarDetalhe7RemessaCNAB400(boleto, this.sequencialArquivo);
+                        this.sequencialArquivo++;
                         break;
                     case TipoArquivo.Outro:
-                        // throw new Exception("Tipo de arquivo inexistente.");
-                        break;
+                         throw new Exception("Tipo de arquivo inexistente.");
                 }
 
-                return _detalhe;
+                return _detalhe + "\n" + _detalhe5 + "\n" + _detalhe7;
 
             }
             catch (Exception e)
@@ -158,7 +163,7 @@ namespace BoletoNet
         public string GerarDetalheRemessaCNAB400(Boleto boleto, int numeroRegistro)
         {
             int numeroDias = 0;
-            int instrucao1 = boleto.Instrucoes[0].Codigo;
+            int instrucao1 = boleto.Instrucoes.Count > 0 ? boleto.Instrucoes[0].Codigo : 0;
             try
             {
                 /*
@@ -172,10 +177,10 @@ namespace BoletoNet
                 TRegistroEDI reg = new TRegistroEDI();
 
                 reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediNumericoSemSeparador_, 0001, 001, 0, "1", '0'));                                       //001-001
-                reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediNumericoSemSeparador_, 0002, 005, 0, "00001", '0'));                                   //002-006
+                reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediAlphaAliDireita______, 0002, 005, 0, "00001", '0'));                                   //002-006
                 reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediAlphaAliEsquerda_____, 0007, 001, 0, "9", '0'));                                       //007-007
-                reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediNumericoSemSeparador_, 0008, 012, 0, boleto.Cedente.ContaBancaria.Conta, '0'));        //008-019
-                reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediAlphaAliEsquerda_____, 0020, 001, 0, boleto.Cedente.ContaBancaria.DigitoConta, '0'));  //020-020
+                reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediAlphaAliDireita______, 0008, 012, 0, boleto.Cedente.ContaBancaria.Conta, '0'));        //008-019
+                reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediAlphaAliDireita______, 0020, 001, 0, boleto.Cedente.ContaBancaria.DigitoConta, '0'));  //020-020
                 reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediAlphaAliEsquerda_____, 0021, 001, 0, "0", '0'));                                       //021-021
                 reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediAlphaAliEsquerda_____, 0022, 003, 0, boleto.Cedente.Carteira, '0'));                   //022-024
                 reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediAlphaAliEsquerda_____, 0025, 013, 0, "0", '0'));                                       //025-037
@@ -193,7 +198,7 @@ namespace BoletoNet
                 reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediAlphaAliDireita______, 0111, 010, 0, "6", '0'));                                       //111-120
                 reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediDataDDMMAA___________, 0121, 006, 0, boleto.DataVencimento, '0'));                     //121-126
                 reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediNumericoSemSeparador_, 0127, 013, 0, "0", '0'));                                       //127-139
-                reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediNumericoSemSeparador_, 0140, 010, 0, "0", '0'));                                       //140-149
+                reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediAlphaAliDireita______, 0140, 010, 0, "0", '0'));                                       //140-149
                 reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediAlphaAliEsquerda_____, 0150, 001, 0, "1", '0'));                                       //150-150
                 reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediDataDDMMAA___________, 0151, 006, 0, boleto.DataDocumento, '0'));                      //151-156
                 reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediNumericoSemSeparador_, 0157, 001, 0, "0", '0'));                                       //157-157
@@ -215,9 +220,8 @@ namespace BoletoNet
                 reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediAlphaAliEsquerda_____, 0335, 020, 0, boleto.Sacado.Endereco.Cidade, '0'));             //335-354
                 reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediAlphaAliEsquerda_____, 0355, 002, 0, boleto.Sacado.Endereco.UF, ' '));                 //355-356
                 reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediAlphaAliEsquerda_____, 0357, 038, 0, string.Empty, ' '));                              //357-394
-                reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediNumericoSemSeparador_, 0395, 006, 0, "000001", ' '));                                  //395-400
-
-
+                reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediNumericoSemSeparador_, 0395, 006, 0, this.sequencialArquivo, ' '));                    //395-400
+                
                 reg.CodificarLinha();
 
                 return Utils.SubstituiCaracteresEspeciais(reg.LinhaRegistro);
@@ -225,6 +229,82 @@ namespace BoletoNet
             catch (Exception e)
             {
                 throw new Exception("Erro ao gerar DETALHE do arquivo CNAB400.", e);
+            }
+        }
+
+        public string GerarDetalhe5RemessaCNAB400(Boleto boleto, int numeroRegistro)
+        {
+            try
+            {
+                /*
+                * Código de Movimento Remessa
+                *InstrucaoConfirmada = 02,
+                *InstrucaoRejeitada = 03,
+                */
+
+                TRegistroEDI reg = new TRegistroEDI();
+
+                reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediNumericoSemSeparador_, 0001, 001, 0, "5", '0'));                                       //001-001
+                reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediAlphaAliEsquerda_____, 0002, 120, 0, string.Empty, ' '));                              //002-121
+                reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediAlphaAliEsquerda_____, 0122, 002, 0, string.Empty, ' '));                              //122-123
+                reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediNumericoSemSeparador_, 0124, 014, 0, "00000000000000", '0'));                          //124-137
+                reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediAlphaAliEsquerda_____, 0138, 040, 0, string.Empty, ' '));                              //138-177
+                reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediAlphaAliEsquerda_____, 0178, 012, 0, string.Empty, ' '));                              //021-021
+                reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediNumericoSemSeparador_, 0190, 008, 0, "00000000", '0'));                                //022-024
+                reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediNumericoSemSeparador_, 0198, 015, 0, "000000000000000", '0'));                         //025-037
+                reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediNumericoSemSeparador_, 0213, 002, 0, "00", ' '));                              //038-062
+                reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediAlphaAliEsquerda_____, 0215, 060, 0, string.Empty, ' '));                                     //063-065
+                reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediAlphaAliEsquerda_____, 0275, 060, 0, string.Empty, '0'));                                      //066-067
+                reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediNumericoSemSeparador_, 0335, 060, 0, "000000000000000000000000000000000000000000000000000000000000", ' '));                              //068-092
+                reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediNumericoSemSeparador_, 0395, 006, 0, this.sequencialArquivo, '0'));                                       //093-093
+
+                reg.CodificarLinha();
+
+                return Utils.SubstituiCaracteresEspeciais(reg.LinhaRegistro);
+            }
+            catch (Exception e)
+            {
+                throw new Exception("Erro ao gerar DETALHE tipo 5 do arquivo CNAB400.", e);
+            }
+        }
+
+        public string GerarDetalhe7RemessaCNAB400(Boleto boleto, int numeroRegistro)
+        {
+            int instrucao1 = boleto.Instrucoes.Count > 0 ? boleto.Instrucoes[0].Codigo : 0;
+            try
+            {
+                /*
+                * Código de Movimento Remessa
+                *InstrucaoConfirmada = 02,
+                *InstrucaoRejeitada = 03,
+                */
+
+                TRegistroEDI reg = new TRegistroEDI();
+
+                reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediNumericoSemSeparador_, 0001, 001, 0, "7", '0'));                                       //001-001
+                reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediAlphaAliEsquerda_____, 0002, 003, 0, string.Empty, ' '));                              //002-004
+                reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediNumericoSemSeparador_, 0005, 002, 0, "00", '0'));                                      //005-006
+                reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediAlphaAliEsquerda_____, 0007, 080, 0, "1111111", '0'));                                 //007-086
+                reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediAlphaAliEsquerda_____, 0087, 008, 0, string.Empty, ' '));                              //087-094
+                reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediAlphaAliEsquerda_____, 0095, 040, 0, "0", '0'));                                       //095-134
+                reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediNumericoSemSeparador_, 0135, 002, 0, "00", '0'));                                      //135-136
+                reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediAlphaAliEsquerda_____, 0137, 080, 0, "0", ' '));                                       //137-216
+                reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediAlphaAliEsquerda_____, 0217, 008, 0, string.Empty, ' '));                              //217-224
+                reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediAlphaAliEsquerda_____, 0225, 040, 0, "", ' '));                                        //225-264
+                reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediNumericoSemSeparador_, 0265, 002, 0, "00", '0'));                                      //265-266
+                reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediAlphaAliEsquerda_____, 0267, 080, 0, string.Empty, ' '));                              //267-346
+                reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediAlphaAliEsquerda_____, 0347, 007, 0, string.Empty, ' '));                              //347-353
+                reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediAlphaAliEsquerda_____, 0354, 040, 0, "", ' '));                                        //354-393
+                reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediAlphaAliEsquerda_____, 0394, 001, 0, string.Empty, ' '));                              //394-394
+                reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediAlphaAliDireita______, 0395, 006, 0, this.sequencialArquivo, '0'));                    //395-400
+
+                reg.CodificarLinha();
+
+                return Utils.SubstituiCaracteresEspeciais(reg.LinhaRegistro);
+            }
+            catch (Exception e)
+            {
+                throw new Exception("Erro ao gerar DETALHE tipo 7 do arquivo CNAB400.", e);
             }
         }
 
@@ -262,8 +342,8 @@ namespace BoletoNet
             {
                 TRegistroEDI reg = new TRegistroEDI();
                 reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediAlphaAliEsquerda_____, 0001, 001, 0, "9", ' '));                           //001-001
-                reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediAlphaAliEsquerda_____, 0002, 394, 0, string.Empty, ' '));                  //002-394
-                reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediInteiro______________, 0395, 006, 0, "000000", '0'));                      //395-400
+                reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediAlphaAliEsquerda_____, 0002, 393, 0, string.Empty, ' '));                  //002-394
+                reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediAlphaAliDireita______, 0395, 006, 0, this.sequencialArquivo, '0'));                      //395-400
 
                 reg.CodificarLinha();
 
