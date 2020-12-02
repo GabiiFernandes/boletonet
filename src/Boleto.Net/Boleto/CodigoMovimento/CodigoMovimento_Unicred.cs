@@ -28,6 +28,16 @@ namespace BoletoNet
                 throw new Exception("Erro ao carregar objeto", ex);
             }
         }
+        
+        public CodigoMovimento_Unicred(int codigo, int codigoDetalhamento)
+        {
+            try {
+                carregar(codigo);
+            }
+            catch (Exception ex) {
+                throw new Exception("Erro ao gerar código de movimento para o banco Unicredi", ex);
+            }
+        }
 
         private void carregar(int codigo)
         {

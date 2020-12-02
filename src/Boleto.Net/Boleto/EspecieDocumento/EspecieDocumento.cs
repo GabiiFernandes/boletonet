@@ -216,7 +216,6 @@ namespace BoletoNet
                         return EspecieDocumento_Sicoob.CarregaTodas();
                     case 136: 
                         return EspecieDocumento_Unicred.CarregaTodas();
-                        break;
                     default:
                         throw new Exception("Espécies do Documento não implementado para o banco : " + codigoBanco);
                 }
