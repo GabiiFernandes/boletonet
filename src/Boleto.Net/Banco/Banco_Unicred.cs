@@ -443,13 +443,14 @@ namespace BoletoNet
 
         public override void FormataLinhaDigitavel(Boleto boleto)
         {
+            string Livre = CampoLivre(boleto);
             string agencia = FormatZerosEsquerda(boleto.Cedente.ContaBancaria.Agencia.ToString(), 4);
             string conta = FormatZerosEsquerda(boleto.Cedente.ContaBancaria.Conta.ToString() + boleto.Cedente.ContaBancaria.DigitoConta.ToString(), 9);
             string nossoNumero = boleto.NossoNumero.Substring(0, 9);
             int[] digitosVerificadores;
             int asciiZero = 48;
-            boleto.CodigoBarra.LinhaDigitavel = string.Format("{0}{1}{2}{3}{4}{5}{6}{7}{8}{9}{10}{11}{12}{13}",
-                this.Codigo, boleto.Moeda, CampoLivre(boleto).Substring(0,5), agencia, 'X', 0, conta, 'Y', nossoNumero, 2, 'Z', _dacBoleto.ToString(), FatorVencimento(boleto), GetValorBoletoFormatado(boleto.ValorBoleto));
+            boleto.CodigoBarra.LinhaDigitavel = string.Format("{0}{1}{2}{3}{4}{5}{6}{7}{8}",
+            Codigo, boleto.Moeda, Livre.Substring(0, 5), 'X', Livre.Substring(5, 10), 'Y', 'Z', FatorVencimento(boleto), GetValorBoletoFormatado(boleto.ValorBoleto));
 
             digitosVerificadores = GetDigitosVerificadoresLinhaDigitavel(boleto.CodigoBarra.LinhaDigitavel);
             boleto.CodigoBarra.LinhaDigitavel = boleto.CodigoBarra.LinhaDigitavel
@@ -469,7 +470,7 @@ namespace BoletoNet
         public override void FormataCodigoBarra(Boleto boleto)
         {
             boleto.CodigoBarra.Codigo = string.Format("{0}{1}{2}{3}{4}{5}",
-            Codigo, boleto.Moeda, 'D', FatorVencimento(boleto), CampoLivre(boleto), GetValorBoletoFormatado(boleto.ValorBoleto));
+            Codigo, boleto.Moeda, 'D', FatorVencimento(boleto), GetValorBoletoFormatado(boleto.ValorBoleto), CampoLivre(boleto));
             _dacBoleto = GetDacBoleto(boleto.CodigoBarra.Codigo);
             boleto.CodigoBarra.Codigo = boleto.CodigoBarra.Codigo.Replace("D", _dacBoleto.ToString());
         }
