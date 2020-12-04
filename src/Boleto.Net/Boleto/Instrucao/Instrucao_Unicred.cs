@@ -14,11 +14,17 @@ namespace BoletoNet
         AlteracaoVencimento = 6,
         AlteracaoSeuNumero = 8,
         Protestar = 9,
-        SustaProtestoManterCarteira = 11,
+        SustarProtestoManterCarteira = 11,
         SustarProtestoBaixarTitulo = 25,
         ProtestoAutomatico = 26,
         AlteracaoOutrosDados = 31, //alteração de dados do pagador
-        AlteracaoCarteira = 40
+        AlteracaoCarteira = 40,
+        //Tipos de protesto
+        //Caso seja instrução de protesto, a instrução na rememessa deve ir com cód 9.
+        //Codigos > 90 são usado para diferenciar o comando do campo 158;
+        NaoProtestar = 90,
+        ProtestarDiaCorridos,
+        ProtestarDiasUteis
     }
     public class Instrucao_Unicred : AbstractInstrucao, IInstrucao
     {
@@ -88,8 +94,8 @@ namespace BoletoNet
                     this.Codigo = (int)EnumInstrucoes_Unicred1.Protestar;
                     this.Descricao = "PROTESTAR";
                     break;
-                case EnumInstrucoes_Unicred1.SustaProtestoManterCarteira:
-                    this.Codigo = (int)EnumInstrucoes_Unicred1.SustaProtestoManterCarteira;
+                case EnumInstrucoes_Unicred1.SustarProtestoManterCarteira:
+                    this.Codigo = (int)EnumInstrucoes_Unicred1.SustarProtestoManterCarteira;
                     this.Descricao = "SUSTAR PROTESTO E MANTER EM CARTEIRA";
                     break;
                 case EnumInstrucoes_Unicred1.SustarProtestoBaixarTitulo:
@@ -108,7 +114,18 @@ namespace BoletoNet
                     this.Codigo = (int)EnumInstrucoes_Unicred1.AlteracaoCarteira;
                     this.Descricao = "ALTERAÇÃO DE CARTEIRA";
                     break;
-
+                case EnumInstrucoes_Unicred1.NaoProtestar:
+                    this.Codigo = (int)EnumInstrucoes_Unicred1.NaoProtestar;
+                    this.Descricao = "NÃO PROTESTAR";
+                    break;
+                case EnumInstrucoes_Unicred1.ProtestarDiaCorridos:
+                    this.Codigo = (int)EnumInstrucoes_Unicred1.ProtestarDiaCorridos;
+                    this.Descricao = "PROTESTAR POR DIAS CORRIDOS";
+                    break;
+                case EnumInstrucoes_Unicred1.ProtestarDiasUteis:
+                    this.Codigo = (int)EnumInstrucoes_Unicred1.ProtestarDiasUteis;
+                    this.Descricao = "PROTESTAR POR DIAS ÚTEIS";
+                    break;
             }
             this.QuantidadeDias = nrDias;
         }
