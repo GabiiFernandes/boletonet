@@ -5,6 +5,7 @@ using BoletoNet.Util;
 using BoletoNet.EDI.Banco;
 using System.Globalization;
 using System.Collections.Generic;
+using System.Text.RegularExpressions;
 
 [assembly: WebResource("BoletoNet.Imagens.422.jpg", "image/jpg")]
 
@@ -444,19 +445,19 @@ namespace BoletoNet
         public override void FormataLinhaDigitavel(Boleto boleto)
         {
             string Livre = CampoLivre(boleto);
-            string agencia = FormatZerosEsquerda(boleto.Cedente.ContaBancaria.Agencia.ToString(), 4);
-            string conta = FormatZerosEsquerda(boleto.Cedente.ContaBancaria.Conta.ToString() + boleto.Cedente.ContaBancaria.DigitoConta.ToString(), 9);
-            string nossoNumero = boleto.NossoNumero.Substring(0, 9);
+ 
             int[] digitosVerificadores;
             int asciiZero = 48;
-            boleto.CodigoBarra.LinhaDigitavel = string.Format("{0}{1}{2}{3}{4}{5}{6}{7}{8}",
-            Codigo, boleto.Moeda, Livre.Substring(0, 5), 'X', Livre.Substring(5, 10), 'Y', 'Z', FatorVencimento(boleto), GetValorBoletoFormatado(boleto.ValorBoleto));
+            boleto.CodigoBarra.LinhaDigitavel = string.Format("{0}{1}{2}{3}{4}{5}{6}{7}{8}{9}{10}",
+            Codigo, boleto.Moeda, Livre.Substring(0, 5), 'X', Livre.Substring(5, 10), 'Y', Livre.Substring(15,10), 'Z', this._dacBoleto, FatorVencimento(boleto), GetValorBoletoFormatado(boleto.ValorBoleto));
 
             digitosVerificadores = GetDigitosVerificadoresLinhaDigitavel(boleto.CodigoBarra.LinhaDigitavel);
             boleto.CodigoBarra.LinhaDigitavel = boleto.CodigoBarra.LinhaDigitavel
                 .Replace('X', Convert.ToChar(asciiZero + digitosVerificadores[0]))
                 .Replace('Y', Convert.ToChar(asciiZero + digitosVerificadores[1]))
                 .Replace('Z', Convert.ToChar(asciiZero + digitosVerificadores[2]));
+            boleto.CodigoBarra.LinhaDigitavel = Regex.Replace(boleto.CodigoBarra.LinhaDigitavel, "(.{5})(.{5})(.{5})(.{6})(.{5})(.{6})(.)(.{14})",
+            "$1.$2 $3.$4 $5.$6 $7 $8");
         }
 
         public string CampoLivre(Boleto boleto)
