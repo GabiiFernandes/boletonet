@@ -6,6 +6,7 @@ using BoletoNet.EDI.Banco;
 using System.Globalization;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
+using System.Text;
 
 [assembly: WebResource("BoletoNet.Imagens.422.jpg", "image/jpg")]
 
@@ -29,42 +30,14 @@ namespace BoletoNet
 
         public string CalcularDigitoNossoNumero(Boleto boleto)
         {
-            string Carteira = boleto.Carteira.ToString();
-
             if (boleto.NossoNumero.Length < 9)
             {
                 throw new IndexOutOfRangeException("Erro. O campo 'Nosso Número' deve ter mais de 9 digitos. Você digitou " + boleto.NossoNumero);
             }
             string NossoNumero = boleto.NossoNumero.Substring(0, 10);
-            int DigitoNossoNumero = GetDVNossoNumero(NossoNumero);
+            int DigitoNossoNumero = Mod11(NossoNumero, 10, 0);
             string Digito = Convert.ToString(DigitoNossoNumero);
             return Digito;
-        }
-
-
-        internal int GetDVNossoNumero(string nossoNumero)
-        {
-            char[] digitosNossoNumero;
-            digitosNossoNumero = nossoNumero.ToCharArray(0, 9);
-            int DVNossoNumero;
-
-            int mult = 1;
-            int sum = 0;
-
-            for (int i = 9; i >= 1; i--)
-            {
-                mult++;
-                if (mult > 9)
-                    mult = 2;
-
-                sum += (int)Char.GetNumericValue(digitosNossoNumero[i - 1]) * mult;
-            }
-
-            DVNossoNumero = 11 - (sum % 11);
-            if (DVNossoNumero >= 10)
-                DVNossoNumero = 0;
-
-            return DVNossoNumero;
         }
 
         public override string GerarHeaderRemessa(string numeroConvenio, Cedente cedente, TipoArquivo tipoArquivo, int numeroArquivoRemessa)
@@ -104,7 +77,7 @@ namespace BoletoNet
                 reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediAlphaAliEsquerda_____, 0003, 007, 0, "REMESSA", ' '));                              //003-009
                 reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediNumericoSemSeparador_, 0010, 002, 0, "01", '0'));                                   //010-011
                 reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediAlphaAliEsquerda_____, 0012, 015, 0, "COBRANCA", ' '));                             //012-026
-                reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediAlphaAliDireita______, 0027, 020, 0, cedente.Codigo + cedente.DigitoCedente, '0')); //027-046
+                reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediAlphaAliDireita______, 0027, 020, 0, cedente.Codigo, '0')); //027-046
                 reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediAlphaAliEsquerda_____, 0047, 030, 0, cedente.Nome, ' '));                           //047-076
                 reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediAlphaAliEsquerda_____, 0077, 003, 0, 136, '0'));                                    //077-079
                 reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediAlphaAliEsquerda_____, 0080, 015, 0, "UNICRED", ' '));                              //080-094
@@ -180,6 +153,7 @@ namespace BoletoNet
                 //string tipoInscricaoEmitente = "02";   // Padrão CNPJ
                 string tipoInscricaoSacado = "02";   // Padrão CNPJ
                 string CodMora = boleto.PercJurosMora > 0 ? boleto.CodJurosMora == "1" ? "4" : "2" : "5";
+                string DVNossoNumero = CalcularDigitoNossoNumero(boleto);
 
                 TRegistroEDI reg = new TRegistroEDI();
 
@@ -197,7 +171,7 @@ namespace BoletoNet
                 reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediAlphaAliEsquerda_____, 0068, 025, 0, string.Empty, ' '));                              //068-092
                 reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediAlphaAliEsquerda_____, 0093, 001, 0, "0", '0'));                                       //093-093
                 reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediAlphaAliEsquerda_____, 0094, 001, 0, boleto.PercMulta > 0 ? "2" : "3", '0'));          //094-094
-                reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediAlphaAliEsquerda_____, 0095, 010, 0, boleto.PercMulta, '0'));                          //095-104
+                reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediNumericoSemSeparador_, 0095, 010, 2, boleto.PercMulta, '0'));                          //095-104
                 reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediAlphaAliEsquerda_____, 0105, 001, 0, CodMora, '0'));                                   //105-105
                 reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediAlphaAliEsquerda_____, 0106, 001, 0, "N", '0'));                                       //106-106
                 reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediAlphaAliEsquerda_____, 0107, 002, 0, string.Empty, ' '));                              //107-108
@@ -214,8 +188,8 @@ namespace BoletoNet
                 reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediNumericoSemSeparador_, 0161, 013, 2, boleto.PercJurosMora, '0'));                      //161-173
                 reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediDataDDMMAA___________, 0174, 006, 0, boleto.ValorDesconto > 0 ? boleto.DataDesconto : DateTime.MinValue, '0')); //174-179
                 reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediNumericoSemSeparador_, 0180, 013, 2, boleto.ValorDesconto, '0'));                      //180-192
-                reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediAlphaAliDireita______, 0193, 011, 0, boleto.NossoNumero, '0'));                        //193-203
-                reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediNumericoSemSeparador_, 0204, 002, 0, "00", '0'));                                      //204-205
+                reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediAlphaAliDireita______, 0193, 011, 0, boleto.NossoNumero + DVNossoNumero, '0'));                        //193-203
+                reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediAlphaAliDireita______, 0204, 002, 0, "00", '0'));                                      //204-205
                 reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediNumericoSemSeparador_, 0206, 013, 2, instrucao1 == 4 ? boleto.Abatimento : 0, '0'));  //206-218
                 //PAGADOR
                 reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediNumericoSemSeparador_, 0219, 002, 0, tipoInscricaoSacado, '0'));                       //219-220
@@ -227,7 +201,7 @@ namespace BoletoNet
                 reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediAlphaAliEsquerda_____, 0335, 020, 0, boleto.Sacado.Endereco.Cidade, '0'));             //335-354
                 reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediAlphaAliEsquerda_____, 0355, 002, 0, boleto.Sacado.Endereco.UF, ' '));                 //355-356
                 reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediAlphaAliEsquerda_____, 0357, 038, 0, string.Empty, ' '));                              //357-394
-                reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediNumericoSemSeparador_, 0395, 006, 0, this.sequencialArquivo, ' '));                    //395-400
+                reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediNumericoSemSeparador_, 0395, 006, 0, this.sequencialArquivo, '0'));                    //395-400
                 
                 reg.CodificarLinha();
 
@@ -254,16 +228,16 @@ namespace BoletoNet
                 reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediNumericoSemSeparador_, 0001, 001, 0, "5", '0'));                                       //001-001
                 reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediAlphaAliEsquerda_____, 0002, 120, 0, string.Empty, ' '));                              //002-121
                 reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediAlphaAliEsquerda_____, 0122, 002, 0, string.Empty, ' '));                              //122-123
-                reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediNumericoSemSeparador_, 0124, 014, 0, "00000000000000", '0'));                          //124-137
+                reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediNumericoSemSeparador_, 0124, 014, 0, "0", '0'));                                       //124-137
                 reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediAlphaAliEsquerda_____, 0138, 040, 0, string.Empty, ' '));                              //138-177
                 reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediAlphaAliEsquerda_____, 0178, 012, 0, string.Empty, ' '));                              //021-021
-                reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediNumericoSemSeparador_, 0190, 008, 0, "00000000", '0'));                                //022-024
-                reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediNumericoSemSeparador_, 0198, 015, 0, "000000000000000", '0'));                         //025-037
-                reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediNumericoSemSeparador_, 0213, 002, 0, "00", ' '));                                      //038-062
+                reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediNumericoSemSeparador_, 0190, 008, 0, "0", '0'));                                       //022-024
+                reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediNumericoSemSeparador_, 0198, 015, 0, "0", '0'));                                       //025-037
+                reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediNumericoSemSeparador_, 0213, 002, 0, "00", '0'));                                      //038-062
                 reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediAlphaAliEsquerda_____, 0215, 060, 0, string.Empty, ' '));                              //063-065
                 reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediAlphaAliEsquerda_____, 0275, 060, 0, string.Empty, '0'));                              //066-067
-                reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediNumericoSemSeparador_, 0335, 060, 0, "000000000000000000000000000000000000000000000000000000000000", ' ')); //068-092
-                reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediNumericoSemSeparador_, 0395, 006, 0, this.sequencialArquivo, '0'));                    //093-093
+                reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediAlphaAliDireita______, 0335, 060, 0, "0", '0'));                                       //068-092
+                reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediAlphaAliDireita______, 0395, 006, 0, this.sequencialArquivo, '0'));                    //093-093
 
                 reg.CodificarLinha();
 
@@ -277,11 +251,7 @@ namespace BoletoNet
 
         public string GerarDetalhe7RemessaCNAB400(Boleto boleto, int numeroRegistro)
         {
-            List<string> mensagens = new List<string>();
-            string mensagemInstrucao = boleto.Instrucoes.Count > 0 ? boleto.Instrucoes[boleto.Instrucoes.Count-1].Descricao : null;
-            
-            if (mensagemInstrucao != null && mensagemInstrucao != "NÃO PROTESTAR")
-                mensagens.Add(mensagemInstrucao);
+            var mensagens = new List<string>();
 
             foreach (IInstrucao instrucao in boleto.Instrucoes)
             {
@@ -320,6 +290,26 @@ namespace BoletoNet
 
                 reg.CodificarLinha();
 
+
+                if (!string.IsNullOrEmpty(reg.LinhaRegistro))
+                {
+                    var sb = new StringBuilder();
+                    var arrayChar = reg.LinhaRegistro.Normalize(NormalizationForm.FormD).ToCharArray();
+
+                    foreach (char c in arrayChar)
+                    {
+                        if (CharUnicodeInfo.GetUnicodeCategory(c) != UnicodeCategory.NonSpacingMark)
+                            sb.Append(c);
+                    }
+                    return Regex.Replace(sb.ToString(), @"[^0-9a-zA-Z\%\=\/\$°ºª&¹²³.,\\@\- ]+", " ")
+                        .Replace("ª", "a")
+                        .Replace("º", "o")
+                        .Replace("°", "o")
+                        .Replace("&", "e")
+                        .Replace("¹", "1")
+                        .Replace("²", "2")
+                        .Replace("³", "3");
+                }
                 return Utils.SubstituiCaracteresEspeciais(reg.LinhaRegistro);
             }
             catch (Exception e)
@@ -416,7 +406,6 @@ namespace BoletoNet
 
         public override void ValidaBoleto(Boleto boleto)
         {
-
             // Calcula o DAC do Nosso Número
             _dacNossoNumero = CalcularDigitoNossoNumero(boleto);
 
@@ -462,10 +451,11 @@ namespace BoletoNet
 
         public string CampoLivre(Boleto boleto)
         {
+            string _Digito = CalcularDigitoNossoNumero(boleto);
 
-            return FormatZerosEsquerda(boleto.Cedente.ContaBancaria.Agencia.ToString() + "0",4)
-                + FormatZerosEsquerda(boleto.Cedente.ContaBancaria.Conta.ToString() + boleto.Cedente.ContaBancaria.DigitoConta, 10)
-                + FormatZerosEsquerda(boleto.NossoNumero, 11);
+            return FormatZerosEsquerda(boleto.Cedente.ContaBancaria.Agencia.ToString(),4)
+                + FormatZerosEsquerda(boleto.Cedente.ContaBancaria.Conta.ToString() + boleto.Cedente.ContaBancaria.DigitoConta, 10) 
+                + FormatZerosEsquerda(boleto.NossoNumero + _Digito, 11);
         }
 
         public override void FormataCodigoBarra(Boleto boleto)
