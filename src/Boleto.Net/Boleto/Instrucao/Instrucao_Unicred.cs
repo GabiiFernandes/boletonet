@@ -17,14 +17,18 @@ namespace BoletoNet
         SustarProtestoManterCarteira = 11,
         SustarProtestoBaixarTitulo = 25,
         ProtestoAutomatico = 26,
+        //Para Protesto automatico 
+        ProtestoAutomaticoDiasCorridos = 27,
+        ProtestoAutomaticoDiasUteis = 28,
         AlteracaoOutrosDados = 31, //alteração de dados do pagador
         AlteracaoCarteira = 40,
         //Tipos de protesto
         //Caso seja instrução de protesto, a instrução na rememessa deve ir com cód 9.
         //Codigos > 90 são usado para diferenciar o comando do campo 158;
         NaoProtestar = 90,
-        ProtestarDiaCorridos,
-        ProtestarDiasUteis
+        ProtestarDiaCorridos = 91,
+        ProtestarDiasUteis = 92,
+
     }
     public class Instrucao_Unicred : AbstractInstrucao, IInstrucao
     {
@@ -90,10 +94,6 @@ namespace BoletoNet
                     this.Codigo = (int)EnumInstrucoes_Unicred1.AlteracaoSeuNumero;
                     this.Descricao = "ALTERAÇÃO DE SEU NÚMERO";
                     break;
-                case EnumInstrucoes_Unicred1.Protestar:
-                    this.Codigo = (int)EnumInstrucoes_Unicred1.Protestar;
-                    this.Descricao = "PROTESTAR";
-                    break;
                 case EnumInstrucoes_Unicred1.SustarProtestoManterCarteira:
                     this.Codigo = (int)EnumInstrucoes_Unicred1.SustarProtestoManterCarteira;
                     this.Descricao = "SUSTAR PROTESTO E MANTER EM CARTEIRA";
@@ -102,9 +102,13 @@ namespace BoletoNet
                     this.Codigo = (int)EnumInstrucoes_Unicred1.SustarProtestoBaixarTitulo;
                     this.Descricao = "SUSTAR PROTESTO E BAIXAR TITULO";
                     break;
-                case EnumInstrucoes_Unicred1.ProtestoAutomatico:
-                    this.Codigo = (int)EnumInstrucoes_Unicred1.ProtestoAutomatico;
-                    this.Descricao = "PROTESTO AUTOMÁTICO";
+                case EnumInstrucoes_Unicred1.ProtestoAutomaticoDiasUteis:
+                    this.Codigo = (int)EnumInstrucoes_Unicred1.ProtestoAutomaticoDiasUteis;
+                    this.Descricao = "PROTESTO AUTOMÁTICO POR DIAS ÚTEIS";
+                    break;
+                case EnumInstrucoes_Unicred1.ProtestoAutomaticoDiasCorridos:
+                    this.Codigo = (int)EnumInstrucoes_Unicred1.ProtestoAutomaticoDiasCorridos;
+                    this.Descricao = "PROTESTO AUTOMÁTICO POR DIAS CORRIDOS";
                     break;
                 case EnumInstrucoes_Unicred1.AlteracaoOutrosDados:
                     this.Codigo = (int)EnumInstrucoes_Unicred1.AlteracaoOutrosDados;

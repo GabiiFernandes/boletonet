@@ -35,7 +35,10 @@ namespace BoletoNet
                 throw new IndexOutOfRangeException("Erro. O campo 'Nosso Número' deve ter mais de 9 digitos. Você digitou " + boleto.NossoNumero);
             }
             string NossoNumero = boleto.NossoNumero.Substring(0, 10);
-            int DigitoNossoNumero = Mod11(NossoNumero, 10, 0);
+            int DigitoNossoNumero = Mod11(NossoNumero, 10, 1);
+            DigitoNossoNumero = 11 - DigitoNossoNumero;
+            if (DigitoNossoNumero > 9)
+                DigitoNossoNumero = 0;
             string Digito = Convert.ToString(DigitoNossoNumero);
             return Digito;
         }
@@ -140,9 +143,28 @@ namespace BoletoNet
         {
             int instrucao1 = boleto.Instrucoes[boleto.Instrucoes.Count - 1].Codigo; //Considera sempre a última instrução pois o banco só aceita uma instrução para remessa
             int instrucaoProtesto = 0;
-            if (instrucao1 > 90)
-                instrucaoProtesto = instrucao1 == 91 ? 1 : 2;
-            instrucao1 = instrucao1 >= 90 ? 9 : instrucao1;
+            int DiasProtesto = 0;
+
+            if (instrucao1 == 27 || instrucao1 == 91)
+            {
+                instrucaoProtesto = 1;
+                DiasProtesto = boleto.Instrucoes[boleto.Instrucoes.Count - 1].QuantidadeDias;
+            }
+            else if (instrucao1 == 92 || instrucao1 ==28)
+            {
+                instrucaoProtesto = 2;
+                DiasProtesto = boleto.Instrucoes[boleto.Instrucoes.Count - 1].QuantidadeDias;
+            }
+            else if (instrucao1 == 90)
+            {
+                instrucaoProtesto = 3;
+            }
+
+            if (instrucao1 >= 90)
+                instrucao1 = 9;
+            else if (instrucao1 == 27 || instrucao1 == 28)
+                instrucao1 = 26;
+
             try
             {
                 /*
@@ -153,7 +175,6 @@ namespace BoletoNet
                 //string tipoInscricaoEmitente = "02";   // Padrão CNPJ
                 string tipoInscricaoSacado = "02";   // Padrão CNPJ
                 string CodMora = boleto.PercJurosMora > 0 ? boleto.CodJurosMora == "1" ? "4" : "2" : "5";
-                string DVNossoNumero = CalcularDigitoNossoNumero(boleto);
 
                 TRegistroEDI reg = new TRegistroEDI();
 
@@ -184,11 +205,11 @@ namespace BoletoNet
                 reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediDataDDMMAA___________, 0151, 006, 0, boleto.DataDocumento, '0'));                      //151-156
                 reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediAlphaAliDireita______, 0157, 001, 0, "0", '0'));                                       //157-157
                 reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediAlphaAliDireita______, 0158, 001, 0, instrucaoProtesto, '0'));                         //158-158
-                reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediAlphaAliDireita______, 0159, 002, 0, "0", '0'));                                       //159-160 
+                reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediAlphaAliDireita______, 0159, 002, 0, DiasProtesto, '0'));                                       //159-160 
                 reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediNumericoSemSeparador_, 0161, 013, 2, boleto.PercJurosMora, '0'));                      //161-173
                 reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediDataDDMMAA___________, 0174, 006, 0, boleto.ValorDesconto > 0 ? boleto.DataDesconto : DateTime.MinValue, '0')); //174-179
                 reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediNumericoSemSeparador_, 0180, 013, 2, boleto.ValorDesconto, '0'));                      //180-192
-                reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediAlphaAliDireita______, 0193, 011, 0, boleto.NossoNumero + DVNossoNumero, '0'));                        //193-203
+                reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediAlphaAliDireita______, 0193, 011, 0, boleto.NossoNumero + CalcularDigitoNossoNumero(boleto), '0'));      //193-203
                 reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediAlphaAliDireita______, 0204, 002, 0, "00", '0'));                                      //204-205
                 reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediNumericoSemSeparador_, 0206, 013, 2, instrucao1 == 4 ? boleto.Abatimento : 0, '0'));  //206-218
                 //PAGADOR
@@ -254,11 +275,9 @@ namespace BoletoNet
             var mensagens = new List<string>();
 
             foreach (IInstrucao instrucao in boleto.Instrucoes)
-            {
                 if (instrucao.Codigo != 90)
-                mensagens.Add(instrucao.Descricao);
-            }
-
+                    mensagens.Add(instrucao.Descricao);
+           
             int numeroMensagens = mensagens.Count;
             
             try
@@ -406,9 +425,6 @@ namespace BoletoNet
 
         public override void ValidaBoleto(Boleto boleto)
         {
-            // Calcula o DAC do Nosso Número
-            _dacNossoNumero = CalcularDigitoNossoNumero(boleto);
-
             // Calcula o DAC da Conta Corrente
             _dacContaCorrente = Mod10(boleto.Cedente.ContaBancaria.Agencia + boleto.Cedente.ContaBancaria.Conta);
 
@@ -425,6 +441,10 @@ namespace BoletoNet
             //if (boleto.DataDocumento.ToString("dd/MM/yyyy") == "01/01/0001")
             if (boleto.DataDocumento == DateTime.MinValue) // diegomodolo (diego.ribeiro@nectarnet.com.br)
                 boleto.DataDocumento = DateTime.Now;
+
+            boleto.Aceite = "Não";
+            boleto.LocalPagamento = "PAGÁVEL EM QUALQUER AGÊNCIA BANCÁRIA/CORRESPONDENTE BANCÁRIO";
+            boleto.DigitoNossoNumero = _dacNossoNumero;
 
             FormataCodigoBarra(boleto);
             FormataLinhaDigitavel(boleto);
@@ -451,11 +471,9 @@ namespace BoletoNet
 
         public string CampoLivre(Boleto boleto)
         {
-            string _Digito = CalcularDigitoNossoNumero(boleto);
-
             return FormatZerosEsquerda(boleto.Cedente.ContaBancaria.Agencia.ToString(),4)
                 + FormatZerosEsquerda(boleto.Cedente.ContaBancaria.Conta.ToString() + boleto.Cedente.ContaBancaria.DigitoConta, 10) 
-                + FormatZerosEsquerda(boleto.NossoNumero + _Digito, 11);
+                + FormatZerosEsquerda(boleto.NossoNumero + this._dacNossoNumero, 11);
         }
 
         public override void FormataCodigoBarra(Boleto boleto)
@@ -468,6 +486,9 @@ namespace BoletoNet
 
         public override void FormataNossoNumero(Boleto boleto)
         {
+            // Calcula o DAC do Nosso Número
+            _dacNossoNumero = CalcularDigitoNossoNumero(boleto);
+            boleto.NossoNumero += '-' + this._dacNossoNumero;
         }
 
         public override void FormataNumeroDocumento(Boleto boleto)
@@ -481,25 +502,6 @@ namespace BoletoNet
             ////IMPLEMENTACAO PENDENTE...
             mensagem = vMsg;
             return vRetorno;
-        }
-
-
-        internal int ObtainNumeroDocumento()
-        {
-            int numeroDocumento = this.numeroDocumento + 1;
-            this.numeroDocumento = numeroDocumento;
-
-            return numeroDocumento;
-        }
-
-
-
-        internal static string GetFormatedNossoNumero(Boleto boleto)
-        {
-            string _nossoNumero = string.Format("{0}{1}",
-                Utils.FormatCode(boleto.Cedente.ContaBancaria.Conta + boleto.Cedente.ContaBancaria.DigitoConta, 8),
-                Utils.FormatCode(boleto.NossoNumero, 9));
-            return _nossoNumero;
         }
 
         internal int GetDacBoleto(string codigoBarras)
@@ -591,4 +593,3 @@ namespace BoletoNet
         }
     }
 }
-
