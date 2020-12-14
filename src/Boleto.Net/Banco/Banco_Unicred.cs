@@ -180,11 +180,11 @@ namespace BoletoNet
 
                 reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediNumericoSemSeparador_, 0001, 001, 0, "1", '0'));                                       //001-001
                 reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediAlphaAliDireita______, 0002, 005, 0, boleto.Cedente.ContaBancaria.Agencia, '0'));      //002-006
-                reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediAlphaAliEsquerda_____, 0007, 001, 0, "9", '0'));                                       //007-007
+                reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediAlphaAliEsquerda_____, 0007, 001, 0, "0", '0'));                                       //007-007
                 reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediAlphaAliDireita______, 0008, 012, 0, boleto.Cedente.ContaBancaria.Conta, '0'));        //008-019
                 reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediAlphaAliDireita______, 0020, 001, 0, boleto.Cedente.ContaBancaria.DigitoConta, '0'));  //020-020
                 reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediAlphaAliEsquerda_____, 0021, 001, 0, "0", '0'));                                       //021-021
-                reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediAlphaAliEsquerda_____, 0022, 003, 0, boleto.Cedente.Carteira, '0'));                   //022-024
+                reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediAlphaAliDireita______, 0022, 003, 0, boleto.Cedente.Carteira, '0'));                   //022-024
                 reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediAlphaAliEsquerda_____, 0025, 013, 0, "0", '0'));                                       //025-037
                 reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediAlphaAliEsquerda_____, 0038, 025, 0, boleto.NumeroControle, ' '));                     //038-062
                 reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediAlphaAliEsquerda_____, 0063, 003, 0, "136", '0'));                                     //063-065
@@ -398,20 +398,19 @@ namespace BoletoNet
                 detalhe.Agencia = Utils.ToInt32(String.Concat(reg.Agencia, reg.DigitoAgencia));
                 detalhe.Conta = Utils.ToInt32(reg.Conta);
                 detalhe.DACConta = Utils.ToInt32(reg.DigitoConta);
-                detalhe.Carteira = reg.TipoCarteira;
+                detalhe.Carteira = "21";                
                 detalhe.CodigoOcorrencia = Utils.ToInt32(reg.TipoOcorrencia);
-                detalhe.DescricaoOcorrencia = "";
-                int dataLiquidacao = Utils.ToInt32(reg.DataLimiteDesconto);
+                detalhe.DescricaoOcorrencia = new CodigoMovimento_Unicred(detalhe.CodigoOcorrencia, Utils.ToInt32(reg.ComplementoMovimento).ToString()).Descricao;
+                int dataLiquidacao = Utils.ToInt32(reg.DataLiquidacao);
                 detalhe.DataLiquidacao = Utils.ToDateTime(dataLiquidacao.ToString("##-##-##"));
-                detalhe.NumeroDocumento = reg.IdentificacaoTitulo;
+                detalhe.NumeroDocumento = reg.SeuNumero;
                 int dataVencimento = Utils.ToInt32(reg.VencimentoTitulo);
                 detalhe.DataVencimento = Utils.ToDateTime(dataVencimento.ToString("##-##-##"));
                 detalhe.ValorTitulo = Utils.ToDecimal(reg.ValorNominalTitulo) / 100;
                 detalhe.CodigoBanco = Utils.ToInt32(reg.CodigoBanco);
                 detalhe.AgenciaCobradora = Utils.ToInt32(reg.Agencia);
-                detalhe.Especie = Utils.ToInt32(reg.EspecieTitulo);
-                detalhe.IOF = Utils.ToDecimal(reg.ValorIOF) / 100;
-                detalhe.Abatimentos = Utils.ToDecimal(reg.ValorAbatimentoConcedido) / 100;
+                detalhe.IOF = Utils.ToDecimal(reg.ValorTarifas) / 100;
+                detalhe.Abatimentos = Utils.ToDecimal(reg.ValorAbatimento) / 100;
                 detalhe.Descontos = Utils.ToDecimal(reg.ValorDescontoConcedido) / 100;
                 detalhe.JurosMora = Utils.ToDecimal(reg.ValorJurosMora) / 100;
 
