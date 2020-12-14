@@ -17,11 +17,14 @@ namespace BoletoNet
         SustarProtestoManterCarteira = 11,
         SustarProtestoBaixarTitulo = 25,
         ProtestoAutomatico = 26,
-        //Para Protesto automatico 
+
+        //Para Protesto automatico 27 e 28
         ProtestoAutomaticoDiasCorridos = 27,
         ProtestoAutomaticoDiasUteis = 28,
+
         AlteracaoOutrosDados = 31, //alteração de dados do pagador
         AlteracaoCarteira = 40,
+
         //Tipos de protesto
         //Caso seja instrução de protesto, a instrução na rememessa deve ir com cód 9.
         //Codigos > 90 são usado para diferenciar o comando do campo 158;

@@ -417,6 +417,10 @@ namespace BoletoNet
                     case 104:
                         enumComandosRetorno = typeof(EnumCodigoMovimento_Caixa);
                         break;
+                    //136 - Unicred
+                    case 136:
+                        enumComandosRetorno = typeof(EnumCodigoMovimento_Unicred);
+                        break;
                     //341 - Itaú
                     case 341:
                         enumComandosRetorno = typeof(EnumCodigoMovimento_Itau);

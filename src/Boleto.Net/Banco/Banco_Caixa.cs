@@ -1834,7 +1834,7 @@ namespace BoletoNet
 
             if (int.TryParse(codigo, out codigoMovimento))
             {
-                CodigoMovimento_Caixa movimento = new CodigoMovimento_Caixa(codigoMovimento);
+                CodigoMovimento_Caixa movimento = this.cedenteLongo ? new CodigoMovimento_Caixa(codigoMovimento) : new CodigoMovimento_Caixa(codigoMovimento, true);
                 return movimento.Descricao;
             }
             else
