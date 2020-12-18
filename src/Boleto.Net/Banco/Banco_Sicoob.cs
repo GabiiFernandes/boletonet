@@ -193,6 +193,7 @@ namespace BoletoNet
 
         public override void FormataNossoNumero(Boleto boleto)
         {
+            this.isBoletoLegado = (boleto.Cedente.Convenio == 0);
             //Variaveis
             int resultado = 0;
             int dv = 0;
