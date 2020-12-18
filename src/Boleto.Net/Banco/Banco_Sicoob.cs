@@ -193,6 +193,7 @@ namespace BoletoNet
 
         public override void FormataNossoNumero(Boleto boleto)
         {
+            //Precisa carregar valor pra esta variavel aqui, pois nem sempre é chamado pelo ValidaBoleto, e nesse caso não tem ela carregada
             this.isBoletoLegado = (boleto.Cedente.Convenio == 0);
             //Variaveis
             int resultado = 0;
