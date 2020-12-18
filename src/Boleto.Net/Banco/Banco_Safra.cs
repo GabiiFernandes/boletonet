@@ -183,7 +183,7 @@ namespace BoletoNet
                 //detalhe.DACNossoNumero = reg.NossoNumero.Substring(reg.NossoNumero.Length - 1); //DV
                 detalhe.Carteira = reg.TipoCarteira;
                 detalhe.CodigoOcorrencia = Utils.ToInt32(reg.TipoOcorrencia);
-                detalhe.DescricaoOcorrencia = new CodigoMovimento(85, detalhe.CodigoOcorrencia).Descricao;
+                detalhe.DescricaoOcorrencia = new CodigoMovimento(this.Codigo, detalhe.CodigoOcorrencia).Descricao;
                 int dataLiquidacao = Utils.ToInt32(reg.DataLimiteDesconto);
                 detalhe.DataLiquidacao = Utils.ToDateTime(dataLiquidacao.ToString("##-##-##"));
                 detalhe.NumeroDocumento = reg.IdentificacaoTitulo;

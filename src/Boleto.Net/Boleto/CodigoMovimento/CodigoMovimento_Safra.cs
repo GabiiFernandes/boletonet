@@ -24,12 +24,9 @@ namespace BoletoNet
         BaixaPorEntregaFrancoDePagamento = 16,
         ConfirmacaoDeInstrucaoDeProtesto = 19,
         ConfirmacaoDeSustentarProtesto = 20,
-        TransferenciaDeCedente = 21,
         TituloEnviadoACartorio = 23,
         BaixaDeTituloProtestado = 40,
         LiquidacaoDeTituloBaixado = 41,
-        TituloRetiradoDoCartorio = 42,
-        DespesaDeCartorio = 43,
         ValorDoTituloAlterado = 51
     }
 
@@ -90,12 +87,9 @@ namespace BoletoNet
             { EnumCodigoMovimento_Safra.BaixaPorEntregaFrancoDePagamento, "Baixado por entrega franco de pagamento" },
             { EnumCodigoMovimento_Safra.ConfirmacaoDeInstrucaoDeProtesto, "Confirmação de instrução de protesto" },
             { EnumCodigoMovimento_Safra.ConfirmacaoDeSustentarProtesto, "Confirmação de sustentar protesto" },
-            { EnumCodigoMovimento_Safra.TransferenciaDeCedente, "Transferência de cedente" },
             { EnumCodigoMovimento_Safra.TituloEnviadoACartorio, "Título enviado a cartório" },
             { EnumCodigoMovimento_Safra.BaixaDeTituloProtestado, "Baixa de título protestado" },
             { EnumCodigoMovimento_Safra.LiquidacaoDeTituloBaixado, "Liquidação de título baixado" },
-            { EnumCodigoMovimento_Safra.TituloRetiradoDoCartorio, "Título retirado do cartório" },
-            { EnumCodigoMovimento_Safra.DespesaDeCartorio, "Despesa de cartório" },
             { EnumCodigoMovimento_Safra.ValorDoTituloAlterado, "Valor do título alterado" },
         };
 
@@ -106,23 +100,20 @@ namespace BoletoNet
             { EnumCodigoMovimento_Safra.TransferenciaDeCarteiraEntrada, TipoOcorrenciaRetorno.TransferenciaDeCarteiraEntrada },
             { EnumCodigoMovimento_Safra.TransferenciaDeCarteiraBaixa, TipoOcorrenciaRetorno.TransferenciaDeCarteiraBaixa },
             { EnumCodigoMovimento_Safra.LiquidacaoNormal, TipoOcorrenciaRetorno.Liquidacao },
-            //{ EnumCodigoMovimento_Safra.LiquidacaoParcial, TipoOcorrenciaRetorno.ConfirmacaoDoRecebimentoDaInstrucaoDeDesconto }, //verificar
+            { EnumCodigoMovimento_Safra.LiquidacaoParcial, TipoOcorrenciaRetorno.Liquidacao }, //verificar
             { EnumCodigoMovimento_Safra.BaixadoAutomaticamente, TipoOcorrenciaRetorno.Baixa },
-            //{ EnumCodigoMovimento_Safra.BaixadoConformeInstrucoes, "Baixado conforme instruções" }, //verificar
+            { EnumCodigoMovimento_Safra.BaixadoConformeInstrucoes, TipoOcorrenciaRetorno.Baixa }, //verificar
             { EnumCodigoMovimento_Safra.TitulosSemSer, TipoOcorrenciaRetorno.TitulosEmCarteira },
             { EnumCodigoMovimento_Safra.AbatimentoConcedido, TipoOcorrenciaRetorno.ConfirmacaoRecebimentoInstrucaoDeAbatimento },
             { EnumCodigoMovimento_Safra.AbatimentoCancelado, TipoOcorrenciaRetorno.ConfirmacaoRecebimentoInstrucaoDeCancelamentoAbatimento },
             { EnumCodigoMovimento_Safra.VencimentoAlterado, TipoOcorrenciaRetorno.ConfirmacaoRecebimentoInstrucaoAlteracaoDeVencimento },
-            //{ EnumCodigoMovimento_Safra.LiquidacaoEmCartorio, "Liquidação em cartório" }, //verificar
+            { EnumCodigoMovimento_Safra.LiquidacaoEmCartorio, TipoOcorrenciaRetorno.Liquidacao }, //verificar
             { EnumCodigoMovimento_Safra.BaixaPorEntregaFrancoDePagamento, TipoOcorrenciaRetorno.FrancoDePagamento },
             { EnumCodigoMovimento_Safra.ConfirmacaoDeInstrucaoDeProtesto, TipoOcorrenciaRetorno.ConfirmacaoRecebimentoInstrucaoDeProtesto },
             { EnumCodigoMovimento_Safra.ConfirmacaoDeSustentarProtesto, TipoOcorrenciaRetorno.ConfirmacaoRecebimentoInstrucaoDeSustacaoCancelamentoDeProtesto },
-            //{ EnumCodigoMovimento_Safra.TransferenciaDeCedente, "Transferência de cedente" }, //verificar
             { EnumCodigoMovimento_Safra.TituloEnviadoACartorio, TipoOcorrenciaRetorno.RemessaACartorio },
             { EnumCodigoMovimento_Safra.BaixaDeTituloProtestado, TipoOcorrenciaRetorno.ProtestadoEBaixado },
-            //{ EnumCodigoMovimento_Safra.LiquidacaoDeTituloBaixado, "Liquidação de título baixado" },
-            //{ EnumCodigoMovimento_Safra.TituloRetiradoDoCartorio, "Título retirado do cartório" },
-            //{ EnumCodigoMovimento_Safra.DespesaDeCartorio, "Despesa de cartório" },
+            { EnumCodigoMovimento_Safra.LiquidacaoDeTituloBaixado, TipoOcorrenciaRetorno.Liquidacao },
             { EnumCodigoMovimento_Safra.ValorDoTituloAlterado, TipoOcorrenciaRetorno.ConfirmacaoDeAlteracaoDoValorNominalDoTitulo },
         };
     }
