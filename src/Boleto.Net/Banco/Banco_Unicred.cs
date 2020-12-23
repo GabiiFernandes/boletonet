@@ -173,8 +173,16 @@ namespace BoletoNet
                 *InstrucaoRejeitada = 03,
                 */
                 //string tipoInscricaoEmitente = "02";   // Padrão CNPJ
-                string tipoInscricaoSacado = "02";   // Padrão CNPJ
-                string CodMora = boleto.PercJurosMora > 0 ? boleto.CodJurosMora == "1" ? "4" : "2" : "5";
+                string tipoInscricaoSacado = "00";
+                if (boleto.Sacado.CPFCNPJ.Length == 14)
+                {
+                    tipoInscricaoSacado = "02";   // Padrão CNPJ
+                }else if (boleto.Sacado.CPFCNPJ.Length == 11)
+                {
+                    tipoInscricaoSacado = "01";   // Padrão CPF
+                }
+
+                    string CodMora = boleto.PercJurosMora > 0 ? boleto.CodJurosMora == "1" ? "4" : "2" : "5";
 
                 TRegistroEDI reg = new TRegistroEDI();
 
