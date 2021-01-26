@@ -109,7 +109,6 @@ namespace BoletoNet
             try
             {
                 string _detalhe = "";
-                string _detalhe5 = "";
                 string _detalhe7 = "";
 
                 base.GerarDetalheRemessa(boleto, this.sequencialArquivo, tipoArquivo);
@@ -121,8 +120,6 @@ namespace BoletoNet
                     case TipoArquivo.CNAB400:
                         _detalhe = GerarDetalheRemessaCNAB400(boleto, this.sequencialArquivo);
                         this.sequencialArquivo++;
-                        _detalhe5 = GerarDetalhe5RemessaCNAB400(boleto, this.sequencialArquivo);
-                        this.sequencialArquivo++;
                         _detalhe7 = GerarDetalhe7RemessaCNAB400(boleto, this.sequencialArquivo);
                         this.sequencialArquivo++;
                         break;
@@ -130,7 +127,7 @@ namespace BoletoNet
                          throw new Exception("Tipo de arquivo inexistente.");
                 }
 
-                return _detalhe + "\n" + _detalhe5 + "\n" + _detalhe7;
+                return _detalhe + "\n" + _detalhe7;
 
             }
             catch (Exception e)
@@ -242,6 +239,8 @@ namespace BoletoNet
             }
         }
 
+
+        #region 
         public string GerarDetalhe5RemessaCNAB400(Boleto boleto, int numeroRegistro)
         {
             try
@@ -277,6 +276,7 @@ namespace BoletoNet
                 throw new Exception("Erro ao gerar DETALHE tipo 5 do arquivo CNAB400.", e);
             }
         }
+        #endregion
 
         public string GerarDetalhe7RemessaCNAB400(Boleto boleto, int numeroRegistro)
         {
