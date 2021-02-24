@@ -12,7 +12,6 @@ using System.Text;
 
 namespace BoletoNet
 {
-    //teste
     internal class Banco_Unicred : AbstractBanco, IBanco
     {
         private string _dacNossoNumero = string.Empty;
