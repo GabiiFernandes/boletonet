@@ -11,7 +11,7 @@ using System.Text;
 [assembly: WebResource("BoletoNet.Imagens.422.jpg", "image/jpg")]
 
 namespace BoletoNet
-{
+{ 
     internal class Banco_Unicred : AbstractBanco, IBanco
     {
         private string _dacNossoNumero = string.Empty;
