@@ -794,42 +794,77 @@ namespace BoletoNet
         }
         public string GerarHeaderRemessaCNAB240(Cedente cedente)
         {
+            
             try
             {
-                TRegistroEDI reg = new TRegistroEDI();
-                reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediNumericoSemSeparador_, 0001, 003, 0, base.Codigo, '0'));                                 // posição 1 até 3     (3) - código do banco na compensação        
-                reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediNumericoSemSeparador_, 0004, 004, 0, "0000", '0'));                                      // posição 4 até 7     (4) - Lote de Serviço
-                reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediNumericoSemSeparador_, 0008, 001, 0, "0", '0'));                                         // posição 8 até 8     (1) - Tipo de Registro
-                reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediAlphaAliEsquerda_____, 0009, 009, 0, string.Empty, ' '));                                // posição 9 até 17     (9) - Uso Exclusivo FEBRABAN/CNAB
                 #region Regra Tipo de Inscrição Cedente
                 string vCpfCnpjEmi = "0";//não informado
                 if (cedente.CPFCNPJ.Length.Equals(11)) vCpfCnpjEmi = "1"; //Cpf
                 else if (cedente.CPFCNPJ.Length.Equals(14)) vCpfCnpjEmi = "2"; //Cnpj
                 #endregion
-                reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediNumericoSemSeparador_, 0018, 001, 0, vCpfCnpjEmi, '0'));                                  // posição 18 até 18   (1) - Tipo de Inscrição 
-                reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediNumericoSemSeparador_, 0019, 014, 0, cedente.CPFCNPJ, '0'));                              // posição 19 até 32   (14)- Número de Inscrição da empresa
-                reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediNumericoSemSeparador_, 0033, 020, 0, "0", '0'));                                          // posição 33 até 52   (20)- Uso Exclusivo CAIXA
-                reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediNumericoSemSeparador_, 0053, 005, 0, cedente.ContaBancaria.Agencia, '0'));                // posição 53 até 57   (5) - Agência Mantenedora da Conta
-                reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediAlphaAliEsquerda_____, 0058, 001, 0, cedente.ContaBancaria.DigitoAgencia.ToUpper(), ' '));// posição 58 até 58   (1) - Dígito Verificador da Agência
-                reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediNumericoSemSeparador_, 0059, 006, 0, cedente.Codigo, '0'));                             // posição 59 até 64   (6) - Código do Convênio no Banco (Código do Cedente)
-                reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediNumericoSemSeparador_, 0065, 007, 0, "0", '0'));                                          // posição 65 até 71   (7) - Uso Exclusivo CAIXA
-                reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediNumericoSemSeparador_, 0072, 001, 0, "0", '0'));                                       // posição 72 até 72   (1) - Uso Exclusivo CAIXA
-                reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediAlphaAliEsquerda_____, 0073, 030, 0, cedente.Nome.ToUpper(), ' '));                       // posição 73 até 102  (30)- Nome da Empresa
-                reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediAlphaAliEsquerda_____, 0103, 030, 0, "CAIXA ECONOMICA FEDERAL", ' '));                    // posição 103 até 132 (30)- Nome do Banco
-                reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediAlphaAliEsquerda_____, 0133, 010, 0, string.Empty, ' '));                                 // posição 133 até 142 (10)- Uso Exclusivo FEBRABAN/CNAB
-                reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediNumericoSemSeparador_, 0143, 001, 0, "1", '0'));                                          // posição 143 até 413 (1) - Código 1 - Remessa / 2 - Retorno
-                reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediDataDDMMAAAA_________, 0144, 008, 0, DateTime.Now, ' '));                                 // posição 144 até 151 (8) - Data de Geração do Arquivo
-                reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediHoraHHMMSS___________, 0152, 006, 0, DateTime.Now, ' '));                                 // posição 152 até 157 (6) - Hora de Geração do Arquivo
-                reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediNumericoSemSeparador_, 0158, 006, 0, this.sequencialArquivo, '0'));                     // posição 158 até 163 (6) - Número Seqüencial do Arquivo
-                reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediNumericoSemSeparador_, 0164, 003, 0, "101", '0'));                                        // posição 164 até 166 (3) - Nro da Versão do Layout do Arquivo
-                reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediNumericoSemSeparador_, 0167, 005, 0, "0", '0'));                                          // posição 167 até 171 (5) - Densidade de Gravação do Arquivo
-                reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediAlphaAliEsquerda_____, 0172, 020, 0, string.Empty, ' '));                                 // posição 172 até 191 (20)- Para Uso Reservado do Banco
-                reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediAlphaAliEsquerda_____, 0192, 020, 0, "REMESSA-PRODUCAO", ' '));                           // posição 192 até 211 (20)- Para Uso Reservado da Empresa
-                reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediAlphaAliEsquerda_____, 0212, 004, 0, string.Empty, ' '));                                 // posição 212 até 215 (4) - Versão Aplicativo CAIXA
-                reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediAlphaAliEsquerda_____, 0216, 025, 0, string.Empty, ' '));                                 // posição 216 até 240 (25)- Para Uso Reservado da Empresa
-                //
-                reg.CodificarLinha();
-                //
+
+                TRegistroEDI reg = new TRegistroEDI();
+                if (cedente.Codigo.Length.Equals(6))
+                {
+                    reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediNumericoSemSeparador_, 0001, 003, 0, base.Codigo, '0'));                                 // posição 1 até 3     (3) - código do banco na compensação        
+                    reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediNumericoSemSeparador_, 0004, 004, 0, "0000", '0'));                                      // posição 4 até 7     (4) - Lote de Serviço
+                    reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediNumericoSemSeparador_, 0008, 001, 0, "0", '0'));                                         // posição 8 até 8     (1) - Tipo de Registro
+                    reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediAlphaAliEsquerda_____, 0009, 009, 0, string.Empty, ' '));                                // posição 9 até 17     (9) - Uso Exclusivo FEBRABAN/CNAB     
+                    reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediNumericoSemSeparador_, 0018, 001, 0, vCpfCnpjEmi, '0'));                                  // posição 18 até 18   (1) - Tipo de Inscrição 
+                    reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediNumericoSemSeparador_, 0019, 014, 0, cedente.CPFCNPJ, '0'));                              // posição 19 até 32   (14)- Número de Inscrição da empresa
+                    reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediNumericoSemSeparador_, 0033, 020, 0, "0", '0'));                                          // posição 33 até 52   (20)- Uso Exclusivo CAIXA
+                    reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediNumericoSemSeparador_, 0053, 005, 0, cedente.ContaBancaria.Agencia, '0'));                // posição 53 até 57   (5) - Agência Mantenedora da Conta
+                    reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediAlphaAliEsquerda_____, 0058, 001, 0, cedente.ContaBancaria.DigitoAgencia.ToUpper(), ' '));// posição 58 até 58   (1) - Dígito Verificador da Agência
+                    reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediNumericoSemSeparador_, 0059, 006, 0, cedente.Codigo, '0'));                             // posição 59 até 64   (6) - Código do Convênio no Banco (Código do Cedente)
+                    reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediNumericoSemSeparador_, 0065, 007, 0, "0", '0'));                                          // posição 65 até 71   (7) - Uso Exclusivo CAIXA
+                    reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediNumericoSemSeparador_, 0072, 001, 0, "0", '0'));                                       // posição 72 até 72   (1) - Uso Exclusivo CAIXA
+                    reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediAlphaAliEsquerda_____, 0073, 030, 0, cedente.Nome.ToUpper(), ' '));                       // posição 73 até 102  (30)- Nome da Empresa
+                    reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediAlphaAliEsquerda_____, 0103, 030, 0, "CAIXA ECONOMICA FEDERAL", ' '));                    // posição 103 até 132 (30)- Nome do Banco
+                    reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediAlphaAliEsquerda_____, 0133, 010, 0, string.Empty, ' '));                                 // posição 133 até 142 (10)- Uso Exclusivo FEBRABAN/CNAB
+                    reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediNumericoSemSeparador_, 0143, 001, 0, "1", '0'));                                          // posição 143 até 413 (1) - Código 1 - Remessa / 2 - Retorno
+                    reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediDataDDMMAAAA_________, 0144, 008, 0, DateTime.Now, ' '));                                 // posição 144 até 151 (8) - Data de Geração do Arquivo
+                    reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediHoraHHMMSS___________, 0152, 006, 0, DateTime.Now, ' '));                                 // posição 152 até 157 (6) - Hora de Geração do Arquivo
+                    reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediNumericoSemSeparador_, 0158, 006, 0, this.sequencialArquivo, '0'));                     // posição 158 até 163 (6) - Número Seqüencial do Arquivo
+                    reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediNumericoSemSeparador_, 0164, 003, 0, "101", '0'));                                        // posição 164 até 166 (3) - Nro da Versão do Layout do Arquivo
+                    reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediNumericoSemSeparador_, 0167, 005, 0, "0", '0'));                                          // posição 167 até 171 (5) - Densidade de Gravação do Arquivo
+                    reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediAlphaAliEsquerda_____, 0172, 020, 0, string.Empty, ' '));                                 // posição 172 até 191 (20)- Para Uso Reservado do Banco
+                    reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediAlphaAliEsquerda_____, 0192, 020, 0, "REMESSA-PRODUCAO", ' '));                           // posição 192 até 211 (20)- Para Uso Reservado da Empresa
+                    reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediAlphaAliEsquerda_____, 0212, 004, 0, string.Empty, ' '));                                 // posição 212 até 215 (4) - Versão Aplicativo CAIXA
+                    reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediAlphaAliEsquerda_____, 0216, 025, 0, string.Empty, ' '));                                 // posição 216 até 240 (25)- Para Uso Reservado da Empresa
+                                                                                                                                                                       //
+                    reg.CodificarLinha();
+                }
+                else
+                {
+                    reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediNumericoSemSeparador_, 0001, 003, 0, base.Codigo, '0'));                                 // posição 1 até 3     (3) - código do banco na compensação        
+                    reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediNumericoSemSeparador_, 0004, 004, 0, "0000", '0'));                                      // posição 4 até 7     (4) - Lote de Serviço
+                    reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediNumericoSemSeparador_, 0008, 001, 0, "0", '0'));                                         // posição 8 até 8     (1) - Tipo de Registro
+                    reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediAlphaAliEsquerda_____, 0009, 009, 0, string.Empty, ' '));                                // posição 9 até 17     (9) - Uso Exclusivo FEBRABAN/CNAB
+                    reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediNumericoSemSeparador_, 0018, 001, 0, vCpfCnpjEmi, '0'));                                  // posição 18 até 18   (1) - Tipo de Inscrição 
+                    reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediNumericoSemSeparador_, 0019, 014, 0, cedente.CPFCNPJ, '0'));                              // posição 19 até 32   (14)- Número de Inscrição da empresa
+                    reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediNumericoSemSeparador_, 0033, 020, 0, "0", '0'));                                          // posição 33 até 52   (20)- Uso Exclusivo CAIXA
+                    reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediNumericoSemSeparador_, 0053, 005, 0, cedente.ContaBancaria.Agencia, '0'));                // posição 53 até 57   (5) - Agência Mantenedora da Conta
+                    reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediAlphaAliEsquerda_____, 0058, 001, 0, cedente.ContaBancaria.DigitoAgencia.ToUpper(), ' '));// posição 58 até 58   (1) - Dígito Verificador da Agência
+                    reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediNumericoSemSeparador_, 0059, 007, 0, cedente.Codigo, '0'));                             // posição 59 até 64   (6) - Código do Convênio no Banco (Código do Cedente)
+                    reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediNumericoSemSeparador_, 0065, 006, 0, "0", '0'));                                          // posição 65 até 71   (7) - Uso Exclusivo CAIXA
+                    reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediNumericoSemSeparador_, 0072, 001, 0, "0", '0'));                                       // posição 72 até 72   (1) - Uso Exclusivo CAIXA
+                    reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediAlphaAliEsquerda_____, 0073, 030, 0, cedente.Nome.ToUpper(), ' '));                       // posição 73 até 102  (30)- Nome da Empresa
+                    reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediAlphaAliEsquerda_____, 0103, 030, 0, "CAIXA ECONOMICA FEDERAL", ' '));                    // posição 103 até 132 (30)- Nome do Banco
+                    reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediAlphaAliEsquerda_____, 0133, 010, 0, string.Empty, ' '));                                 // posição 133 até 142 (10)- Uso Exclusivo FEBRABAN/CNAB
+                    reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediNumericoSemSeparador_, 0143, 001, 0, "1", '0'));                                          // posição 143 até 413 (1) - Código 1 - Remessa / 2 - Retorno
+                    reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediDataDDMMAAAA_________, 0144, 008, 0, DateTime.Now, ' '));                                 // posição 144 até 151 (8) - Data de Geração do Arquivo
+                    reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediHoraHHMMSS___________, 0152, 006, 0, DateTime.Now, ' '));                                 // posição 152 até 157 (6) - Hora de Geração do Arquivo
+                    reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediNumericoSemSeparador_, 0158, 006, 0, this.sequencialArquivo, '0'));                     // posição 158 até 163 (6) - Número Seqüencial do Arquivo
+                    reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediNumericoSemSeparador_, 0164, 003, 0, "101", '0'));                                        // posição 164 até 166 (3) - Nro da Versão do Layout do Arquivo
+                    reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediNumericoSemSeparador_, 0167, 005, 0, "0", '0'));                                          // posição 167 até 171 (5) - Densidade de Gravação do Arquivo
+                    reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediAlphaAliEsquerda_____, 0172, 020, 0, string.Empty, ' '));                                 // posição 172 até 191 (20)- Para Uso Reservado do Banco
+                    reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediAlphaAliEsquerda_____, 0192, 020, 0, "REMESSA-PRODUCAO", ' '));                           // posição 192 até 211 (20)- Para Uso Reservado da Empresa
+                    reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediAlphaAliEsquerda_____, 0212, 004, 0, string.Empty, ' '));                                 // posição 212 até 215 (4) - Versão Aplicativo CAIXA
+                    reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediAlphaAliEsquerda_____, 0216, 025, 0, string.Empty, ' '));                                 // posição 216 até 240 (25)- Para Uso Reservado da Empresa
+                                                                                                                                                                       //
+                    reg.CodificarLinha();
+                }
+
                 string vLinha = reg.LinhaRegistro;
                 string _header = Utils.SubstituiCaracteresEspeciais(vLinha);
   
@@ -845,32 +880,64 @@ namespace BoletoNet
             try
             {
                 TRegistroEDI reg = new TRegistroEDI();
-                reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediNumericoSemSeparador_, 0001, 003, 0, base.Codigo, '0'));                                 // posição 1 até 3     (3) - código do banco na compensação        
-                reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediNumericoSemSeparador_, 0004, 004, 0, "0001", '0'));                                      // posição 4 até 7     (4) - Lote de Serviço
-                reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediNumericoSemSeparador_, 0008, 001, 0, "1", '0'));                                         // posição 8 até 8     (1) - Tipo de Registro
-                reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediAlphaAliEsquerda_____, 0009, 001, 0, "R", ' '));                                         // posição 9 até 9     (1) - ‘R’ (equivale a Remessa)
-                reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediNumericoSemSeparador_, 0010, 002, 0, "01", '0'));                                        // posição 10 até 11   (2) -       
-                reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediNumericoSemSeparador_, 0012, 002, 0, "0", '0'));                                         // posição 12 até 13   (2) - zeros
-                reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediNumericoSemSeparador_, 0014, 003, 0, "060", '0'));                                       // posição 14 até 16   (3) - 
-                reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediAlphaAliEsquerda_____, 0017, 001, 0, string.Empty, ' '));                                // posição 17 até 17   (1) - espaços
-                reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediNumericoSemSeparador_, 0018, 001, 0, (cedente.CPFCNPJ.Length == 11 ? "1" : "2"), '0'));  // posição 18 até 18   (1) - Tipo de Inscrição do Beneficiário
-                reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediNumericoSemSeparador_, 0019, 015, 0, cedente.CPFCNPJ, '0'));                             // posição 19 até 33   (15) - cpf/cnpj
-                reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediNumericoSemSeparador_, 0034, 006, 0, cedente.Codigo, '0'));                              // posição 34 até 40   (7) - 
-                reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediNumericoSemSeparador_, 0040, 014, 0, "0", '0'));                                         // posição 41 até 53   (13) - zeros
-                reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediNumericoSemSeparador_, 0054, 005, 0, cedente.ContaBancaria.Agencia, '0'));               // posição 54 até 58   (5) - código da agencia              
-                reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediNumericoSemSeparador_, 0059, 001, 0, cedente.ContaBancaria.DigitoAgencia, '0'));         // posição 59 até 59   (1) - digito verificador da agencia
-                reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediNumericoSemSeparador_, 0060, 006, 0, cedente.Codigo, '0'));                                         // posição 60 até 65   (6) - zeros  
-                reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediNumericoSemSeparador_, 0066, 007, 0, "0", '0'));                                         // posição 66 até 72   (7) - zeros
-                reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediNumericoSemSeparador_, 0073, 001, 0, "0", '0'));                                         // posição 73 até 73   (1) - zeros
-                reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediAlphaAliEsquerda_____, 0074, 030, 0, cedente.Nome.ToUpper(), ' '));                      // posição 74 até 103  (30) - Nome da empresa
-                reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediAlphaAliEsquerda_____, 0104, 040, 0, " ", ' '));                                         // posição 104 até 143 (40)
-                reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediAlphaAliEsquerda_____, 0144, 040, 0, " ", ' '));                                         // posição 144 até 183 (40) 
-                reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediNumericoSemSeparador_, 0184, 008, 0, this.sequencialArquivo, '0'));                    // posição 184 até 191 (8) - Numero sequencial do arquivo                
-                reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediDataDDMMAAAA_________, 0192, 008, 0, DateTime.Now, ' '));                                // posição 192 até 199 (8) - Data de gravação               
-                reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediNumericoSemSeparador_, 0200, 008, 0, "0", '0'));                                         // posição 200 até 207 (8) - zeros
-                reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediAlphaAliEsquerda_____, 0208, 033, 0, " ", ' '));                                         // posição 208 até 240 (33) -espaços
+                if (cedente.Codigo.Length.Equals(6))
+                {
+                    reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediNumericoSemSeparador_, 0001, 003, 0, base.Codigo, '0'));                                 // posição 1 até 3     (3) - código do banco na compensação        
+                    reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediNumericoSemSeparador_, 0004, 004, 0, "0001", '0'));                                      // posição 4 até 7     (4) - Lote de Serviço
+                    reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediNumericoSemSeparador_, 0008, 001, 0, "1", '0'));                                         // posição 8 até 8     (1) - Tipo de Registro
+                    reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediAlphaAliEsquerda_____, 0009, 001, 0, "R", ' '));                                         // posição 9 até 9     (1) - ‘R’ (equivale a Remessa)
+                    reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediNumericoSemSeparador_, 0010, 002, 0, "01", '0'));                                        // posição 10 até 11   (2) -       
+                    reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediNumericoSemSeparador_, 0012, 002, 0, "0", '0'));                                         // posição 12 até 13   (2) - zeros
+                    reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediNumericoSemSeparador_, 0014, 003, 0, "060", '0'));                                       // posição 14 até 16   (3) - 
+                    reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediAlphaAliEsquerda_____, 0017, 001, 0, string.Empty, ' '));                                // posição 17 até 17   (1) - espaços
+                    reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediNumericoSemSeparador_, 0018, 001, 0, (cedente.CPFCNPJ.Length == 11 ? "1" : "2"), '0'));  // posição 18 até 18   (1) - Tipo de Inscrição do Beneficiário
+                    reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediNumericoSemSeparador_, 0019, 015, 0, cedente.CPFCNPJ, '0'));                             // posição 19 até 33   (15) - cpf/cnpj
+                    reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediNumericoSemSeparador_, 0034, 006, 0, cedente.Codigo, '0'));                              // posição 34 até 40   (7) - 
+                    reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediNumericoSemSeparador_, 0040, 014, 0, "0", '0'));                                         // posição 41 até 53   (13) - zeros
+                    reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediNumericoSemSeparador_, 0054, 005, 0, cedente.ContaBancaria.Agencia, '0'));               // posição 54 até 58   (5) - código da agencia              
+                    reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediNumericoSemSeparador_, 0059, 001, 0, cedente.ContaBancaria.DigitoAgencia, '0'));         // posição 59 até 59   (1) - digito verificador da agencia
+                    reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediNumericoSemSeparador_, 0060, 006, 0, cedente.Codigo, '0'));                                         // posição 60 até 65   (6) - zeros  
+                    reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediNumericoSemSeparador_, 0066, 007, 0, "0", '0'));                                         // posição 66 até 72   (7) - zeros
+                    reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediNumericoSemSeparador_, 0073, 001, 0, "0", '0'));                                         // posição 73 até 73   (1) - zeros
+                    reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediAlphaAliEsquerda_____, 0074, 030, 0, cedente.Nome.ToUpper(), ' '));                      // posição 74 até 103  (30) - Nome da empresa
+                    reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediAlphaAliEsquerda_____, 0104, 040, 0, " ", ' '));                                         // posição 104 até 143 (40)
+                    reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediAlphaAliEsquerda_____, 0144, 040, 0, " ", ' '));                                         // posição 144 até 183 (40) 
+                    reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediNumericoSemSeparador_, 0184, 008, 0, this.sequencialArquivo, '0'));                    // posição 184 até 191 (8) - Numero sequencial do arquivo                
+                    reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediDataDDMMAAAA_________, 0192, 008, 0, DateTime.Now, ' '));                                // posição 192 até 199 (8) - Data de gravação               
+                    reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediNumericoSemSeparador_, 0200, 008, 0, "0", '0'));                                         // posição 200 até 207 (8) - zeros
+                    reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediAlphaAliEsquerda_____, 0208, 033, 0, " ", ' '));                                         // posição 208 até 240 (33) -espaços
 
-                reg.CodificarLinha();
+                    reg.CodificarLinha();
+                }
+                else
+                {
+                    reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediNumericoSemSeparador_, 0001, 003, 0, base.Codigo, '0'));                                 // posição 1 até 3     (3) - código do banco na compensação        
+                    reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediNumericoSemSeparador_, 0004, 004, 0, "0001", '0'));                                      // posição 4 até 7     (4) - Lote de Serviço
+                    reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediNumericoSemSeparador_, 0008, 001, 0, "1", '0'));                                         // posição 8 até 8     (1) - Tipo de Registro
+                    reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediAlphaAliEsquerda_____, 0009, 001, 0, "R", ' '));                                         // posição 9 até 9     (1) - ‘R’ (equivale a Remessa)
+                    reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediNumericoSemSeparador_, 0010, 002, 0, "01", '0'));                                        // posição 10 até 11   (2) -       
+                    reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediNumericoSemSeparador_, 0012, 002, 0, "0", '0'));                                         // posição 12 até 13   (2) - zeros
+                    reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediNumericoSemSeparador_, 0014, 003, 0, "060", '0'));                                       // posição 14 até 16   (3) - 
+                    reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediAlphaAliEsquerda_____, 0017, 001, 0, string.Empty, ' '));                                // posição 17 até 17   (1) - espaços
+                    reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediNumericoSemSeparador_, 0018, 001, 0, (cedente.CPFCNPJ.Length == 11 ? "1" : "2"), '0'));  // posição 18 até 18   (1) - Tipo de Inscrição do Beneficiário
+                    reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediNumericoSemSeparador_, 0019, 015, 0, cedente.CPFCNPJ, '0'));                             // posição 19 até 33   (15) - cpf/cnpj
+                    reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediNumericoSemSeparador_, 0034, 007, 0, cedente.Codigo, '0'));                              // posição 34 até 40   (7) - 
+                    reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediNumericoSemSeparador_, 0040, 013, 0, "0", '0'));                                         // posição 41 até 53   (13) - zeros
+                    reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediNumericoSemSeparador_, 0054, 005, 0, cedente.ContaBancaria.Agencia, '0'));               // posição 54 até 58   (5) - código da agencia              
+                    reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediNumericoSemSeparador_, 0059, 001, 0, cedente.ContaBancaria.DigitoAgencia, '0'));         // posição 59 até 59   (1) - digito verificador da agencia
+                    reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediNumericoSemSeparador_, 0060, 006, 0, "0", '0'));                                         // posição 60 até 65   (6) - zeros  
+                    reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediNumericoSemSeparador_, 0066, 007, 0, "0", '0'));                                         // posição 66 até 72   (7) - zeros
+                    reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediNumericoSemSeparador_, 0073, 001, 0, "0", '0'));                                         // posição 73 até 73   (1) - zeros
+                    reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediAlphaAliEsquerda_____, 0074, 030, 0, cedente.Nome.ToUpper(), ' '));                      // posição 74 até 103  (30) - Nome da empresa
+                    reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediAlphaAliEsquerda_____, 0104, 040, 0, " ", ' '));                                         // posição 104 até 143 (40)
+                    reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediAlphaAliEsquerda_____, 0144, 040, 0, " ", ' '));                                         // posição 144 até 183 (40) 
+                    reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediNumericoSemSeparador_, 0184, 008, 0, this.sequencialArquivo, '0'));                    // posição 184 até 191 (8) - Numero sequencial do arquivo                
+                    reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediDataDDMMAAAA_________, 0192, 008, 0, DateTime.Now, ' '));                                // posição 192 até 199 (8) - Data de gravação               
+                    reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediNumericoSemSeparador_, 0200, 008, 0, "0", '0'));                                         // posição 200 até 207 (8) - zeros
+                    reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediAlphaAliEsquerda_____, 0208, 033, 0, " ", ' '));                                         // posição 208 até 240 (33) -espaços
+
+                    reg.CodificarLinha();
+                }
                 //
                 string vLinha = reg.LinhaRegistro;
                 string _header = Utils.SubstituiCaracteresEspeciais(vLinha);
@@ -889,40 +956,6 @@ namespace BoletoNet
             {
                 validaInstrucoes240(boleto);
                 TRegistroEDI reg = new TRegistroEDI();
-                reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediNumericoSemSeparador_, 0001, 003, 0, base.Codigo, '0'));                                   // posição 1 até 3     (3) - código do banco na compensação        
-                reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediNumericoSemSeparador_, 0004, 004, 0, "1", '0'));                                           // posição 4 até 7     (4) - Lote de Serviço
-                reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediNumericoSemSeparador_, 0008, 001, 0, "3", '0'));                                           // posição 8 até 8     (1) - Tipo de Registro
-                reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediNumericoSemSeparador_, 0009, 005, 0, numeroRegistro, '0'));                                // posição 9 até 13    (5) - Nº Sequencial do Registro no Lote
-                reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediAlphaAliEsquerda_____, 0014, 001, 0, "P", '0'));                                           // posição 14 até 14   (1) - Cód. Segmento do Registro Detalhe
-                reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediAlphaAliEsquerda_____, 0015, 001, 0, string.Empty, ' '));                                  // posição 15 até 15   (1) - Uso Exclusivo FEBRABAN/CNAB
-                reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediNumericoSemSeparador_, 0016, 002, 0, ObterCodigoDaOcorrencia(boleto), '0'));               // posição 16 até 17   (2) - Código de Movimento Remessa
-                reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediNumericoSemSeparador_, 0018, 005, 0, cedente.ContaBancaria.Agencia, '0'));                 // posição 18 até 22   (5) - Agência Mantenedora da Conta
-                reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediAlphaAliEsquerda_____, 0023, 001, 0, cedente.ContaBancaria.DigitoAgencia.ToUpper(), ' ')); // posição 23 até 23   (1) - Dígito Verificador da Agência
-                reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediNumericoSemSeparador_, 0024, 006, 0, cedente.Codigo, '0'));                              // posição 24 até 29   (6) - Código do Convênio no Banco
-                reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediNumericoSemSeparador_, 0030, 008, 0, "0", '0'));                                           // posição 30 até 40   (11)- Uso Exclusivo CAIXA
-
-                reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediNumericoSemSeparador_, 0038, 002, 0, ' ', '0'));                            // posição 43 até 57   (15)- Identificação do Título no Banco
-                reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediNumericoSemSeparador_, 0040, 001, 0, "0", '0'));                                           // posição 58 até 58   (1) - Código Carteira
-                               
-                //modalidade são os dois algarimos iniciais do nosso número...                
-                //nosso numero já traz a modalidade concatenada, então passa direto o nosso nro que preenche os dois campos do leiaute
- 
-                reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediNumericoSemSeparador_, 0041, 017, 0, boleto.NossoNumero, '0'));                           // posição 59 até 59   (1) - Forma de Cadastr. do Título no Banco 1 - Com Registro 2 - Sem registro.
-
-                reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediAlphaAliEsquerda_____, 0058, 001, 0, "1", '0'));
-                String Emissao = boleto.Carteira.Equals("CS") ? "1" : "2";// posição 60 até 60   (1) - Tipo de Documento
-                reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediNumericoSemSeparador_, 0059, 001, 0, "1", '0'));                                       // posição 61 até 61   (1) - Identificação da Emissão do Bloqueto -- ‘1’-Banco Emite, '2'-entrega do bloqueto pelo Cedente                           
-                reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediNumericoSemSeparador_, 0060, 001, 0, "2", '0'));                                           // posição 62 até 62   (1) - Identificação da Entrega do Bloqueto /* ‘0’ = Postagem pelo Cedente ‘1’ = Sacado via Correios ‘2’ = Cedente via Agência CAIXA*/ 
-                reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediNumericoSemSeparador_, 0061, 001, 0, "2", '0'));                        // posição 63 até 73   (11)- Número do Documento de Cobrança
-                reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediAlphaAliEsquerda_____, 0062, 001, 0, "0", '0'));                                  // posição 74 até 77   (4) - Uso Exclusivo CAIXA
-                reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediAlphaAliEsquerda_____, 0063, 011, 0, boleto.NumeroDocumento, ' '));                         // posição 78 até 85   (8) - Data de Vencimento do Título
-                reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediAlphaAliEsquerda_____, 0074, 004, 0, " ", ' '));                            // posição 86 até 100  (15)- Valor Nominal do Título
-                reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediDataDDMMAAAA_________, 0078, 008, 0, boleto.DataVencimento, '0'));//0sistema atribui AEC pelo CEP do sacado  // posição 101 até 105 (5) - AEC = Agência Encarregada da Cobrança
-                reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediNumericoSemSeparador_, 0086, 015, 2, boleto.ValorBoleto, '0')); // posição 106 até 106 (1) - Dígito Verificador da Agência
-                string EspDoc = boleto.EspecieDocumento.Sigla.Equals("DM") ? "02" : boleto.EspecieDocumento.Codigo;
-                reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediNumericoSemSeparador_, 0101, 005, 0, "0", '0'));                                        // posição 107 até 108 (2) - Espécie do Título
-                reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediAlphaAliEsquerda_____, 0106, 001, 0, "0", ' '));                                 // posição 109 até 109 (1) - Identific. de Título Aceito/Não Aceito
-
                 #region Código de juros
                 string CodJurosMora;
                 if (boleto.JurosMora == 0 && boleto.PercJurosMora == 0)
@@ -930,28 +963,115 @@ namespace BoletoNet
                 else
                     CodJurosMora = "1";
                 #endregion
-                reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediNumericoSemSeparador_, 0107, 002, 0, EspDoc, '0'));                          // posição 110 até 117 (8) - Data da Emissão do Título
-                reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediAlphaAliEsquerda_____, 0109, 001, 0, " ", ' '));
-                reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediDataDDMMAAAA_________, 0110, 008, 0, boleto.DataDocumento, '0'));
-                reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediNumericoSemSeparador_, 0118, 001, 0, CodJurosMora, '0'));
-                reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediDataDDMMAAAA_________, 0119, 008, 0, boleto.DataJurosMora, '0'));
-                reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediNumericoSemSeparador_, 0127, 015, 0, boleto.JurosMora, '0'));
-                reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediNumericoSemSeparador_, 0142, 001, 0, (desconto ? "1" : "0"), '0'));
-                reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediDataDDMMAAAA_________, 0143, 008, 0, boleto.DataDesconto, '0'));
-                reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediNumericoSemSeparador_, 0151, 015, 0, boleto.ValorDesconto, '0'));
-                reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediNumericoSemSeparador_, 0166, 015, 0, boleto.IOF, '0'));
-                reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediAlphaAliEsquerda_____, 0181, 015, 2, boleto.Abatimento, '0'));
-                reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediAlphaAliEsquerda_____, 0196, 025, 0, boleto.NumeroDocumento, ' '));                        // posição 196 até 220 (25)- Identificação do Título na Empresa. Informar o Número do Documento - Seu Número (mesmo das posições 63-73 do Segmento P)                
-                reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediNumericoSemSeparador_, 0221, 001, 0, (protestar ? "1" : "3"), '0'));                       // posição 221 até 221 (1) -  Código para protesto  - ‘1’ = Protestar. "3" = Não Protestar. "9" = Cancelamento Protesto Automático
-                reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediNumericoSemSeparador_, 0222, 002, 0, diasProtesto, '0'));                                  // posição 222 até 223 (2) -  Número de Dias para Protesto                
-                reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediNumericoSemSeparador_, 0224, 001, 0, (baixaDevolver ? "1" : "2"), '0'));                   // posição 224 até 224 (1) -  Código para Baixa/Devolução ‘1’ = Baixar / Devolver. "2" = Não Baixar / Não Devolver
-                reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediNumericoSemSeparador_, 0225, 003, 0, diasDevolucao, '0'));                                 // posição 225 até 227 (3) - Número de Dias para Baixa/Devolução
-                reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediNumericoSemSeparador_, 0228, 002, 0, "09", '0'));                                          // posição 228 até 229 (2) - Código da Moeda. Informar fixo: ‘09’ = REAL
-                reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediNumericoSemSeparador_, 0230, 010, 0, "0", '0'));                                           // posição 230 até 239 (10)- Uso Exclusivo CAIXA                
-                reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediAlphaAliEsquerda_____, 0240, 001, 0, string.Empty, ' '));                                  // posição 240 até 240 (1) - Uso Exclusivo FEBRABAN/CNAB
-                //
-                reg.CodificarLinha();
-                //
+
+                String Emissao = boleto.Carteira.Equals("CS") ? "1" : "2";// posição 60 até 60   (1) - Tipo de Documento
+
+                string EspDoc = boleto.EspecieDocumento.Sigla.Equals("DM") ? "02" : boleto.EspecieDocumento.Codigo;
+
+                if (cedente.Codigo.Length.Equals(6))
+                {
+                    reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediNumericoSemSeparador_, 0001, 003, 0, base.Codigo, '0'));                                   // posição 1 até 3     (3) - código do banco na compensação        
+                    reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediNumericoSemSeparador_, 0004, 004, 0, "1", '0'));                                           // posição 4 até 7     (4) - Lote de Serviço
+                    reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediNumericoSemSeparador_, 0008, 001, 0, "3", '0'));                                           // posição 8 até 8     (1) - Tipo de Registro
+                    reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediNumericoSemSeparador_, 0009, 005, 0, numeroRegistro, '0'));                                // posição 9 até 13    (5) - Nº Sequencial do Registro no Lote
+                    reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediAlphaAliEsquerda_____, 0014, 001, 0, "P", '0'));                                           // posição 14 até 14   (1) - Cód. Segmento do Registro Detalhe
+                    reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediAlphaAliEsquerda_____, 0015, 001, 0, string.Empty, ' '));                                  // posição 15 até 15   (1) - Uso Exclusivo FEBRABAN/CNAB
+                    reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediNumericoSemSeparador_, 0016, 002, 0, ObterCodigoDaOcorrencia(boleto), '0'));               // posição 16 até 17   (2) - Código de Movimento Remessa
+                    reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediNumericoSemSeparador_, 0018, 005, 0, cedente.ContaBancaria.Agencia, '0'));                 // posição 18 até 22   (5) - Agência Mantenedora da Conta
+                    reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediAlphaAliEsquerda_____, 0023, 001, 0, cedente.ContaBancaria.DigitoAgencia.ToUpper(), ' ')); // posição 23 até 23   (1) - Dígito Verificador da Agência
+                    reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediNumericoSemSeparador_, 0024, 006, 0, cedente.Codigo, '0'));                              // posição 24 até 29   (6) - Código do Convênio no Banco
+                    reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediNumericoSemSeparador_, 0030, 008, 0, "0", '0'));                                           // posição 30 até 40   (11)- Uso Exclusivo CAIXA
+                    reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediNumericoSemSeparador_, 0038, 002, 0, ' ', '0'));                            // posição 43 até 57   (15)- Identificação do Título no Banco
+                    reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediNumericoSemSeparador_, 0040, 001, 0, "0", '0'));                                           // posição 58 até 58   (1) - Código Carteira
+                    //modalidade são os dois algarimos iniciais do nosso número...                
+                    //nosso numero já traz a modalidade concatenada, então passa direto o nosso nro que preenche os dois campos do leiaute
+                    reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediNumericoSemSeparador_, 0041, 017, 0, boleto.NossoNumero, '0'));                           // posição 59 até 59   (1) - Forma de Cadastr. do Título no Banco 1 - Com Registro 2 - Sem registro.
+                    reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediAlphaAliEsquerda_____, 0058, 001, 0, "1", '0'));
+                    reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediNumericoSemSeparador_, 0059, 001, 0, "1", '0'));                                       // posição 61 até 61   (1) - Identificação da Emissão do Bloqueto -- ‘1’-Banco Emite, '2'-entrega do bloqueto pelo Cedente                           
+                    reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediNumericoSemSeparador_, 0060, 001, 0, "2", '0'));                                           // posição 62 até 62   (1) - Identificação da Entrega do Bloqueto /* ‘0’ = Postagem pelo Cedente ‘1’ = Sacado via Correios ‘2’ = Cedente via Agência CAIXA*/ 
+                    reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediNumericoSemSeparador_, 0061, 001, 0, "2", '0'));                        // posição 63 até 73   (11)- Número do Documento de Cobrança
+                    reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediAlphaAliEsquerda_____, 0062, 001, 0, "0", '0'));                                  // posição 74 até 77   (4) - Uso Exclusivo CAIXA
+                    reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediAlphaAliEsquerda_____, 0063, 011, 0, boleto.NumeroDocumento, ' '));                         // posição 78 até 85   (8) - Data de Vencimento do Título
+                    reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediAlphaAliEsquerda_____, 0074, 004, 0, " ", ' '));                            // posição 86 até 100  (15)- Valor Nominal do Título
+                    reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediDataDDMMAAAA_________, 0078, 008, 0, boleto.DataVencimento, '0'));//0sistema atribui AEC pelo CEP do sacado  // posição 101 até 105 (5) - AEC = Agência Encarregada da Cobrança
+                    reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediNumericoSemSeparador_, 0086, 015, 2, boleto.ValorBoleto, '0')); // posição 106 até 106 (1) - Dígito Verificador da Agência
+                    reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediNumericoSemSeparador_, 0101, 005, 0, "0", '0'));                                        // posição 107 até 108 (2) - Espécie do Título
+                    reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediAlphaAliEsquerda_____, 0106, 001, 0, "0", ' '));                                 // posição 109 até 109 (1) - Identific. de Título Aceito/Não Aceito
+                    reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediNumericoSemSeparador_, 0107, 002, 0, EspDoc, '0'));                          // posição 110 até 117 (8) - Data da Emissão do Título
+                    reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediAlphaAliEsquerda_____, 0109, 001, 0, " ", ' '));
+                    reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediDataDDMMAAAA_________, 0110, 008, 0, boleto.DataDocumento, '0'));
+                    reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediNumericoSemSeparador_, 0118, 001, 0, CodJurosMora, '0'));
+                    reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediDataDDMMAAAA_________, 0119, 008, 0, boleto.DataJurosMora, '0'));
+                    reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediNumericoSemSeparador_, 0127, 015, 0, boleto.JurosMora, '0'));
+                    reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediNumericoSemSeparador_, 0142, 001, 0, (desconto ? "1" : "0"), '0'));
+                    reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediDataDDMMAAAA_________, 0143, 008, 0, boleto.DataDesconto, '0'));
+                    reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediNumericoSemSeparador_, 0151, 015, 0, boleto.ValorDesconto, '0'));
+                    reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediNumericoSemSeparador_, 0166, 015, 0, boleto.IOF, '0'));
+                    reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediAlphaAliEsquerda_____, 0181, 015, 2, boleto.Abatimento, '0'));
+                    reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediAlphaAliEsquerda_____, 0196, 025, 0, boleto.NumeroDocumento, ' '));                        // posição 196 até 220 (25)- Identificação do Título na Empresa. Informar o Número do Documento - Seu Número (mesmo das posições 63-73 do Segmento P)                
+                    reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediNumericoSemSeparador_, 0221, 001, 0, (protestar ? "1" : "3"), '0'));                       // posição 221 até 221 (1) -  Código para protesto  - ‘1’ = Protestar. "3" = Não Protestar. "9" = Cancelamento Protesto Automático
+                    reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediNumericoSemSeparador_, 0222, 002, 0, diasProtesto, '0'));                                  // posição 222 até 223 (2) -  Número de Dias para Protesto                
+                    reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediNumericoSemSeparador_, 0224, 001, 0, (baixaDevolver ? "1" : "2"), '0'));                   // posição 224 até 224 (1) -  Código para Baixa/Devolução ‘1’ = Baixar / Devolver. "2" = Não Baixar / Não Devolver
+                    reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediNumericoSemSeparador_, 0225, 003, 0, diasDevolucao, '0'));                                 // posição 225 até 227 (3) - Número de Dias para Baixa/Devolução
+                    reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediNumericoSemSeparador_, 0228, 002, 0, "09", '0'));                                          // posição 228 até 229 (2) - Código da Moeda. Informar fixo: ‘09’ = REAL
+                    reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediNumericoSemSeparador_, 0230, 010, 0, "0", '0'));                                           // posição 230 até 239 (10)- Uso Exclusivo CAIXA                
+                    reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediAlphaAliEsquerda_____, 0240, 001, 0, string.Empty, ' '));                                  // posição 240 até 240 (1) - Uso Exclusivo FEBRABAN/CNAB
+                                                                                                                                                                        //
+                    reg.CodificarLinha();
+                    //
+                }
+                else
+                {
+                    reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediNumericoSemSeparador_, 0001, 003, 0, base.Codigo, '0'));                                   // posição 1 até 3     (3) - código do banco na compensação        
+                    reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediNumericoSemSeparador_, 0004, 004, 0, "1", '0'));                                           // posição 4 até 7     (4) - Lote de Serviço
+                    reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediNumericoSemSeparador_, 0008, 001, 0, "3", '0'));                                           // posição 8 até 8     (1) - Tipo de Registro
+                    reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediNumericoSemSeparador_, 0009, 005, 0, numeroRegistro, '0'));                                // posição 9 até 13    (5) - Nº Sequencial do Registro no Lote
+                    reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediAlphaAliEsquerda_____, 0014, 001, 0, "P", '0'));                                           // posição 14 até 14   (1) - Cód. Segmento do Registro Detalhe
+                    reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediAlphaAliEsquerda_____, 0015, 001, 0, string.Empty, ' '));                                  // posição 15 até 15   (1) - Uso Exclusivo FEBRABAN/CNAB
+                    reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediNumericoSemSeparador_, 0016, 002, 0, ObterCodigoDaOcorrencia(boleto), '0'));               // posição 16 até 17   (2) - Código de Movimento Remessa
+                    reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediNumericoSemSeparador_, 0018, 005, 0, cedente.ContaBancaria.Agencia, '0'));                 // posição 18 até 22   (5) - Agência Mantenedora da Conta
+                    reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediAlphaAliEsquerda_____, 0023, 001, 0, cedente.ContaBancaria.DigitoAgencia.ToUpper(), ' ')); // posição 23 até 23   (1) - Dígito Verificador da Agência
+                    reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediNumericoSemSeparador_, 0024, 007, 0, cedente.Codigo, '0'));                              // posição 24 até 29   (6) - Código do Convênio no Banco
+                    reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediNumericoSemSeparador_, 0031, 007, 0, "0", '0'));                                           // posição 30 até 40   (11)- Uso Exclusivo CAIXA
+                    reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediNumericoSemSeparador_, 0038, 002, 0, '0', '0'));                            // posição 43 até 57   (15)- Identificação do Título no Banco
+                    //reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediNumericoSemSeparador_, 0040, 001, 0, "0", '0'));                                           // posição 58 até 58   (1) - Código Carteira
+                    //modalidade são os dois algarimos iniciais do nosso número...                
+                    //nosso numero já traz a modalidade concatenada, então passa direto o nosso nro que preenche os dois campos do leiaute
+                    //reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediNumericoSemSeparador_, 0041, 002, 0, cedente.Carteira, '0'));
+                    reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediNumericoSemSeparador_, 0041, 017, 0, boleto.NossoNumero, '0'));                           // posição 59 até 59   (1) - Forma de Cadastr. do Título no Banco 1 - Com Registro 2 - Sem registro.
+                    reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediAlphaAliEsquerda_____, 0058, 001, 0, "1", '0'));
+                    reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediNumericoSemSeparador_, 0059, 001, 0, "1", '0'));                                       // posição 61 até 61   (1) - Identificação da Emissão do Bloqueto -- ‘1’-Banco Emite, '2'-entrega do bloqueto pelo Cedente                           
+                    reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediNumericoSemSeparador_, 0060, 001, 0, "2", '0'));                                           // posição 62 até 62   (1) - Identificação da Entrega do Bloqueto /* ‘0’ = Postagem pelo Cedente ‘1’ = Sacado via Correios ‘2’ = Cedente via Agência CAIXA*/ 
+                    reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediNumericoSemSeparador_, 0061, 001, 0, "2", '0'));                        // posição 63 até 73   (11)- Número do Documento de Cobrança
+                    reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediAlphaAliEsquerda_____, 0062, 001, 0, "0", '0'));                                  // posição 74 até 77   (4) - Uso Exclusivo CAIXA
+                    reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediAlphaAliEsquerda_____, 0063, 011, 0, boleto.NumeroDocumento, ' '));                         // posição 78 até 85   (8) - Data de Vencimento do Título
+                    reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediAlphaAliEsquerda_____, 0074, 004, 0, " ", ' '));                            // posição 86 até 100  (15)- Valor Nominal do Título
+                    reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediDataDDMMAAAA_________, 0078, 008, 0, boleto.DataVencimento, '0'));//0sistema atribui AEC pelo CEP do sacado  // posição 101 até 105 (5) - AEC = Agência Encarregada da Cobrança
+                    reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediNumericoSemSeparador_, 0086, 015, 2, boleto.ValorBoleto, '0')); // posição 106 até 106 (1) - Dígito Verificador da Agência
+                    reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediNumericoSemSeparador_, 0101, 005, 0, "0", '0'));                                        // posição 107 até 108 (2) - Espécie do Título
+                    reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediAlphaAliEsquerda_____, 0106, 001, 0, "0", ' '));                                 // posição 109 até 109 (1) - Identific. de Título Aceito/Não Aceito
+                    reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediNumericoSemSeparador_, 0107, 002, 0, EspDoc, '0'));                          // posição 110 até 117 (8) - Data da Emissão do Título
+                    reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediAlphaAliEsquerda_____, 0109, 001, 0, " ", ' '));
+                    reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediDataDDMMAAAA_________, 0110, 008, 0, boleto.DataDocumento, '0'));
+                    reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediNumericoSemSeparador_, 0118, 001, 0, CodJurosMora, '0'));
+                    reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediDataDDMMAAAA_________, 0119, 008, 0, boleto.DataJurosMora, '0'));
+                    reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediNumericoSemSeparador_, 0127, 015, 0, boleto.JurosMora, '0'));
+                    reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediNumericoSemSeparador_, 0142, 001, 0, (desconto ? "1" : "0"), '0'));
+                    reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediDataDDMMAAAA_________, 0143, 008, 0, boleto.DataDesconto, '0'));
+                    reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediNumericoSemSeparador_, 0151, 015, 0, boleto.ValorDesconto, '0'));
+                    reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediNumericoSemSeparador_, 0166, 015, 0, boleto.IOF, '0'));
+                    reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediAlphaAliEsquerda_____, 0181, 015, 2, boleto.Abatimento, '0'));
+                    reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediAlphaAliEsquerda_____, 0196, 025, 0, boleto.NumeroDocumento, ' '));                        // posição 196 até 220 (25)- Identificação do Título na Empresa. Informar o Número do Documento - Seu Número (mesmo das posições 63-73 do Segmento P)                
+                    reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediNumericoSemSeparador_, 0221, 001, 0, (protestar ? "1" : "3"), '0'));                       // posição 221 até 221 (1) -  Código para protesto  - ‘1’ = Protestar. "3" = Não Protestar. "9" = Cancelamento Protesto Automático
+                    reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediNumericoSemSeparador_, 0222, 002, 0, diasProtesto, '0'));                                  // posição 222 até 223 (2) -  Número de Dias para Protesto                
+                    reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediNumericoSemSeparador_, 0224, 001, 0, (baixaDevolver ? "1" : "2"), '0'));                   // posição 224 até 224 (1) -  Código para Baixa/Devolução ‘1’ = Baixar / Devolver. "2" = Não Baixar / Não Devolver
+                    reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediNumericoSemSeparador_, 0225, 003, 0, diasDevolucao, '0'));                                 // posição 225 até 227 (3) - Número de Dias para Baixa/Devolução
+                    reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediNumericoSemSeparador_, 0228, 002, 0, "09", '0'));                                          // posição 228 até 229 (2) - Código da Moeda. Informar fixo: ‘09’ = REAL
+                    reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediNumericoSemSeparador_, 0230, 010, 0, "0", '0'));                                           // posição 230 até 239 (10)- Uso Exclusivo CAIXA                
+                    reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediAlphaAliEsquerda_____, 0240, 001, 0, string.Empty, ' '));                                  // posição 240 até 240 (1) - Uso Exclusivo FEBRABAN/CNAB
+                                                                                                                                                                        //
+                    reg.CodificarLinha();
+                }
                 string vLinha = reg.LinhaRegistro;
                 string _SegmentoP = Utils.SubstituiCaracteresEspeciais(vLinha);
 
@@ -1303,57 +1423,6 @@ namespace BoletoNet
         {
             try
             {
-                #region Segmento P
-                validaInstrucoes240(boleto);
-                TRegistroEDI reg = new TRegistroEDI();
-                reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediNumericoSemSeparador_, 0001, 003, 0, base.Codigo, '0'));                                   // posição 1 até 3     (3) - código do banco na compensação        
-                reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediNumericoSemSeparador_, 0004, 004, 0, "1", '0'));                                           // posição 4 até 7     (4) - Lote de Serviço
-                reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediNumericoSemSeparador_, 0008, 001, 0, "3", '0'));                                           // posição 8 até 8     (1) - Tipo de Registro
-                reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediNumericoSemSeparador_, 0009, 005, 0, numeroRegistro, '0'));                                // posição 9 até 13    (5) - Nº Sequencial do Registro no Lote
-                reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediAlphaAliEsquerda_____, 0014, 001, 0, "P", '0'));                                           // posição 14 até 14   (1) - Cód. Segmento do Registro Detalhe
-                reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediAlphaAliEsquerda_____, 0015, 001, 0, string.Empty, ' '));                                  // posição 15 até 15   (1) - Uso Exclusivo FEBRABAN/CNAB
-                reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediNumericoSemSeparador_, 0016, 002, 0, ObterCodigoDaOcorrencia(boleto), '0'));               // posição 16 até 17   (2) - Código de Movimento Remessa
-
-                reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediNumericoSemSeparador_, 0018, 005, 0, cedente.ContaBancaria.Agencia, '0'));                 // posição 18 até 22   (5) - Agência Mantenedora da Conta
-
-                reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediAlphaAliEsquerda_____, 0023, 001, 0, cedente.ContaBancaria.DigitoAgencia.ToUpper(), ' ')); // posição 23 até 23   (1) - Dígito Verificador da Agência
-                reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediNumericoSemSeparador_, 0024, 006, 0, cedente.Codigo, '0'));                              // posição 24 até 29   (6) - Código do Convênio no Banco
-                reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediNumericoSemSeparador_, 0030, 011, 0, "0", '0'));                                           // posição 30 até 40   (11)- Uso Exclusivo CAIXA
-
-
-
-
-                //modalidade são os dois algarimos iniciais do nosso número...                
-                //nosso numero já traz a modalidade concatenada, então passa direto o nosso nro que preenche os dois campos do leiaute
-                reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediNumericoSemSeparador_, 0041, 017, 0, boleto.NossoNumero, '0'));                            // posição 43 até 57   (15)- Identificação do Título no Banco
-                #region Código da Carteira
-                //Código adotado pela FEBRABAN, para identificar a característica dos títulos dentro das modalidades de cobrança existentes no banco.
-                //‘1’ = Cobrança Simples; ‘3’ = Cobrança Caucionada; ‘4’ = Cobrança Descontada
-                reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediNumericoSemSeparador_, 0058, 001, 0, "1", '0'));                                           // posição 58 até 58   (1) - Código Carteira
-                #endregion
-                #region Forma de Cadastramento do Título no Banco
-                string vFormaCadastramento = "1";// Com registro
-                if (boleto.Remessa.TipoDocumento.Equals("2"))
-                    vFormaCadastramento = "2";//sem registro               
-                #endregion
-                reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediNumericoSemSeparador_, 0059, 001, 0, vFormaCadastramento, '0'));                           // posição 59 até 59   (1) - Forma de Cadastr. do Título no Banco 1 - Com Registro 2 - Sem registro.
-                #region Tratamento do tipo Cobrança (com ou sem registro)
-
-                #endregion
-                reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediAlphaAliEsquerda_____, 0060, 001, 0, "2", '0'));
-                String Emissao = boleto.Carteira.Equals("CS") ? "1" : "2";// posição 60 até 60   (1) - Tipo de Documento
-                reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediNumericoSemSeparador_, 0061, 001, 0, Emissao, '0'));                                       // posição 61 até 61   (1) - Identificação da Emissão do Bloqueto -- ‘1’-Banco Emite, '2'-entrega do bloqueto pelo Cedente                           
-                reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediAlphaAliEsquerda_____, 0062, 001, 0, "0", '0'));                                           // posição 62 até 62   (1) - Identificação da Entrega do Bloqueto /* ‘0’ = Postagem pelo Cedente ‘1’ = Sacado via Correios ‘2’ = Cedente via Agência CAIXA*/ 
-                reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediAlphaAliEsquerda_____, 0063, 011, 0, boleto.NumeroDocumento, ' '));                        // posição 63 até 73   (11)- Número do Documento de Cobrança
-                reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediAlphaAliEsquerda_____, 0074, 004, 0, string.Empty, ' '));                                  // posição 74 até 77   (4) - Uso Exclusivo CAIXA
-                reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediDataDDMMAAAA_________, 0078, 008, 0, boleto.DataVencimento, ' '));                         // posição 78 até 85   (8) - Data de Vencimento do Título
-                reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediNumericoSemSeparador_, 0086, 015, 2, boleto.ValorBoleto, '0'));                            // posição 86 até 100  (15)- Valor Nominal do Título
-                reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediNumericoSemSeparador_, 0101, 005, 2, "0", '0'));//0sistema atribui AEC pelo CEP do sacado  // posição 101 até 105 (5) - AEC = Agência Encarregada da Cobrança
-                reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediAlphaAliEsquerda_____, 0106, 001, 0, "0", ' ')); // posição 106 até 106 (1) - Dígito Verificador da Agência
-                string EspDoc = boleto.EspecieDocumento.Sigla.Equals("DM") ? "02" : boleto.EspecieDocumento.Codigo;
-                reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediNumericoSemSeparador_, 0107, 002, 2, EspDoc, '0'));                                        // posição 107 até 108 (2) - Espécie do Título
-                reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediAlphaAliEsquerda_____, 0109, 001, 0, boleto.Aceite, ' '));                                 // posição 109 até 109 (1) - Identific. de Título Aceito/Não Aceito
-                reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediDataDDMMAAAA_________, 0110, 008, 0, boleto.DataDocumento, '0'));                          // posição 110 até 117 (8) - Data da Emissão do Título
                 #region Código de juros
                 string CodJurosMora;
                 if (boleto.JurosMora == 0 && boleto.PercJurosMora == 0)
@@ -1362,26 +1431,123 @@ namespace BoletoNet
                     CodJurosMora = "1";
                 #endregion
 
+                #region Forma de Cadastramento do Título no Banco
+                string vFormaCadastramento = "1";// Com registro
+                if (boleto.Remessa.TipoDocumento.Equals("2"))
+                    vFormaCadastramento = "2";//sem registro               
+                #endregion
 
-                reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediNumericoSemSeparador_, 0118, 001, 2, CodJurosMora, '0'));                                           // posição 118 até 118 (1) - Código do Juros de Mora
-                reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediDataDDMMAAAA_________, 0119, 008, 0, boleto.DataJurosMora, '0'));                          // posição 119 até 126 (8) - Data do Juros de Mora
-                reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediNumericoSemSeparador_, 0127, 015, 2, boleto.JurosMora, '0'));                              // posição 127 até 141 (15)- Juros de Mora por Dia/Taxa
-                reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediNumericoSemSeparador_, 0142, 001, 0, "0", '0'));                                           // posição 142 até 142 (1) -  Código do Desconto 1 - "0" = Sem desconto. "1"= Valor Fixo até a data informada "2" = Percentual até a data informada
-                reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediDataDDMMAAAA_________, 0143, 008, 0, boleto.DataDesconto, '0'));                           // posição 143 até 150 (8) - Data do Desconto
-                reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediNumericoSemSeparador_, 0151, 015, 2, boleto.ValorDesconto, '0'));                          // posição 151 até 165 (15)- Valor/Percentual a ser Concedido
-                reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediNumericoSemSeparador_, 0166, 015, 2, boleto.IOF, '0'));                                    // posição 166 até 180 (15)- Valor do IOF a ser concedido
-                reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediNumericoSemSeparador_, 0181, 015, 2, boleto.Abatimento, '0'));                             // posição 181 até 195 (15)- Valor do Abatimento
-                reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediAlphaAliEsquerda_____, 0196, 025, 0, boleto.NumeroDocumento, ' '));                        // posição 196 até 220 (25)- Identificação do Título na Empresa. Informar o Número do Documento - Seu Número (mesmo das posições 63-73 do Segmento P)                
-                reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediNumericoSemSeparador_, 0221, 001, 0, (protestar ? "1" : "3"), '0'));                       // posição 221 até 221 (1) -  Código para protesto  - ‘1’ = Protestar. "3" = Não Protestar. "9" = Cancelamento Protesto Automático
-                reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediNumericoSemSeparador_, 0222, 002, 0, diasProtesto, '0'));                                  // posição 222 até 223 (2) -  Número de Dias para Protesto                
-                reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediNumericoSemSeparador_, 0224, 001, 0, (baixaDevolver ? "1" : "2"), '0'));                   // posição 224 até 224 (1) -  Código para Baixa/Devolução ‘1’ = Baixar / Devolver. "2" = Não Baixar / Não Devolver
-                reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediNumericoSemSeparador_, 0225, 003, 0, diasDevolucao, '0'));                                 // posição 225 até 227 (3) - Número de Dias para Baixa/Devolução
-                reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediNumericoSemSeparador_, 0228, 002, 0, "09", '0'));                                          // posição 228 até 229 (2) - Código da Moeda. Informar fixo: ‘09’ = REAL
-                reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediNumericoSemSeparador_, 0230, 010, 2, "0", '0'));                                           // posição 230 até 239 (10)- Uso Exclusivo CAIXA                
-                reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediAlphaAliEsquerda_____, 0240, 001, 0, string.Empty, ' '));                                  // posição 240 até 240 (1) - Uso Exclusivo FEBRABAN/CNAB
-                //
-                reg.CodificarLinha();
-                //
+                string EspDoc = boleto.EspecieDocumento.Sigla.Equals("DM") ? "02" : boleto.EspecieDocumento.Codigo;
+
+                #region Segmento P
+                validaInstrucoes240(boleto);
+                TRegistroEDI reg = new TRegistroEDI();
+                if (cedente.Codigo.Length.Equals(6))
+                {
+                    reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediNumericoSemSeparador_, 0001, 003, 0, base.Codigo, '0'));                                   // posição 1 até 3     (3) - código do banco na compensação        
+                    reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediNumericoSemSeparador_, 0004, 004, 0, "1", '0'));                                           // posição 4 até 7     (4) - Lote de Serviço
+                    reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediNumericoSemSeparador_, 0008, 001, 0, "3", '0'));                                           // posição 8 até 8     (1) - Tipo de Registro
+                    reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediNumericoSemSeparador_, 0009, 005, 0, numeroRegistro, '0'));                                // posição 9 até 13    (5) - Nº Sequencial do Registro no Lote
+                    reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediAlphaAliEsquerda_____, 0014, 001, 0, "P", '0'));                                           // posição 14 até 14   (1) - Cód. Segmento do Registro Detalhe
+                    reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediAlphaAliEsquerda_____, 0015, 001, 0, string.Empty, ' '));                                  // posição 15 até 15   (1) - Uso Exclusivo FEBRABAN/CNAB
+                    reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediNumericoSemSeparador_, 0016, 002, 0, ObterCodigoDaOcorrencia(boleto), '0'));               // posição 16 até 17   (2) - Código de Movimento Remessa
+                    reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediNumericoSemSeparador_, 0018, 005, 0, cedente.ContaBancaria.Agencia, '0'));                 // posição 18 até 22   (5) - Agência Mantenedora da Conta
+                    reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediAlphaAliEsquerda_____, 0023, 001, 0, cedente.ContaBancaria.DigitoAgencia.ToUpper(), ' ')); // posição 23 até 23   (1) - Dígito Verificador da Agência
+                    reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediNumericoSemSeparador_, 0024, 006, 0, cedente.Codigo, '0'));                              // posição 24 até 29   (6) - Código do Convênio no Banco
+                    reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediNumericoSemSeparador_, 0030, 011, 0, "0", '0'));                                           // posição 30 até 40   (11)- Uso Exclusivo CAIXA
+                    //modalidade são os dois algarimos iniciais do nosso número...                
+                    //nosso numero já traz a modalidade concatenada, então passa direto o nosso nro que preenche os dois campos do leiaute
+                    reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediNumericoSemSeparador_, 0041, 017, 0, boleto.NossoNumero, '0'));                            // posição 43 até 57   (15)- Identificação do Título no Banco
+                    //Código adotado pela FEBRABAN, para identificar a característica dos títulos dentro das modalidades de cobrança existentes no banco.
+                    //‘1’ = Cobrança Simples; ‘3’ = Cobrança Caucionada; ‘4’ = Cobrança Descontada
+                    reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediNumericoSemSeparador_, 0058, 001, 0, "1", '0'));                                           // posição 58 até 58   (1) - Código Carteira
+                    reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediNumericoSemSeparador_, 0059, 001, 0, vFormaCadastramento, '0'));                           // posição 59 até 59   (1) - Forma de Cadastr. do Título no Banco 1 - Com Registro 2 - Sem registro.
+                    reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediAlphaAliEsquerda_____, 0060, 001, 0, "2", '0'));
+                    String Emissao = boleto.Carteira.Equals("CS") ? "1" : "2";// posição 60 até 60   (1) - Tipo de Documento
+                    reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediNumericoSemSeparador_, 0061, 001, 0, Emissao, '0'));                                       // posição 61 até 61   (1) - Identificação da Emissão do Bloqueto -- ‘1’-Banco Emite, '2'-entrega do bloqueto pelo Cedente                           
+                    reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediAlphaAliEsquerda_____, 0062, 001, 0, "0", '0'));                                           // posição 62 até 62   (1) - Identificação da Entrega do Bloqueto /* ‘0’ = Postagem pelo Cedente ‘1’ = Sacado via Correios ‘2’ = Cedente via Agência CAIXA*/ 
+                    reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediAlphaAliEsquerda_____, 0063, 011, 0, boleto.NumeroDocumento, ' '));                        // posição 63 até 73   (11)- Número do Documento de Cobrança
+                    reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediAlphaAliEsquerda_____, 0074, 004, 0, string.Empty, ' '));                                  // posição 74 até 77   (4) - Uso Exclusivo CAIXA
+                    reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediDataDDMMAAAA_________, 0078, 008, 0, boleto.DataVencimento, ' '));                         // posição 78 até 85   (8) - Data de Vencimento do Título
+                    reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediNumericoSemSeparador_, 0086, 015, 2, boleto.ValorBoleto, '0'));                            // posição 86 até 100  (15)- Valor Nominal do Título
+                    reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediNumericoSemSeparador_, 0101, 005, 2, "0", '0'));//0sistema atribui AEC pelo CEP do sacado  // posição 101 até 105 (5) - AEC = Agência Encarregada da Cobrança
+                    reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediAlphaAliEsquerda_____, 0106, 001, 0, "0", ' ')); // posição 106 até 106 (1) - Dígito Verificador da Agência
+                    reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediNumericoSemSeparador_, 0107, 002, 2, EspDoc, '0'));                                        // posição 107 até 108 (2) - Espécie do Título
+                    reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediAlphaAliEsquerda_____, 0109, 001, 0, boleto.Aceite, ' '));                                 // posição 109 até 109 (1) - Identific. de Título Aceito/Não Aceito
+                    reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediDataDDMMAAAA_________, 0110, 008, 0, boleto.DataDocumento, '0'));                          // posição 110 até 117 (8) - Data da Emissão do Título
+                    reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediNumericoSemSeparador_, 0118, 001, 2, CodJurosMora, '0'));                                           // posição 118 até 118 (1) - Código do Juros de Mora
+                    reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediDataDDMMAAAA_________, 0119, 008, 0, boleto.DataJurosMora, '0'));                          // posição 119 até 126 (8) - Data do Juros de Mora
+                    reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediNumericoSemSeparador_, 0127, 015, 2, boleto.JurosMora, '0'));                              // posição 127 até 141 (15)- Juros de Mora por Dia/Taxa
+                    reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediNumericoSemSeparador_, 0142, 001, 0, "0", '0'));                                           // posição 142 até 142 (1) -  Código do Desconto 1 - "0" = Sem desconto. "1"= Valor Fixo até a data informada "2" = Percentual até a data informada
+                    reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediDataDDMMAAAA_________, 0143, 008, 0, boleto.DataDesconto, '0'));                           // posição 143 até 150 (8) - Data do Desconto
+                    reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediNumericoSemSeparador_, 0151, 015, 2, boleto.ValorDesconto, '0'));                          // posição 151 até 165 (15)- Valor/Percentual a ser Concedido
+                    reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediNumericoSemSeparador_, 0166, 015, 2, boleto.IOF, '0'));                                    // posição 166 até 180 (15)- Valor do IOF a ser concedido
+                    reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediNumericoSemSeparador_, 0181, 015, 2, boleto.Abatimento, '0'));                             // posição 181 até 195 (15)- Valor do Abatimento
+                    reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediAlphaAliEsquerda_____, 0196, 025, 0, boleto.NumeroDocumento, ' '));                        // posição 196 até 220 (25)- Identificação do Título na Empresa. Informar o Número do Documento - Seu Número (mesmo das posições 63-73 do Segmento P)                
+                    reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediNumericoSemSeparador_, 0221, 001, 0, (protestar ? "1" : "3"), '0'));                       // posição 221 até 221 (1) -  Código para protesto  - ‘1’ = Protestar. "3" = Não Protestar. "9" = Cancelamento Protesto Automático
+                    reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediNumericoSemSeparador_, 0222, 002, 0, diasProtesto, '0'));                                  // posição 222 até 223 (2) -  Número de Dias para Protesto                
+                    reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediNumericoSemSeparador_, 0224, 001, 0, (baixaDevolver ? "1" : "2"), '0'));                   // posição 224 até 224 (1) -  Código para Baixa/Devolução ‘1’ = Baixar / Devolver. "2" = Não Baixar / Não Devolver
+                    reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediNumericoSemSeparador_, 0225, 003, 0, diasDevolucao, '0'));                                 // posição 225 até 227 (3) - Número de Dias para Baixa/Devolução
+                    reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediNumericoSemSeparador_, 0228, 002, 0, "09", '0'));                                          // posição 228 até 229 (2) - Código da Moeda. Informar fixo: ‘09’ = REAL
+                    reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediNumericoSemSeparador_, 0230, 010, 2, "0", '0'));                                           // posição 230 até 239 (10)- Uso Exclusivo CAIXA                
+                    reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediAlphaAliEsquerda_____, 0240, 001, 0, string.Empty, ' '));                                  // posição 240 até 240 (1) - Uso Exclusivo FEBRABAN/CNAB
+                                                                                                                                                                        //
+                    reg.CodificarLinha();
+                    //
+                }
+                else
+                {
+                    reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediNumericoSemSeparador_, 0001, 003, 0, base.Codigo, '0'));                                   // posição 1 até 3     (3) - código do banco na compensação        
+                    reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediNumericoSemSeparador_, 0004, 004, 0, "1", '0'));                                           // posição 4 até 7     (4) - Lote de Serviço
+                    reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediNumericoSemSeparador_, 0008, 001, 0, "3", '0'));                                           // posição 8 até 8     (1) - Tipo de Registro
+                    reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediNumericoSemSeparador_, 0009, 005, 0, numeroRegistro, '0'));                                // posição 9 até 13    (5) - Nº Sequencial do Registro no Lote
+                    reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediAlphaAliEsquerda_____, 0014, 001, 0, "P", '0'));                                           // posição 14 até 14   (1) - Cód. Segmento do Registro Detalhe
+                    reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediAlphaAliEsquerda_____, 0015, 001, 0, string.Empty, ' '));                                  // posição 15 até 15   (1) - Uso Exclusivo FEBRABAN/CNAB
+                    reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediNumericoSemSeparador_, 0016, 002, 0, ObterCodigoDaOcorrencia(boleto), '0'));               // posição 16 até 17   (2) - Código de Movimento Remessa
+                    reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediNumericoSemSeparador_, 0018, 005, 0, cedente.ContaBancaria.Agencia, '0'));                 // posição 18 até 22   (5) - Agência Mantenedora da Conta
+                    reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediAlphaAliEsquerda_____, 0023, 001, 0, cedente.ContaBancaria.DigitoAgencia.ToUpper(), ' ')); // posição 23 até 23   (1) - Dígito Verificador da Agência
+                    reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediNumericoSemSeparador_, 0024, 007, 0, cedente.Codigo, '0'));                              // posição 24 até 29   (6) - Código do Convênio no Banco
+                    reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediNumericoSemSeparador_, 0031, 010, 0, "0", '0'));                                           // posição 30 até 40   (11)- Uso Exclusivo CAIXA
+                    //modalidade são os dois algarimos iniciais do nosso número...                
+                    //nosso numero já traz a modalidade concatenada, então passa direto o nosso nro que preenche os dois campos do leiaute
+                    reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediNumericoSemSeparador_, 0041, 017, 0, boleto.NossoNumero, '0'));                            // posição 43 até 57   (15)- Identificação do Título no Banco
+                    #region Código da Carteira
+                    //Código adotado pela FEBRABAN, para identificar a característica dos títulos dentro das modalidades de cobrança existentes no banco.
+                    //‘1’ = Cobrança Simples; ‘3’ = Cobrança Caucionada; ‘4’ = Cobrança Descontada
+                    reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediNumericoSemSeparador_, 0058, 001, 0, "1", '0'));                                           // posição 58 até 58   (1) - Código Carteira
+                    reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediNumericoSemSeparador_, 0059, 001, 0, "1", '0'));                           // posição 59 até 59   (1) - Forma de Cadastr. do Título no Banco 1 - Com Registro 2 - Sem registro.
+                    reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediAlphaAliEsquerda_____, 0060, 001, 0, "2", '0'));
+                    String Emissao = boleto.Carteira.Equals("CS") ? "1" : "2";// posição 60 até 60   (1) - Tipo de Documento
+                    reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediNumericoSemSeparador_, 0061, 001, 0, "2", '0'));                                       // posição 61 até 61   (1) - Identificação da Emissão do Bloqueto -- ‘1’-Banco Emite, '2'-entrega do bloqueto pelo Cedente                           
+                    reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediAlphaAliEsquerda_____, 0062, 001, 0, "0", '0'));                                           // posição 62 até 62   (1) - Identificação da Entrega do Bloqueto /* ‘0’ = Postagem pelo Cedente ‘1’ = Sacado via Correios ‘2’ = Cedente via Agência CAIXA*/ 
+                    reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediAlphaAliEsquerda_____, 0063, 011, 0, boleto.NumeroDocumento, ' '));                        // posição 63 até 73   (11)- Número do Documento de Cobrança
+                    reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediAlphaAliEsquerda_____, 0074, 004, 0, string.Empty, ' '));                                  // posição 74 até 77   (4) - Uso Exclusivo CAIXA
+                    reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediDataDDMMAAAA_________, 0078, 008, 0, boleto.DataVencimento, ' '));                         // posição 78 até 85   (8) - Data de Vencimento do Título
+                    reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediNumericoSemSeparador_, 0086, 015, 2, boleto.ValorBoleto, '0'));                            // posição 86 até 100  (15)- Valor Nominal do Título
+                    reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediNumericoSemSeparador_, 0101, 005, 2, "0", '0'));//0sistema atribui AEC pelo CEP do sacado  // posição 101 até 105 (5) - AEC = Agência Encarregada da Cobrança
+                    reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediAlphaAliEsquerda_____, 0106, 001, 0, "0", ' ')); // posição 106 até 106 (1) - Dígito Verificador da Agência
+                    reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediNumericoSemSeparador_, 0107, 002, 2, EspDoc, '0'));                                        // posição 107 até 108 (2) - Espécie do Título
+                    reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediAlphaAliEsquerda_____, 0109, 001, 0, " ", ' '));                                 // posição 109 até 109 (1) - Identific. de Título Aceito/Não Aceito
+                    reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediDataDDMMAAAA_________, 0110, 008, 0, boleto.DataDocumento, '0'));                          // posição 110 até 117 (8) - Data da Emissão do Título
+                    reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediNumericoSemSeparador_, 0118, 001, 2, CodJurosMora, '0'));                                           // posição 118 até 118 (1) - Código do Juros de Mora
+                    reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediDataDDMMAAAA_________, 0119, 008, 0, boleto.DataJurosMora, '0'));                          // posição 119 até 126 (8) - Data do Juros de Mora
+                    reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediNumericoSemSeparador_, 0127, 015, 2, boleto.JurosMora, '0'));                              // posição 127 até 141 (15)- Juros de Mora por Dia/Taxa
+                    reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediNumericoSemSeparador_, 0142, 001, 0, (desconto ? "1" : "0"), '0'));                                           // posição 142 até 142 (1) -  Código do Desconto 1 - "0" = Sem desconto. "1"= Valor Fixo até a data informada "2" = Percentual até a data informada
+                    reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediDataDDMMAAAA_________, 0143, 008, 0, boleto.DataDesconto, '0'));                           // posição 143 até 150 (8) - Data do Desconto
+                    reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediNumericoSemSeparador_, 0151, 015, 2, boleto.ValorDesconto, '0'));                          // posição 151 até 165 (15)- Valor/Percentual a ser Concedido
+                    reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediNumericoSemSeparador_, 0166, 015, 2, boleto.IOF, '0'));                                    // posição 166 até 180 (15)- Valor do IOF a ser concedido
+                    reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediNumericoSemSeparador_, 0181, 015, 2, boleto.Abatimento, '0'));                             // posição 181 até 195 (15)- Valor do Abatimento
+                    reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediAlphaAliEsquerda_____, 0196, 025, 0, boleto.NumeroDocumento, ' '));                        // posição 196 até 220 (25)- Identificação do Título na Empresa. Informar o Número do Documento - Seu Número (mesmo das posições 63-73 do Segmento P)                
+                    reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediNumericoSemSeparador_, 0221, 001, 0, (protestar ? "1" : "3"), '0'));                       // posição 221 até 221 (1) -  Código para protesto  - ‘1’ = Protestar. "3" = Não Protestar. "9" = Cancelamento Protesto Automático
+                    reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediNumericoSemSeparador_, 0222, 002, 0, diasProtesto, '0'));                                  // posição 222 até 223 (2) -  Número de Dias para Protesto                
+                    reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediNumericoSemSeparador_, 0224, 001, 0, (baixaDevolver ? "1" : "2"), '0'));                   // posição 224 até 224 (1) -  Código para Baixa/Devolução ‘1’ = Baixar / Devolver. "2" = Não Baixar / Não Devolver
+                    reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediNumericoSemSeparador_, 0225, 003, 0, diasDevolucao, '0'));                                 // posição 225 até 227 (3) - Número de Dias para Baixa/Devolução
+                    reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediNumericoSemSeparador_, 0228, 002, 0, "09", '0'));                                          // posição 228 até 229 (2) - Código da Moeda. Informar fixo: ‘09’ = REAL
+                    reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediNumericoSemSeparador_, 0230, 010, 2, "0", '0'));                                           // posição 230 até 239 (10)- Uso Exclusivo CAIXA                
+                    reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediAlphaAliEsquerda_____, 0240, 001, 0, string.Empty, ' '));                                  // posição 240 até 240 (1) - Uso Exclusivo FEBRABAN/CNAB
+                                                                                                                                                                        //
+                    reg.CodificarLinha();
+                }
                 string vLinha = reg.LinhaRegistro;
                 string _SegmentoP = Utils.SubstituiCaracteresEspeciais(vLinha);
 
@@ -1394,6 +1560,7 @@ namespace BoletoNet
             }
 
         }
+        #endregion
         public string GerarDetalheSegmentoQRemessaCNAB240SIGCB(Boleto boleto, int numeroRegistro, Sacado sacado)
         {
             try
