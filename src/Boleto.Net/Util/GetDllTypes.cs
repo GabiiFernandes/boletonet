@@ -429,11 +429,12 @@ namespace BoletoNet
                     case 1:
                         enumComandosRetorno = typeof(EnumCodigoMovimento_BancoBrasil);
                         break;
-
+                    //Bradesco
                     case 237:
-
+                        codigoBanco = 85; //utiliza codigos de movimento da cecred poís são iguais
+                        enumComandosRetorno = typeof(EnumCodigoMovimento_Cecred);
+                        break;
                     case 353:
-
                     case 422: //Safra
                         enumComandosRetorno = typeof(EnumCodigoMovimento_Safra);
                         break;
