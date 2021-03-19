@@ -140,7 +140,7 @@ namespace BoletoNet
                 string dvCodigoCedente = Mod11Base9(codigoCedente).ToString();
 
                 //Posição 27 - 29
-                string primeiraParteNossoNumero = boleto.NossoNumero.Substring(0, 3);
+                string primeiraParteNossoNumero = boleto.NossoNumero.Substring(2, 3);
 
                 //104 - Caixa Econômica Federal S.A. 
                 //Carteira 01. 
@@ -157,18 +157,17 @@ namespace BoletoNet
                 }
                 else
                 {
-                    primeiraConstante = boleto.Carteira;
+                    primeiraConstante = boleto.NossoNumero.Substring(0,1);
                 }
 
                 // Posição 31 - 33
-                string segundaParteNossoNumero = boleto.NossoNumero.Substring(0, 3); //(3, 3);
+                string segundaParteNossoNumero = boleto.NossoNumero.Substring(5, 3); //(3, 3);
 
                 // Posição 24
-                string segundaConstante = EMISSAO_CEDENTE.ToString();
+                string segundaConstante = boleto.NossoNumero.Substring(1, 1);
 
                 //Posição 35 - 43
-                string terceiraParteNossoNumero = boleto.NossoNumero.Substring(3, 7) + segundaConstante +
-                                                  segundaConstante; //(6, 9);
+                string terceiraParteNossoNumero = boleto.NossoNumero.Substring(8, 9);
 
                 //Posição 44
                 string ccc = string.Format("{0}{1}{2}{3}{4}{5}{6}", codigoCedente, dvCodigoCedente,
