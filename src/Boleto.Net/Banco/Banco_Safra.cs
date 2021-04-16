@@ -350,7 +350,11 @@ namespace BoletoNet
                  */
 
                 string tipoInscricaoEmitente = "02";   // Padrão CNPJ
-                string tipoInscricaoSacado = "02";   // Padrão CNPJ
+                string tipoInscricaoSacado;
+                if (boleto.Sacado.CPFCNPJ.Length.Equals(11))
+                    tipoInscricaoSacado = "01"; //CPF
+                else
+                    tipoInscricaoSacado = "02";   //CNPJ
 
                 TRegistroEDI reg = new TRegistroEDI();
 
