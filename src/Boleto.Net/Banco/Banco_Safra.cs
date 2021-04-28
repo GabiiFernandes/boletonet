@@ -175,36 +175,21 @@ namespace BoletoNet
                 //Passa para o detalhe as propriedades de reg;
                 DetalheRetorno detalhe = new DetalheRetorno(registro);
 
-                detalhe.Agencia = Utils.ToInt32(String.Concat(reg.Agencia, reg.DigitoAgencia));
-                detalhe.Conta = Utils.ToInt32(reg.Conta);
-                detalhe.DACConta = Utils.ToInt32(reg.DigitoConta);
-                //detalhe.NossoNumeroComDV = reg.NossoNumero;
-                //detalhe.NossoNumero = reg.NossoNumero.Substring(0, reg.NossoNumero.Length - 1); //Nosso Número sem o DV!
-                //detalhe.DACNossoNumero = reg.NossoNumero.Substring(reg.NossoNumero.Length - 1); //DV
                 detalhe.Carteira = reg.TipoCarteira;
-                detalhe.CodigoOcorrencia = Utils.ToInt32(reg.TipoOcorrencia);
+                detalhe.CodigoOcorrencia = Utils.ToInt32(reg.IdentOcorrencia);
                 detalhe.DescricaoOcorrencia = new CodigoMovimento(this.Codigo, detalhe.CodigoOcorrencia).Descricao;
-                int dataLiquidacao = Utils.ToInt32(reg.DataLimiteDesconto);
-                detalhe.DataLiquidacao = Utils.ToDateTime(dataLiquidacao.ToString("##-##-##"));
-                detalhe.NumeroDocumento = reg.IdentificacaoTitulo;
+                detalhe.NumeroDocumento = reg.TituloEmpresa;
+                detalhe.NossoNumero = reg.NumTitulo;
                 int dataVencimento = Utils.ToInt32(reg.VencimentoTitulo);
                 detalhe.DataVencimento = Utils.ToDateTime(dataVencimento.ToString("##-##-##"));
                 detalhe.ValorTitulo = Utils.ToDecimal(reg.ValorNominalTitulo) / 100;
                 detalhe.CodigoBanco = Utils.ToInt32(reg.CodigoBanco);
-                detalhe.AgenciaCobradora = Utils.ToInt32(reg.Agencia);
+                detalhe.AgenciaCobradora = Utils.ToInt32(reg.AgenciaEncarregada);
                 detalhe.Especie = Utils.ToInt32(reg.EspecieTitulo);
-                //int dataCredito = Utils.ToInt32(reg.DataCredito);
-                //detalhe.DataOcorrencia = Utils.ToDateTime(dataCredito.ToString("##-##-##"));
-                //detalhe.TarifaCobranca = Utils.ToDecimal(reg.ValorJurosMora) / 100;
-                //detalhe.OutrasDespesas = Utils.ToDecimal(reg.OutrasDespesas) / 100;
-                //detalhe.ValorOutrasDespesas = Utils.ToDecimal(reg.valor) / 100;
                 detalhe.IOF = Utils.ToDecimal(reg.ValorIOF) / 100;
                 detalhe.Abatimentos = Utils.ToDecimal(reg.ValorAbatimentoConcedido) / 100;
                 detalhe.Descontos = Utils.ToDecimal(reg.ValorDescontoConcedido) / 100;
-                //detalhe.ValorPrincipal = Utils.ToDecimal(reg.valor) / 100;
                 detalhe.JurosMora = Utils.ToDecimal(reg.ValorJurosMora) / 100;
-                //detalhe.OutrosCreditos = Utils.ToDecimal(reg.OutrosRecebimentos) / 100;
-                //detalhe.ValorPago = Utils.ToDecimal(reg.ValorLancamento) / 100;
 
                 return detalhe;
             }
