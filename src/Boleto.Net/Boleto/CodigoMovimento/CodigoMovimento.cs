@@ -58,7 +58,9 @@ namespace BoletoNet
             {
                 switch (codigoBanco)
                 {
-
+                    case 33:
+                        _ICodigoMovimento = new CodigoMovimento_Santander(codigoMovimento);
+                        break;
                     // Caixa
                     case 104:
                         _ICodigoMovimento = new CodigoMovimento_Caixa(codigoMovimento);

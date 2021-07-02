@@ -741,85 +741,37 @@ namespace BoletoNet
             try
             {
 
-                string _segmentoQ;
 
-                //Código do Banco na compensação ==> 001 - 003
-                _segmentoQ = Utils.FormatCode(Codigo.ToString(), "0", 3, true);
+                TRegistroEDI reg = new TRegistroEDI();
+                reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediNumericoSemSeparador_, 0001, 003, 0, "33", '0'));                                             //001-003
+                reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediNumericoSemSeparador_, 0004, 004, 0, "1", '0'));                                              //004-007
+                reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediNumericoSemSeparador_, 0008, 001, 0, "3", '0'));                                              //008-008
+                reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediNumericoSemSeparador_, 0009, 005, 0, numeroRegistro, '0'));                                   //009-013
+                reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediAlphaAliEsquerda_____, 0014, 001, 0, "Q", ' '));                                              //017-017
+                reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediNumericoSemSeparador_, 0015, 001, 0, string.Empty, ' '));                                     //014-014
+                reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediNumericoSemSeparador_, 0016, 002, 0, ObterCodigoDaOcorrencia(boleto), ' '));                  //015-015
+                reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediAlphaAliEsquerda_____, 0018, 001, 0, (boleto.Sacado.CPFCNPJ.Length == 11 ? "1" : "2"), ' ')); //016-017
+                reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediNumericoSemSeparador_, 0019, 015, 0, boleto.Sacado.CPFCNPJ, '0'));                            //018-033
+                reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediAlphaAliEsquerda_____, 0034, 040, 0, boleto.Sacado.Nome, ' '));                               //034-073
+                reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediAlphaAliEsquerda_____, 0074, 040, 0, boleto.Sacado.Endereco.End, ' '));                       //074-113
+                reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediAlphaAliEsquerda_____, 0114, 015, 0, boleto.Sacado.Endereco.Bairro, ' '));                    //114-128
+                reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediAlphaAliDireita______, 0129, 005, 0, boleto.Sacado.Endereco.CEP.Substring(0, 5), '0'));       //129-133
+                reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediAlphaAliEsquerda_____, 0134, 003, 0, boleto.Sacado.Endereco.CEP.Substring(5, 3), ' '));       //134-136
+                reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediAlphaAliEsquerda_____, 0137, 015, 0, boleto.Sacado.Endereco.Cidade, ' '));                    //137-151
+                reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediAlphaAliDireita______, 0152, 002, 0, boleto.Sacado.Endereco.UF, '0'));                        //152-153
+                reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediAlphaAliEsquerda_____, 0154, 001, 0, "0", ' '));                                              //154-154
+                reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediNumericoSemSeparador_, 0155, 015, 0, "0", '0'));                                              //155-169
+                reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediNumericoSemSeparador_, 0170, 040, 0, string.Empty, ' '));                                     //170-209
+                reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediNumericoSemSeparador_, 0210, 003, 0, "0", '0'));                                              //210-212
+                reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediAlphaAliEsquerda_____, 0213, 003, 0, "0", '0'));                                              //213-215
+                reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediAlphaAliEsquerda_____, 0216, 003, 0, "0", '0'));                                              //216-218
+                reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediNumericoSemSeparador_, 0219, 003, 0, "0", '0'));                                              //219-221
+                reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediNumericoSemSeparador_, 0222, 019, 0, string.Empty, ' '));                                     //222-240
+                reg.CodificarLinha();
 
-                //Numero do lote remessa ==> 004 - 007
-                _segmentoQ += Utils.FitStringLength("1", 4, 4, '0', 0, true, true, true);
+                reg.CodificarLinha();
 
-                //Tipo de registro ==> 008 - 008
-                _segmentoQ += "3";
-
-                //Nº seqüencial do registro no lote ==> 009 - 013
-                _segmentoQ += Utils.FitStringLength(numeroRegistro.ToString(), 5, 5, '0', 0, true, true, true);
-
-                //Cód. segmento do registro detalhe ==> 014 - 014
-                _segmentoQ += "Q";
-
-                //Reservado (uso Banco) ==> 015 - 015
-                _segmentoQ += " ";
-
-                //Código de movimento remessa ==> 016 - 017
-                _segmentoQ += ObterCodigoDaOcorrencia(boleto);
-
-                if (boleto.Sacado.CPFCNPJ.Length <= 11)
-                    //Tipo de inscrição do sacado ==> 018 - 018
-                    _segmentoQ += "1";
-                else
-                    //Tipo de inscrição do sacado ==> 018 - 018
-                    _segmentoQ += "2";
-
-                //Número de inscrição do sacado ==> 019 - 033
-                _segmentoQ += Utils.FitStringLength(boleto.Sacado.CPFCNPJ, 15, 15, '0', 0, true, true, true);
-
-                //Nome sacado ==> 034 - 073
-                _segmentoQ += Utils.FitStringLength(boleto.Sacado.Nome.TrimStart(' '), 40, 40, ' ', 0, true, true, false).ToUpper();
-
-                //Endereço sacado ==> 074 - 113
-                _segmentoQ += Utils.FitStringLength(boleto.Sacado.Endereco.End.TrimStart(' '), 40, 40, ' ', 0, true, true, false).ToUpper();
-
-                //Bairro sacado ==> 114 - 128
-                _segmentoQ += Utils.FitStringLength(boleto.Sacado.Endereco.Bairro.TrimStart(' '), 15, 15, ' ', 0, true, true, false).ToUpper();
-
-                //Cep sacado ==> 129 - 133
-                _segmentoQ += Utils.FitStringLength(boleto.Sacado.Endereco.CEP.Substring(0, 5), 5, 5, ' ', 0, true, true, false).ToUpper();
-
-                //Sufixo do Cep do sacado ==> 134 - 136
-                _segmentoQ += Utils.FitStringLength(boleto.Sacado.Endereco.CEP.Substring(5, 3), 3, 3, ' ', 0, true, true, false).ToUpper();
-
-                //Cidade do sacado ==> 137 - 151
-                _segmentoQ += Utils.FitStringLength(boleto.Sacado.Endereco.Cidade.TrimStart(' '), 15, 15, ' ', 0, true, true, false).ToUpper();
-
-                //Unidade da federação do sacado ==> 152 - 153
-                _segmentoQ += Utils.FitStringLength(boleto.Sacado.Endereco.UF, 2, 2, ' ', 0, true, true, false).ToUpper();
-
-                //Tipo de inscrição sacador/avalista ==> 154 - 154
-                _segmentoQ += "0";
-
-                //Nº de inscrição sacador/avalista ==> 155 - 169
-                _segmentoQ += "0".PadLeft(15, '0');
-
-                //Nome do sacador/avalista ==> 170 - 209
-                _segmentoQ += " ".PadLeft(40, ' ');
-
-                //Identificador de carne ==> 210 –212
-                _segmentoQ += "0".PadLeft(3, '0');
-
-                //Seqüencial da Parcela ou número inicial da parcela ==> 213 –215
-                _segmentoQ += "0".PadLeft(3, '0');
-
-                //Quantidade total de parcelas ==> 216 –218
-                _segmentoQ += "0".PadLeft(3, '0');
-
-                //Número do plano ==> 219 – 221
-                _segmentoQ += "0".PadLeft(3, '0');
-
-                //Reservado (uso Banco) ==> 222 - 240
-                _segmentoQ += " ".PadLeft(19, ' ');
-
-                return Utils.SubstituiCaracteresEspeciais(_segmentoQ);
+                return Utils.SubstituiCaracteresEspeciais(reg.LinhaRegistro);
 
             }
             catch (Exception ex)

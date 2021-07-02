@@ -412,7 +412,9 @@ namespace BoletoNet
             {
                 switch (codigoBanco)
                 {
-
+                    case 33:
+                        enumComandosRetorno = typeof(EnumCodigoMovimento_Santander);
+                        break;
                     // Caixa
                     case 104:
                         enumComandosRetorno = typeof(EnumCodigoMovimento_Caixa);
