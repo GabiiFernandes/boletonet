@@ -741,8 +741,8 @@ namespace BoletoNet
             try
             {
 
-
                 TRegistroEDI reg = new TRegistroEDI();
+
                 reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediNumericoSemSeparador_, 0001, 003, 0, "33", '0'));                                             //001-003
                 reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediNumericoSemSeparador_, 0004, 004, 0, "1", '0'));                                              //004-007
                 reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediNumericoSemSeparador_, 0008, 001, 0, "3", '0'));                                              //008-008
@@ -767,7 +767,6 @@ namespace BoletoNet
                 reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediAlphaAliEsquerda_____, 0216, 003, 0, "0", '0'));                                              //216-218
                 reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediNumericoSemSeparador_, 0219, 003, 0, "0", '0'));                                              //219-221
                 reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediNumericoSemSeparador_, 0222, 019, 0, string.Empty, ' '));                                     //222-240
-                reg.CodificarLinha();
 
                 reg.CodificarLinha();
 
@@ -783,107 +782,56 @@ namespace BoletoNet
         {
             try
             {
-                string _brancos110 = new string(' ', 110);
-                string _brancos9 = new string(' ', 9);
 
-                string _segmentoR;
+                TRegistroEDI reg = new TRegistroEDI();
 
-                //Código do Banco na compensação ==> 001 - 003
-                _segmentoR = Utils.FormatCode(Codigo.ToString(), "0", 3, true);
-
-                //Numero do lote remessa ==> 004 - 007
-                _segmentoR += Utils.FitStringLength("1", 4, 4, '0', 0, true, true, true);
-
-                //Tipo de registro ==> 008 - 008
-                _segmentoR += "3";
-
-                //Nº seqüencial do registro de lote ==> 009 - 013
-                _segmentoR += Utils.FitStringLength(numeroRegistro.ToString(), 5, 5, '0', 0, true, true, true);
-
-                //Código segmento do registro detalhe ==> 014 - 014
-                _segmentoR += "R";
-
-                //Reservado (uso Banco) ==> 015 - 015
-                _segmentoR += " ";
-
-                //Código de movimento ==> 016 - 017
-                _segmentoR += ObterCodigoDaOcorrencia(boleto);
-
+                reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediNumericoSemSeparador_, 0001, 003, 0, "33", '0'));                                             //001-003
+                reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediNumericoSemSeparador_, 0004, 004, 0, "1", '0'));                                              //004-007
+                reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediNumericoSemSeparador_, 0008, 001, 0, "3", '0'));                                              //008-008
+                reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediNumericoSemSeparador_, 0009, 005, 0, numeroRegistro, '0'));                                   //009-013
+                reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediAlphaAliEsquerda_____, 0014, 001, 0, "R", ' '));                                              //014-014
+                reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediNumericoSemSeparador_, 0015, 001, 0, string.Empty, ' '));                                     //015-015
+                reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediNumericoSemSeparador_, 0016, 002, 0, ObterCodigoDaOcorrencia(boleto), ' '));                  //016-017
                 if (boleto.OutrosDescontos > 0)
                 {
-                    //Código do desconto 2 ==> 018 - 018
-                    _segmentoR += "1";
-
-                    //Data do desconto 2 ==> 019 - 026
-                    _segmentoR += boleto.DataOutrosDescontos.ToString("ddMMyyyy");
-
-                    //Valor/Percentual a ser concedido ==> 027 - 041
-                    _segmentoR += Utils.FitStringLength(boleto.OutrosDescontos.ApenasNumeros(), 15, 15, '0', 0, true, true, true);
+                    reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediAlphaAliEsquerda_____, 0018, 001, 0, "1", ' '));                                          //018-018
+                    reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediDataDDMMAAAA_________, 0019, 008, 0, boleto.DataOutrosDescontos, '0'));                   //019-026
+                    reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediNumericoSemSeparador_, 0027, 015, 2, boleto.OutrosDescontos, ' '));                       //027-041
                 }
                 else
                 {
-                    //Código do desconto 2 ==> 018 - 018
-                    _segmentoR += "0";
-
-                    //Data do desconto 2 ==> 019 - 026
-                    _segmentoR += "0".PadLeft(8, '0');
-
-                    //Valor/Percentual a ser concedido ==> 027 - 041
-                    _segmentoR += "0".PadLeft(15, '0');
+                    reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediAlphaAliEsquerda_____, 0018, 001, 0, "0", ' '));                                          //018-018
+                    reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediAlphaAliEsquerda_____, 0019, 008, 0, "0", '0'));                                          //019-026
+                    reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediNumericoSemSeparador_, 0027, 015, 2, "0", '0'));                                          //027-041
                 }
 
-                //Reservado (uso Banco) ==> 042 – 065
-                _segmentoR += " ".PadLeft(24, ' ');
-
+                reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediAlphaAliEsquerda_____, 0042, 024, 0, string.Empty, ' '));                                     //042-065
                 if (boleto.PercMulta > 0)
                 {
-                    //Código da multa ==> 066 - 066
-                    _segmentoR += "2";
-
-                    //Data da multa ==> 067 - 074
-                    _segmentoR += boleto.DataMulta.ToString("ddMMyyyy");
-
-                    //Valor/Percentual a ser aplicado ==> 075 - 089
-                    _segmentoR += Utils.FitStringLength(boleto.PercMulta.ApenasNumeros(), 15, 15, '0', 0, true, true, true);
+                    reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediAlphaAliEsquerda_____, 0066, 001, 0, "2", ' '));                                          //066-066
+                    reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediDataDDMMAAAA_________, 0067, 008, 0, boleto.DataMulta, '0'));                             //067-074
+                    reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediNumericoSemSeparador_, 0075, 015, 2, boleto.PercMulta, '0'));                             //075-089
                 }
                 else if (boleto.ValorMulta > 0)
                 {
-                    //Código da multa ==> 066 - 066
-                    _segmentoR += "1";
-
-                    //Data da multa ==> 067 - 074
-                    _segmentoR += boleto.DataMulta.ToString("ddMMyyyy");
-
-                    //Valor/Percentual a ser aplicado ==> 075 - 089
-                    _segmentoR += Utils.FitStringLength(boleto.ValorMulta.ApenasNumeros(), 15, 15, '0', 0, true, true, true);
+                    reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediAlphaAliEsquerda_____, 0066, 001, 0, "1", ' '));                                          //066-066
+                    reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediDataDDMMAAAA_________, 0067, 008, 0, boleto.DataMulta, '0'));                             //067-074
+                    reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediNumericoSemSeparador_, 0075, 015, 2, boleto.ValorMulta, '0'));                            //075-089
                 }
                 else
                 {
-                    //Código da multa ==> 066 - 066
-                    _segmentoR += "0";
-
-                    //Data da multa ==> 067 - 074
-                    _segmentoR += "0".PadLeft(8, '0');
-
-                    //Valor/Percentual a ser aplicado ==> 075 - 089
-                    _segmentoR += "0".PadLeft(15, '0');
+                    reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediAlphaAliEsquerda_____, 0066, 001, 0, "0", ' '));                                          //066-066
+                    reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediDataDDMMAAAA_________, 0067, 008, 0, "0", '0'));                                          //067-074
+                    reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediNumericoSemSeparador_, 0075, 015, 2, "0", '0'));                                          //075-089
                 }
+                reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediAlphaAliEsquerda_____, 0090, 010, 0, string.Empty, ' '));                                     //090-099
+                reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediAlphaAliDireita______, 0100, 040, 0, string.Empty, ' '));                                     //100-139
+                reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediAlphaAliEsquerda_____, 0140, 040, 0, string.Empty, ' '));                                     //140-179
+                reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediNumericoSemSeparador_, 0180, 061, 0, string.Empty, ' '));                                     //180-240
 
-                //Reservado (uso Banco) ==> 090 - 099
-                _segmentoR += " ".PadLeft(10, ' ');
+                reg.CodificarLinha();
 
-                //Mensagem 3 ==> 100 - 139
-                _segmentoR += " ".PadLeft(40, ' ');
-
-                //Mensagem 4 ==> 140 - 179
-                _segmentoR += " ".PadLeft(40, ' ');
-
-                //Reservado ==> 180 - 240
-                _segmentoR += " ".PadLeft(61, ' ');
-
-                _segmentoR = Utils.SubstituiCaracteresEspeciais(_segmentoR);
-
-                return _segmentoR;
+                return Utils.SubstituiCaracteresEspeciais(reg.LinhaRegistro);
             }
             catch (Exception ex)
             {
@@ -893,57 +841,49 @@ namespace BoletoNet
         public override string GerarDetalheSegmentoSRemessa(Boleto boleto, int numeroRegistro, TipoArquivo tipoArquivo)
         {
             try
-            {
+            {   
+                #region MSG
+                string msg1 = string.Empty;
+                string msg2 = string.Empty;
+                string msg3 = string.Empty;
 
-                string _segmentoS;
-
-                //Código do Banco na compensação ==> 001 - 003
-                _segmentoS = Utils.FormatCode(Codigo.ToString(), "0", 3, true);
-
-                //Numero do lote remessa ==> 004 - 007
-                _segmentoS += Utils.FitStringLength("1", 4, 4, '0', 0, true, true, true);
-
-                //Tipo de registro ==> 008 - 008
-                _segmentoS += "3";
-
-                //Nº seqüencial do registro de lote ==> 009 - 013
-                _segmentoS += Utils.FitStringLength(numeroRegistro.ToString(), 5, 5, '0', 0, true, true, true);
-
-                //Cód. Segmento do registro detalhe ==> 014 - 014
-                _segmentoS += "S";
-
-                //Reservado (uso Banco) ==> 015 - 015
-                _segmentoS += " ";
-
-                //Código de movimento ==> 016 - 017
-                _segmentoS += ObterCodigoDaOcorrencia(boleto);
-
-                //Identificação da impressão ==> 018 - 018
-                _segmentoS += "2";
-
-                //Mensagem 5 ==> 019 - 058
-                //Mensagem 6 ==> 059 - 098
-                //Mensagem 7 ==> 099 - 138
-                for (int i = 0; i < 3; i++)
+                if (boleto.Instrucoes.Count > 0)
                 {
-                    if (boleto.Instrucoes.Count > i)
-                        _segmentoS += Utils.FitStringLength(boleto.Instrucoes[i].Descricao, 40, 40, ' ', 0, true, true, false);
-                    else
-                        _segmentoS += Utils.FitStringLength(" ", 40, 40, ' ', 0, true, true, false);
+                     msg1 = boleto.Instrucoes[0].Descricao;
                 }
 
-                //Mensagem 8 ==> 139 - 178
-                _segmentoS += " ".PadLeft(40, ' ');
+                if (boleto.Instrucoes.Count > 1)
+                {
+                     msg2 = boleto.Instrucoes[1].Descricao;
+                }
 
-                //Mensagem 9 ==> 179 - 218
-                _segmentoS += " ".PadLeft(40, ' ');
+                if (boleto.Instrucoes.Count > 2)
+                {
+                     msg3 = boleto.Instrucoes[2].Descricao;
+                }
+                #endregion MSG
 
-                //Reservado (uso Banco) ==> 219 - 240
-                _segmentoS += " ".PadLeft(22, ' ');
+                TRegistroEDI reg = new TRegistroEDI();
 
-                _segmentoS = Utils.SubstituiCaracteresEspeciais(_segmentoS);
+                reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediNumericoSemSeparador_, 0001, 003, 0, "33", '0'));                                             //001-003
+                reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediNumericoSemSeparador_, 0004, 004, 0, "1", '0'));                                              //004-007
+                reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediNumericoSemSeparador_, 0008, 001, 0, "3", '0'));                                              //008-008
+                reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediNumericoSemSeparador_, 0009, 005, 0, numeroRegistro, '0'));                                   //009-013
+                reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediAlphaAliEsquerda_____, 0014, 001, 0, "S", ' '));                                              //017-017
+                reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediNumericoSemSeparador_, 0015, 001, 0, string.Empty, ' '));                                     //014-014
+                reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediNumericoSemSeparador_, 0016, 002, 0, ObterCodigoDaOcorrencia(boleto), ' '));                  //015-015
+                reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediAlphaAliEsquerda_____, 0018, 001, 0, "2", ' '));                                              //016-017
+                reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediAlphaAliEsquerda_____, 0019, 040, 0, msg1, ' '));                                             //018-033
+                reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediAlphaAliEsquerda_____, 0059, 040, 0, msg2, ' '));                                             //034-073
+                reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediAlphaAliEsquerda_____, 0099, 040, 0, msg3, ' '));                                             //074-113
+                reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediAlphaAliEsquerda_____, 0139, 040, 0, string.Empty, ' '));                                     //114-128
+                reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediAlphaAliDireita______, 0179, 040, 0, string.Empty, ' '));                                     //129-133
+                reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediAlphaAliEsquerda_____, 0219, 023, 0, string.Empty, ' '));                                     //134-136
 
-                return _segmentoS;
+                reg.CodificarLinha();
+
+                return Utils.SubstituiCaracteresEspeciais(reg.LinhaRegistro);
+
             }
             catch (Exception ex)
             {
@@ -1424,45 +1364,23 @@ namespace BoletoNet
 
         #region TRAILER CNAB240
 
-        /// <summary>
-        ///POS INI/FINAL	DESCRIÇÂO	                   A/N	TAM	DEC	CONTEÚDO	NOTAS
-        ///--------------------------------------------------------------------------------
-        ///001 - 003	Código do Banco na compensação	    N	003		341	
-        ///004 - 007	Lote de serviço	                    N	004		Nota 5 
-        ///008 - 008	Registro Trailer de Lote            N	001     5
-        ///009 - 017	Complemento de Registros            A	009     Brancos
-        ///018 - 023    Qtd. Registros do Lote              N   006     Nota 15     
-        ///024 - 041    Soma Valor dos Débitos do Lote      N   018     Nota 14     
-        ///042 - 059    Soma Qtd. de Moedas do Lote         N   018     Nota 14
-        ///060 - 230    Complemento de Registros            A   171     Brancos
-        ///231 - 240    Cód. Ocr. para Retorno              A   010     Brancos
-        /// </summary>
-
         public override string GerarTrailerLoteRemessa(int numeroRegistro)
         {
             try
             {
-                //Código do Banco na compensação ==> 001 - 003
-                string trailer = Utils.FormatCode(Codigo.ToString(), "0", 3, true);
+                TRegistroEDI reg = new TRegistroEDI();
 
-                //Numero do lote remessa ==> 004 - 007
-                trailer += Utils.FormatCode("1", "0", 4, true);
+                reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediNumericoSemSeparador_, 0001, 003, 0, "33", '0'));                                             //001-003
+                reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediNumericoSemSeparador_, 0004, 004, 0, "1", '0'));                                              //004-007
+                reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediNumericoSemSeparador_, 0008, 001, 0, "5", '0'));                                              //008-008
+                reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediNumericoSemSeparador_, 0009, 009, 0, string.Empty, ' '));                                     //009-017
+                reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediNumericoSemSeparador_, 0018, 006, 0, numeroRegistro, '0'));                                   //018-023
+                reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediNumericoSemSeparador_, 0024, 217, 0, string.Empty, ' '));                                     //024-240
 
-                //Tipo de registro ==> 008 - 008
-                trailer += "5";
+                reg.CodificarLinha();
 
-                //Reservado (uso Banco) ==> 009 - 017
-                trailer += Utils.FormatCode("", " ", 9);
+                return Utils.SubstituiCaracteresEspeciais(reg.LinhaRegistro);
 
-                //Quantidade de registros do lote ==> 018 - 023
-                trailer += Utils.FormatCode(numeroRegistro.ToString(), "0", 6, true);
-
-                //Reservado (uso Banco) ==> 024 - 240
-                trailer += Utils.FormatCode("", " ", 217);
-
-                trailer = Utils.SubstituiCaracteresEspeciais(trailer);
-
-                return trailer;
             }
             catch (Exception e)
             {
@@ -1470,46 +1388,24 @@ namespace BoletoNet
             }
         }
 
-        /// <summary>
-        ///POS INI/FINAL	DESCRIÇÂO	                   A/N	TAM	DEC	CONTEÚDO	NOTAS
-        ///--------------------------------------------------------------------------------
-        ///001 - 003	Código do Banco na compensação	    N	003		341	
-        ///004 - 007	Lote de serviço	                    N	004		9999 
-        ///008 - 008	Registro Trailer de Arquivo         N	001     9
-        ///009 - 017	Complemento de Registros            A	009     Brancos
-        ///018 - 023    Qtd. Lotes do Arquivo               N   006     Nota 15     
-        ///024 - 029    Qtd. Registros do Arquivo           N   006     Nota 15     
-        ///030 - 240    Complemento de Registros            A   211     Brancos
-        /// </summary>
-
         public override string GerarTrailerArquivoRemessa(int numeroRegistro)
         {
             try
             {
-                //Código do Banco na compensação ==> 001 - 003
-                string trailer = Utils.FormatCode(Codigo.ToString(), "0", 3, true);
+                TRegistroEDI reg = new TRegistroEDI();
 
-                //Numero do lote remessa ==> 004 - 007
-                trailer += "9999";
+                reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediNumericoSemSeparador_, 0001, 003, 0, "33", '0'));                                              //001-003
+                reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediNumericoSemSeparador_, 0004, 004, 0, "9999", '0'));                                            //004-007
+                reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediNumericoSemSeparador_, 0008, 001, 0, "9", '0'));                                               //008-008
+                reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediNumericoSemSeparador_, 0009, 009, 0, string.Empty, ' '));                                      //009-017
+                reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediNumericoSemSeparador_, 0018, 006, 0, "1", '0'));                                               //018-023
+                reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediNumericoSemSeparador_, 0024, 006, 0, numeroRegistro, '0'));                                    //024-029
+                reg.CamposEDI.Add(new TCampoRegistroEDI(TTiposDadoEDI.ediNumericoSemSeparador_, 0030, 211, 0, string.Empty, ' '));                                      //030-240
 
-                //Tipo de registro ==> 008 - 008
-                trailer += "9";
+                reg.CodificarLinha();
 
-                //Reservado (uso Banco) ==> 009 - 017
-                trailer += Utils.FormatCode("", " ", 9);
+                return Utils.SubstituiCaracteresEspeciais(reg.LinhaRegistro);
 
-                //Quantidade de lotes do arquivo ==> 018 - 023
-                trailer += Utils.FormatCode("1", "0", 6, true);
-
-                //Quantidade de registros do arquivo ==> 024 - 029
-                trailer += Utils.FormatCode(numeroRegistro.ToString(), "0", 6, true);
-
-                //Reservado (uso Banco) ==> 030 - 240
-                trailer += Utils.FormatCode("", " ", 211);
-
-                trailer = Utils.SubstituiCaracteresEspeciais(trailer);
-
-                return trailer;
             }
             catch (Exception e)
             {
